@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -71,6 +72,16 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
     public Status statusSystem = new Status();//status of the system
     //ProgressDialog
     private ProgressDialog progressDialog;
+
+    //save shared preferences
+    //Variables to save data
+    public static final String SHARED_PREFS = "sharedPrefs";
+    //variables to save text
+    public static final String BLE_ADD = "text";
+
+    //private String
+    private String BLE_ADD_GOT="0";
+
 
 
     @Override
@@ -146,7 +157,10 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
     @Override
     public void onItemPostSelect(int position, String value) {
         Log.d(TAG, "onItemPostSelect: pos:"+position+":value:"+value);
-
+        if(value!=null){
+            BLE_ADD_GOT=value;
+            saveData();
+        }
     }
 
     @Override
@@ -154,7 +168,13 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
         if (v == btnScan) {
             proceedScan();
         } else if (v == btnHome) {
-            launchActivity(MainActivity.class);
+            Bundle bundle = new Bundle();
+            Log.d(TAG, "onClick: get address "+BLE_ADD_GOT);
+            bundle.putString("myAdd", BLE_ADD_GOT);
+            Intent intent = new Intent(ScanActivity.this, MainActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            //launchActivity(MainActivity.class);
         }
     }
 
@@ -473,4 +493,22 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
         modelScan.addAll(hashSet);
         Log.d(TAG, "organizeList: model scan size after"+modelScan.size());
     }
+
+    //-----------Save/Load data----------------//
+    //Method. to take care of save data
+    public void saveData() {
+        //shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);//mode private means no other app can change it
+        SharedPreferences.Editor editor = sharedPreferences.edit();//enable to change the value
+        editor.putString(BLE_ADD, BLE_ADD_GOT);//get the text from the editText
+        editor.apply();
+        Toast.makeText(this, "Data Saved", Toast.LENGTH_SHORT).show();
+    }
+
+    /*
+    //Method to load the data
+    public void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);//mode private means no other app can change it
+        text_ble_add = sharedPreferences.getString(BLE_ADD, "");
+    }*/
 }

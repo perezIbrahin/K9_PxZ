@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,8 +54,9 @@ public class RecyclerViewAdapScan extends RecyclerView.Adapter<RecyclerViewAdapS
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String value=holder.tvname.getText().toString();
+                String value=holder.tvUUid.getText().toString();
                 recyclerViewClickInterface.onItemPostSelect(holder.getAdapterPosition(),value);
+                Toast.makeText(v.getContext(), "Selected device:"+value, Toast.LENGTH_SHORT).show();
             }
         });
 

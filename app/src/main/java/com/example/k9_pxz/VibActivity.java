@@ -183,6 +183,8 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private boolean isAlertDialogForceStopShowing = false;
 
     //variables
+
+    private String myBleAdd="0";//Address used to connect BLE
     private boolean bleIsScanner = false;
     // setup UI handler
     private final static int UPDATE_DEVICE = 0;
@@ -310,6 +312,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         //from old design
         firstTime();//init method just for the first time
         eventControl();//events
+        getExtrasFromAct();//get extras
     }
 
     @Override
@@ -2526,7 +2529,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             mLeDeviceListAdapter.notifyDataSetChanged();
             //Log.d(TAG, "onScanResult: !!!!!!!!!!!!!!");
             //Connect with the device
-            if (deviceFound.equalsIgnoreCase(bluetoothCharacter.MAC_KZ)) {
+            if (deviceFound.equalsIgnoreCase(myBleAdd)) {
                 connectToDevice(result.getDevice());
                 Log.d(TAG, "I got it: ------------" + deviceFound + "----------------");
                 bleIsScanner = false;
@@ -2767,7 +2770,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            //return;
         }
         mGatt.close();
         mGatt = null;
@@ -3136,6 +3139,27 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         public void run() {
             setValueCharact(CHARACTERISTIC_TRANSDUCERS, setPointsBluetooth.getBLE_SP_COOL_ALL_STOP());// setValueCharact(CHARACTERISTIC_TRANSDUCERS, setPointsBluetooth.getBLE_SP_COOL_ALL_STOP());
             //cloudStorageSetPoints("Event:", "Therapy stopped");
+        }
+    }
+
+    //------------get extrass-----------------//
+    //get extras from activity
+    private void getExtrasFromAct(){
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!= null) {
+
+            String add = bundle.getString("vibAdd");
+            if(add!=null){
+                Log.d(TAG, "Vibration getExtrasFromAct: "+add);
+                if(add.equalsIgnoreCase(myBleAdd)){
+                    Log.d(TAG, "getExtrasFromAct: same address");
+                }else{
+                    Log.d(TAG, "getExtrasFromAct: address change");
+                    myBleAdd=add;
+                }
+
+            }
+
         }
     }
 

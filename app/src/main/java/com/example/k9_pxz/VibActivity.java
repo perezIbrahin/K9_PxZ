@@ -448,7 +448,11 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             } else if (view == btnVibration) {//mode vibration
                 selectedMode(MODE_PERCUSSION_VIBRATION);
             } else if (view == btnStart) {//start therapy
-                beforeOnTherapy(setPointsBluetooth.INT_BLE_CMD_START);
+                if(checkTransducersSelected(currentTransdA, currentTransdB)){
+                    beforeOnTherapy(setPointsBluetooth.INT_BLE_CMD_START);
+                }else{
+                    alertDialogCheckTransd();
+                }
             } else if (view == btnStop) {//stop therapy
                 forceStop();
             } else if (view == rbA1) {
@@ -643,6 +647,9 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //------------------therapy---------------
     //*Condition before to start therapy
     private void beforeOnTherapy(int input) {
+        //check transducers!!
+
+
         if (input == setPointsBluetooth.INT_BLE_CMD_START) {
             invisibleSleepModeBtn(); //Invisible sleep mode buttons
             invisibleWakeUpModeBtn();
@@ -945,6 +952,25 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         cleanDisplayTimer();
     }
 
+    //check to have transducerA and Transducer B selected
+    private boolean checkTransducersSelected(int trandA, int trandB){
+        Log.d(TAG, "checkTransducersSelected: A:"+trandA+ "B:"+trandB);
+        try {
+            if(trandA>0 && trandB>0){
+                Log.d(TAG, "checkTransducersSelected: A:"+trandA+ "B:"+trandB);
+                if (trandA+16==trandB){
+                    return  true;
+                }else{
+                    Log.d(TAG, "checkTransducersSelected: A:"+trandA+ "B:"+trandB);
+                    return false;
+                }
+            }
+        }catch ( Exception e){
+            Log.d(TAG, "checkTransducersSelected: "+e.getMessage());
+        }
+        return  false;
+    }
+
     //wake up mode
     private boolean wakeUp(boolean input) {
         final String WAKE_UP_MODE = "WAKE UP";
@@ -1097,8 +1123,6 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             startActivity(i);
         }
     }
-
-
 
     //display set point of intensity
     private void displaySPIntensity(String input) {
@@ -2288,6 +2312,34 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //-----------------------Alert Dialog-----------------------
     /*Alert Dialog:  Windows on the screen to alert than the Therapy is gonna start and take care of the Side Rail
      */
+    //Before start
+    private void alertDialogCheckTransd() {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(VibActivity.this);//, R.style.Theme_AppCompat_Light
+            builder.setTitle(R.string.alert_Title);
+            builder.setIcon(R.drawable.ic_warning_black_24dp);
+            builder.setMessage("Check transducers! Need to match A# with B#.")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            TextView textView = ((TextView) alert.findViewById(android.R.id.message));
+            textView.setTextColor(Color.GRAY);
+            textView.setTextSize(40);
+            textView.setGravity(Gravity.CENTER);
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogBeforeStart: Exception" + e);
+        }
+    }
+
     //Before start
     private void alertDialogBeforeStart() {
         try {

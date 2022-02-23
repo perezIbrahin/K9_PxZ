@@ -21,9 +21,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.K9_PxZ">
         <activity
-            android:name=".SleepActivity"
+            android:name=".ScanActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".SleepActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".VibActivity"
             android:exported="false"
@@ -35,7 +39,7 @@
         <activity
             android:name=".InfoActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".K9Activity"
             android:exported="false"

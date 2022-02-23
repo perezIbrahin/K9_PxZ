@@ -73,5 +73,10 @@
     <dimen name="sim_margin_bot">10dp</dimen>
     <!-- end dim margin-->
 
+    <!-- dim margin-->
+    <dimen name="dim_btn_set_H">100dp</dimen>
+    <dimen name="dim_btn_set_W">100dp</dimen>
+    <!-- end dim margin-->
+
 
 </resources>

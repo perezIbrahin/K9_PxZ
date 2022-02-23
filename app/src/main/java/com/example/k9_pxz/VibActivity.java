@@ -565,7 +565,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         //btn wakeUp/Sleep
         //btnSync = (Button) findViewById(R.id.btnSleep1);//no
         btnWakeUpMode = (Button) findViewById(R.id.btnWakeUpMode1);
-        btnSleepMode = (Button) findViewById(R.id.btnSleepMode1);
+        btnSleepMode = (Button) findViewById(R.id.btnScanDev);
         //
         //side rail
         srLeft = (Button) findViewById(R.id.btnSideRailLeft);

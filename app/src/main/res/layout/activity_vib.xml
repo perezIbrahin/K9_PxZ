@@ -40,7 +40,7 @@
                     tools:layout_editor_absoluteX="7dp" />
 
                 <Button
-                    android:id="@+id/btnSleepMode1"
+                    android:id="@+id/btnScanDev"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -95,9 +95,9 @@
                     android:background="@drawable/btn_roundr_corner"
                     android:drawableStart="@drawable/ic_home_black_24dp"
                     android:text="Home"
-                    app:layout_constraintBottom_toBottomOf="@+id/btnSleepMode1"
-                    app:layout_constraintStart_toEndOf="@+id/btnSleepMode1"
-                    app:layout_constraintTop_toTopOf="@+id/btnSleepMode1" />
+                    app:layout_constraintBottom_toBottomOf="@+id/btnScanDev"
+                    app:layout_constraintStart_toEndOf="@+id/btnScanDev"
+                    app:layout_constraintTop_toTopOf="@+id/btnScanDev" />
 
                 <TextView
                     android:id="@+id/textView3"

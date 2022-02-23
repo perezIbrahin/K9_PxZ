@@ -39,17 +39,6 @@
                     android:orientation="vertical"
                     android:padding="5dp">
 
-                    <Button
-                        android:id="@+id/btnScanDev"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/btn_roundr_corner"
-                        android:drawableStart="@drawable/ic_baseline_toggle_on_24"
-                        android:text="Scan"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <TextView
                         android:id="@+id/textView2"
                         android:layout_width="wrap_content"
@@ -95,9 +84,8 @@
                         android:background="@drawable/btn_roundr_corner"
                         android:drawableStart="@drawable/ic_home_black_24dp"
                         android:text="Home"
-                        app:layout_constraintBottom_toBottomOf="@+id/btnScanDev"
-                        app:layout_constraintStart_toEndOf="@+id/btnScanDev"
-                        app:layout_constraintTop_toTopOf="@+id/btnScanDev" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:layout_editor_absoluteY="12dp" />
 
                     <TextView
                         android:id="@+id/textView3"

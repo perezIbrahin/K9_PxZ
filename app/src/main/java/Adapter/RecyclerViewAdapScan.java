@@ -49,6 +49,17 @@ public class RecyclerViewAdapScan extends RecyclerView.Adapter<RecyclerViewAdapS
         holder.tvname.setText(modelScan.getDeviceName());
         holder.tvRssi.setText(modelScan.getDevRssi());
         holder.tvUUid.setText(modelScan.getDevUIID());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value=holder.tvname.getText().toString();
+                recyclerViewClickInterface.onItemPostSelect(holder.getAdapterPosition(),value);
+            }
+        });
+
+
+        Log.d(TAG, "onBindViewHolder: ");
     }
 
     @Override
@@ -56,7 +67,7 @@ public class RecyclerViewAdapScan extends RecyclerView.Adapter<RecyclerViewAdapS
         return modelScanArrayList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder  {
         TextView tvname;
         TextView tvUUid;
         TextView tvRssi;
@@ -67,7 +78,10 @@ public class RecyclerViewAdapScan extends RecyclerView.Adapter<RecyclerViewAdapS
             tvname=itemView.findViewById(R.id.tvScanName);
             tvUUid=itemView.findViewById(R.id.tvScanUUID);
             tvRssi=itemView.findViewById(R.id.tvSvanRssi);
-
         }
+
+
+
+
     }
 }

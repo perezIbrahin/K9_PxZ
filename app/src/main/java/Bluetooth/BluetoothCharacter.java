@@ -23,7 +23,7 @@ public class BluetoothCharacter {
 
     public final String MAC_K9= "90:FD:9F:5F:55:16";//address of the unit to connect-k9
     public final String MAC_KM= "90:FD:9F:0A:F5:F6";
-    public final String MAC_KZ= "90:FD:9F:0A:F5:F4";//address of the unit to connect-KZ
+    public final String MAC_KZ= "90:FD:9F:0A:F5:F6";//address of the unit to connect-KZ
     public final String MAC_K1200_SYST_B= "90:FD:9F:5F:1D:C2";//address of the unit to connect-KZ//"00:OB:57:B9:B5:7C"
     public final String MAC_K1200_TEST= "90:FD:9F:40:22:B4";//address of the unit to connect-KZ
 

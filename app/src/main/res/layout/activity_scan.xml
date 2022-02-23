@@ -43,6 +43,8 @@
                         android:id="@+id/btnScanDev"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/btn_roundr_corner"
                         android:drawableStart="@drawable/ic_baseline_toggle_on_24"
                         android:text="Scan"
                         app:layout_constraintBottom_toBottomOf="parent"

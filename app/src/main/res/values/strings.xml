@@ -1,0 +1,148 @@
+<resources>
+    <string name="app_name">K9_PxZ</string>
+    <!-- Buttons GUI  -->
+    <string name="btnFan1">FAN1</string>
+    <string name="btnFan2">FAN2</string>
+    <string name="btnFan3">FAN3</string>
+    <string name="btnFan4">FAN4</string>
+    <string name="btnFan5">FAN5</string>
+    <string name="btnModule1">MODULE1</string>
+    <string name="btnModule2">MODULE2</string>
+    <string name="btnModule3">MODULE3</string>
+    <string name="btnModule4">MODULE4</string>
+    <string name="btnModule5">MODULE5</string>
+
+    <string name="btnStart">start</string>
+    <string name="btnStop">stop</string>
+
+    <string name="btnProg_1">PROG1</string>
+    <string name="btnProg_2">PROG2</string>
+    <string name="btnProg_3">PROG3</string>
+
+    <string name="btnPercussion">Percussion</string>
+    <string name="btnVibration">Vibration</string>
+
+    <string name="btnWakeUp">wakeup</string>
+    <string name="btnSleep">sleep</string>
+
+
+    <string name="btnSPFreq5">35</string>
+    <string name="btnSPFreq4">30</string>
+    <string name="btnSPFreq3">25</string>
+    <string name="btnSPFreq2">20</string>
+    <string name="btnSPFreq1">10</string>
+
+    <string name="btnSPInt1">10</string>
+    <string name="btnSPInt2">30</string>
+    <string name="btnSPInt3">50</string>
+    <string name="btnSPInt4">70</string>
+    <string name="btnSPInt5">90</string>
+
+    <string name="btnSPTime1">5</string>
+    <string name="btnSPTime2">10</string>
+    <string name="btnSPTime3">15</string>
+    <string name="btnSPTime4">20</string>
+    <string name="btnSPTime5">25</string>
+
+    <!-- end Buttons  GUI-->
+
+    <!-- TextView GUI  -->
+    <string name="tvPageTitle">Percussion and Vibration</string>
+    <string name="tvModule1">Module1</string>
+    <string name="tvModule2">Module2</string>
+    <string name="tvModule3">Module3</string>
+    <string name="tvModule4">Module4</string>
+    <string name="tvModule5">Module5</string>
+
+    <string name="tvPosHead">Control</string>
+    <string name="tvPosFoot">Modules</string>
+
+    <string name="tv_Freq">Frequency</string>
+    <string name="tv_Int">Intensity</string>
+    <string name="tv_Time">Timer</string>
+
+    <string name="tv_FreqFB">Frequency(Hz)</string>
+    <string name="tv_IntFB">Intensity(%)</string>
+    <string name="tv_TimeFB">Time(min)</string>
+
+    <string name="tv_Mode">Mode:</string>
+    <string name="tv_Zone">Zones Active:</string>
+    <string name="tv_Remaind_time">Zones Active:</string>
+
+
+    <!-- end TextView GUI  -->
+
+    <!-- Radio buttons GUI  -->
+    <string name="rbModule1A">A1</string>
+    <string name="rbModule2A">A2</string>
+    <string name="rbModule3A">A3</string>
+    <string name="rbModule4A">A4</string>
+    <string name="rbModule5A">A5</string>
+
+    <string name="rbModule1B">B1</string>
+    <string name="rbModule2B">B2</string>
+    <string name="rbModule3B">B3</string>
+    <string name="rbModule4B">B4</string>
+    <string name="rbModule5B">B5</string>
+    <string name="title_activity_therapy">TherapyActivity</string>
+
+    <!-- Radio buttons GUI  -->
+    <!-- Buttons GUI  -->
+    <string name="button_screen_mode">Screen Mode</string>
+
+    <!-- Language-->
+
+    <string name="language_spain">Spain</string>
+    <string name="language_france">France</string>
+    <string name="language_US">US</string>
+
+    <!-- Comunication -->
+    <string name="ble_not_supported">BLE is not supported</string>
+
+    <string name="ble_found">BLE found</string>
+    <string name="ble_connected">BLE connected</string>
+    <string name="ble_discovery_finished">BLE discovery finished</string>
+    <string name="ble_disconnected_requested">BLE disconnected requested</string>
+    <string name="ble_disconnected">BLE disconnected</string>
+    <string name="error_bluetooth_not_supported">Error_bluetooth_not_supported</string>
+
+    <!-- Cloud -->
+    <string name="cloud_off">Cloud Off</string>
+    <string name="cloud_upload">Cloud Upload</string>
+    <string name="cloud_done">Cloud Done</string>
+
+    <!-- Ethernet -->
+
+    <string name="eth_connected">ETH connected</string>
+    <string name="eth_disconnected">ETH disconnected</string>
+
+
+    <!-- spinner -->
+    <string name="spinner_title_freq">Frequency(HZ)</string>
+    <string name="spinner_title_Int">Intensity(%)</string>
+    <string name="spinner_title_Time">Time(min)</string>
+
+    <!-- Alert Dialog -->
+    <string name="alert_Title_uuid">New UUID:</string>
+    <string name="alert_Title">To proceed:</string>
+    <string name="alert_message">Confirm Side Rail are up.</string>
+    <string name="alert_Title_com">Alert:</string>
+    <string name="alert_message_com">Communication failed with K9-unit!.</string>
+    <string name="alert_Title_Close_App">Alert:</string>
+    <string name="alert_message_close_app">Are you sure you want to exit?</string>
+
+    <!-- menu -->
+    <string name="menu_cloud">Cloud</string>
+    <string name="menu_Sound">Sound</string>
+    <string name="menu_Voice">Voice</string>
+    <string name="menu_exit">Exit</string>
+    <string name="menu_language">Select language</string>
+    <string name="menu_manual">Manual</string>
+    <string name="menu_about">About</string>
+
+    <!-- MCU ERROR -->
+    <string name="k9_i2c_error">Bus I2C error on K9</string>
+    <string name="k9_mcu_error">MCU error on K9</string>
+
+
+</resources>

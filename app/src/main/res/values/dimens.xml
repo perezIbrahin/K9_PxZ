@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- dim Buttons-->
+    <dimen name="dim_btn_style1_W">80dp</dimen>
+    <dimen name="dim_btn_style1_H">80dp</dimen>
+
+    <dimen name="dim_btn_small_W">100dp</dimen>
+    <dimen name="dim_btn_small_H">50dp</dimen>
+
+    <dimen name="dim_btn_medium_W">150dp</dimen>
+    <dimen name="dim_btn_medium_H">150dp</dimen>
+
+    <dimen name="dim_btn_high_W">180dp</dimen>
+    <dimen name="dim_btn_high_H">180dp</dimen>
+
+
+    <dimen name="dim_btn_control_W">100dp</dimen>
+    <dimen name="dim_btn_control_H">100dp</dimen>
+
+    <dimen name="dim_btn_control_start_W">150dp</dimen>
+    <dimen name="dim_btn_control_start_H">150dp</dimen>
+
+    <dimen name="dim_btn_control_stop_W">150dp</dimen>
+    <dimen name="dim_btn_control_stop_H">150dp</dimen>
+
+    <dimen name="dim_btn_time_W">90dp</dimen>
+    <dimen name="dim_btn_time_H">90dp</dimen>
+
+    <!-- end dim Buttons-->
+
+    <!-- dim TextView-->
+    <dimen name="dim_tv_small_W">100dp</dimen>
+    <dimen name="dim_tv_small_H">100dp</dimen>
+
+    <dimen name="dim_tv_medium_W">150dp</dimen>
+    <dimen name="dim_tv_medium_H">150dp</dimen>
+
+    <dimen name="dim_tv_high_W">180dp</dimen>
+    <dimen name="dim_tv_high_H">180dp</dimen>
+    <!-- end TextView-->
+
+    <!-- dim Text-->
+    <dimen name="dim_text_small">18sp</dimen>
+    <dimen name="dim_text_18sp">18sp</dimen>
+    <dimen name="dim_text_20sp">20sp</dimen>
+    <dimen name="dim_text_24sp">24sp</dimen>
+    <dimen name="dim_text_medium">30sp</dimen>
+    <dimen name="dim_text_high">34sp</dimen>
+    <dimen name="dim_text_sp">30sp</dimen>
+    <!-- end Text-->
+    <!-- dim Radiogroup-->
+    <dimen name="dim_rg_small_W">100dp</dimen>
+    <dimen name="dim_rg_small_H">100dp</dimen>
+
+    <dimen name="dim_rg_medium_W">150dp</dimen>
+    <dimen name="dim_rg_medium_H">150dp</dimen>
+
+    <dimen name="dim_rg_high_W">180dp</dimen>
+    <dimen name="dim_rg_high_H">180dp</dimen>
+    <!-- end dim Radiogroup-->
+
+    <!-- fab modules-->
+    <dimen name="dim_btn_modules_w">100dp</dimen>
+    <dimen name="dim_btn_modules_h">100dp</dimen>
+
+    <!-- dim seekBar-->
+    <dimen name="dim_sb_w">300dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <!-- dim end seekBar-->
+
+    <!-- dim margin-->
+    <dimen name="dim_margin_top">10dp</dimen>
+    <dimen name="sim_margin_bot">10dp</dimen>
+    <!-- end dim margin-->
+
+
+</resources>

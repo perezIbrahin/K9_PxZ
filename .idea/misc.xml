@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/animation_vibration2.xml" value="0.167" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_mode.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_prog.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_rectangule.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_roundr_corner.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_sp.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_sp1.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_start.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_stop.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/btn_up.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/ic__up_blue_24dp.xml" value="0.382" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/drawable/ic_action_connection.xml" value="0.5520833333333334" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_k9.xml" value="0.5359375" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_main.xml" value="0.5359375" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_percussion.xml" value="0.21527117031398668" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_sett.xml" value="0.26038500506585616" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_settings.xml" value="0.26038500506585616" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_vib.xml" value="0.6666666666666666" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3302083333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

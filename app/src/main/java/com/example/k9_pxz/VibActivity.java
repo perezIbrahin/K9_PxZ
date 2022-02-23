@@ -127,6 +127,8 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private Button btnWakeUpMode = null;
     private Button btnSleepMode = null;
 
+    private Button btnGoHome;
+
     //radio buttons
     private RadioButton rbA1 = null;
     private RadioButton rbA2 = null;
@@ -391,6 +393,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private void eventControl() {
         if (true) {
             //btn
+            btnGoHome.setOnClickListener(this);
             btnPercussion.setOnClickListener(this);
             btnVibration.setOnClickListener(this);
             btnStart.setOnClickListener(this);
@@ -506,9 +509,12 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             } else if (view == btnTimer5) {
                 sendDataTimerBLE(setPointsBluetooth.INT_BLE_SP_TIME5);
             } else if (view == btnSleepMode) {//sleep mode
-                wakeUp(false);
+                Toast.makeText(this, "Disable function!", Toast.LENGTH_SHORT).show();
+                //wakeUp(false);
             } else if (view == btnWakeUpMode) {//wake up
                 wakeUp(true);
+            } else if(view==btnGoHome){
+                goHome();
             }
 
         } catch (Exception e) {
@@ -533,6 +539,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //private void old gui
     private void initOldGui() {
         //buttons
+        btnGoHome=findViewById(R.id.btnHome);
         btnPercussion = (Button) findViewById(R.id.btnPercussion);
         btnVibration = (Button) findViewById(R.id.btnVibration);
         btnStart = (Button) findViewById(R.id.btnStart);
@@ -1070,6 +1077,25 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    //launch home activity
+    private void goHome(){
+        if(isTherapyOn){
+            alertDialogLivePage();
+        }else{
+            launchActivity(MainActivity.class);
+
+        }
+    }
+
+    //change activity
+    private void launchActivity(Class mclass) {
+        if (mclass != null) {
+            Intent i = new Intent(getApplicationContext(), mclass);
+            startActivity(i);
+        }
+    }
+
+
 
     //display set point of intensity
     private void displaySPIntensity(String input) {
@@ -1423,40 +1449,28 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         //
         ImageView imageView = null;
         RadioButton radioButton = null;
-
-
         if (true) {
             invisibleAllIconB();
             if (value.equalsIgnoreCase(setPointsBluetooth.SP_BLE_SP_TRB1)) {
                 fieldValue = mTagReference.SELECTED_STRING_RB_B1;
                 imageView = ivB1;
                 radioButton = rbB1;
-                //setRadioButtonVisible(rbB1);
-                // visibleIconTransdB(ivB1);
             } else if (value.equalsIgnoreCase(setPointsBluetooth.SP_BLE_SP_TRB2)) {
                 fieldValue = mTagReference.SELECTED_STRING_RB_B2;
                 imageView = ivB2;
                 radioButton = rbB2;
-                // setRadioButtonVisible(rbB2);
-                // visibleIconTransdB(ivB2);
             } else if (value.equalsIgnoreCase(setPointsBluetooth.SP_BLE_SP_TRB3)) {
                 fieldValue = mTagReference.SELECTED_STRING_RB_B3;
                 imageView = ivB3;
                 radioButton = rbB3;
-                // setRadioButtonVisible(rbB3);
-                // visibleIconTransdB(ivB3);
             } else if (value.equalsIgnoreCase(setPointsBluetooth.SP_BLE_SP_TRB4)) {
                 fieldValue = mTagReference.SELECTED_STRING_RB_B4;
                 imageView = ivB4;
                 radioButton = rbB4;
-                //setRadioButtonVisible(rbB4);
-                //visibleIconTransdB(ivB4);
             } else if (value.equalsIgnoreCase(setPointsBluetooth.SP_BLE_SP_TRB5)) {
                 fieldValue = mTagReference.SELECTED_STRING_RB_B5;
                 imageView = ivB5;
                 radioButton = rbB5;
-                // setRadioButtonVisible(rbB5);
-                //visibleIconTransdB(ivB5);
             }
         }
         //
@@ -1476,13 +1490,9 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         String ret = "";
         String field = "";
         String fieldValue = "";
-        //
         String COMMANDS = "Commands";
-
-
         //
         if (true) {
-
             if (value.equalsIgnoreCase(setPointsBluetooth.SP_BLE_CMD_START)) {
                 cleanColorBtnCmd();
                 fieldValue = mTagReference.ST_SELECTED_THERAPY_RUNNING;
@@ -1879,7 +1889,6 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             public void onFinish() {
                 Log.d(TAG, "runLockColdDown onFinish: ");
                 cancelLockDown();
-
             }
         }.start();
     }
@@ -2306,6 +2315,35 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    //Before start
+    private void alertDialogLivePage() {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(VibActivity.this);//, R.style.Theme_AppCompat_Light
+            builder.setTitle(R.string.alert_Title);
+            builder.setIcon(R.drawable.ic_warning_black_24dp);
+            builder.setMessage("Stop the therapy first! ")
+                    .setCancelable(false)
+                    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            TextView textView = ((TextView) alert.findViewById(android.R.id.message));
+            textView.setTextColor(Color.GRAY);
+            textView.setTextSize(40);
+            textView.setGravity(Gravity.CENTER);
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogBeforeStart: Exception" + e);
+        }
+    }
+
     //Progress dialog Stop
     private void runProgressDialogStop() {
         String title = "Cooling down ...";
@@ -2333,7 +2371,6 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
                     e.printStackTrace();
                 }
                 progressDialog.dismiss();
-
             }
         }).start();
     }

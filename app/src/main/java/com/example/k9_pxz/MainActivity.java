@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnMainK9;
     private Button btnMainSett;
     private Button btnMainInfo;
+    private Button btnMainSleep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +28,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainK9 = findViewById(R.id.btnMainK9);
         btnMainSett = findViewById(R.id.btnMainSet);
         btnMainInfo = findViewById(R.id.btnMainInfo);
+        btnMainSleep = findViewById(R.id.btnMainSllep);
     }
 
     private void eventsBtn() {
         btnMainK9.setOnClickListener(this);
         btnMainSett.setOnClickListener(this);
         btnMainInfo.setOnClickListener(this);
+        btnMainSleep.setOnClickListener(this);
     }
 
     private void launchActivity(Class mclass) {
@@ -50,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             launchActivity(SettActivity.class);
         }else if (v == btnMainInfo) {
             launchActivity(InfoActivity.class);
+        }
+        else if (v == btnMainSleep) {
+            launchActivity(SleepActivity.class);
         }
     }
 }

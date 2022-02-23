@@ -33,7 +33,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/btn_roundr_corner"
                     android:drawableStart="@drawable/ic_baseline_toggle_on_24"
-                    android:text="ON"
+                    android:text="Unlock"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0"
@@ -81,10 +81,32 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
+                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="@+id/ivConnection"
                     app:layout_constraintEnd_toStartOf="@+id/ivConnection"
                     app:layout_constraintTop_toTopOf="@+id/ivConnection"
                     app:srcCompat="@drawable/ic_memory_black_24dp" />
+
+                <Button
+                    android:id="@+id/btnHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/btn_roundr_corner"
+                    android:drawableStart="@drawable/ic_home_black_24dp"
+                    android:text="Home"
+                    app:layout_constraintBottom_toBottomOf="@+id/btnSleepMode1"
+                    app:layout_constraintStart_toEndOf="@+id/btnSleepMode1"
+                    app:layout_constraintTop_toTopOf="@+id/btnSleepMode1" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="link"
+                    app:layout_constraintBottom_toTopOf="@+id/ivConnection"
+                    app:layout_constraintEnd_toEndOf="@+id/ivConnection" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -164,7 +186,7 @@
                     android:id="@+id/btn_int_sp1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="16dp"
                     android:background="@drawable/btn_sp"
                     android:text="@string/btnSPInt1"
                     android:textSize="@dimen/dim_text_sp"
@@ -225,7 +247,7 @@
                     android:id="@+id/btn_freq_sp3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="16dp"
                     android:layout_marginBottom="8dp"
                     android:background="@drawable/btn_sp"
                     android:text="@string/btnSPFreq3"
@@ -338,7 +360,7 @@
                     android:text="@string/btnPercussion"
                     android:textSize="@dimen/dim_text_18sp"
                     app:layout_constraintEnd_toEndOf="@+id/btnSideRailLeft"
-                    app:layout_constraintStart_toEndOf="@+id/btn_freq_sp5"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/divider" />
 
                 <Button
@@ -349,7 +371,7 @@
                     android:text="@string/btnVibration"
                     android:textSize="@dimen/dim_text_18sp"
                     app:layout_constraintBottom_toBottomOf="@+id/btnPercussion"
-                    app:layout_constraintEnd_toStartOf="@+id/btn_int_sp5"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/btnSideRailRight"
                     app:layout_constraintTop_toTopOf="@+id/btnPercussion"
                     app:layout_constraintVertical_bias="0.0" />

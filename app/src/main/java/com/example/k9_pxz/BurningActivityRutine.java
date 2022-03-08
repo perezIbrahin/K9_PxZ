@@ -20,6 +20,10 @@ import Util.Util_Burn;
 
 public class BurningActivityRutine extends AppCompatActivity implements RecyclerViewClickInterface, View.OnClickListener {
     private static final String TAG = "BurningActivityRutine";
+
+    /*
+    *
+    * https://www.youtube.com/watch?v=gpH4Zr1ffnU*/
     //GUI
     private Button btnBurnStart;
     private Button btnBurnStop;

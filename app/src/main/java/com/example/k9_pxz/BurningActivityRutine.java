@@ -13,6 +13,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 import Adapter.RecyclerViewAdapBurn;
+import Alert.CustomAlert;
 import Interface.RecyclerViewClickInterface;
 import Model.ModelBurn;
 import Util.Util_Burn;
@@ -25,6 +26,14 @@ public class BurningActivityRutine extends AppCompatActivity implements Recycler
     private Button btnBurnPause;
     private Button btnBurnReport;
     private Button btnHome;
+
+    //private String
+    private String BLE_ADD_GOT = "0";
+    private String SERIAL_NUMBER = "0";
+    CustomAlert customAlert;
+
+    public String DATA_BLE_ADD="DATA_BLE_ADD";
+    public String DATA_SYSTEM_SERIAL="DATA_SYSTEM_SERIAL";
 
 
     private Util_Burn utilBurn = new Util_Burn();
@@ -163,9 +172,9 @@ public class BurningActivityRutine extends AppCompatActivity implements Recycler
     //go to home
     private void goHome(){
         Bundle bundle = new Bundle();
-        /*Log.d(TAG, "onClick: get address " + BLE_ADD_GOT);
+        Log.d(TAG, "onClick: get address " + BLE_ADD_GOT);
         bundle.putString(DATA_BLE_ADD, BLE_ADD_GOT);//
-        bundle.putString(DATA_SYSTEM_SERIAL, SERIAL_NUMBER);//*/
+        bundle.putString(DATA_SYSTEM_SERIAL, SERIAL_NUMBER);
         Intent intent = new Intent(BurningActivityRutine.this, MainActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);

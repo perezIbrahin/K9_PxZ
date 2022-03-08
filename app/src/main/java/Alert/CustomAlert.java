@@ -391,9 +391,7 @@ public class CustomAlert extends AppCompatActivity {
         }else{
             tvSerialNumber.setText("unknown");
         }
-
-
-
+        
         // set dialog message
         alertDialogBuilder
                 .setCancelable(false)

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_margin="5dp"
+    android:padding="5dp"
+    app:cardCornerRadius="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toBottomOf="@+id/tvBurnStatus"
+            app:layout_constraintEnd_toStartOf="@+id/tvBurnStatus"
+            app:layout_constraintTop_toTopOf="@+id/tvBurnStatus"
+            app:layout_constraintVertical_bias="0.62"
+            app:srcCompat="@drawable/ic_baseline_info_24" />
+
+        <TextView
+            android:id="@+id/tvBurnModule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:hint="Module"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCloudStatus"
+            app:layout_constraintStart_toEndOf="@+id/ivCloudStatus"
+            app:layout_constraintTop_toTopOf="@+id/ivCloudStatus"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/tvBurnFreq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="F=30Hz"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvBurnModule"
+            app:layout_constraintTop_toBottomOf="@+id/tvBurnModule"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <ImageView
+            android:id="@+id/ivCloudStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toEndOf="@+id/divider3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_developer_board_black_24dp" />
+
+        <TextView
+            android:id="@+id/tvBurnStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:text="Pass"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvBurnModule" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="2dp"
+            android:layout_height="103dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="5dp"
+            android:background="?android:attr/listDivider"
+            android:elevation="-5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/divider3"
+            app:layout_constraintEnd_toEndOf="@+id/divider3"
+            app:layout_constraintStart_toStartOf="@+id/divider3"
+            app:layout_constraintTop_toTopOf="@+id/divider3"
+            app:srcCompat="@drawable/ic_baseline_radio_button_checked_24" />
+
+        <TextView
+            android:id="@+id/tvBurnTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="T=25min"
+            android:textSize="20sp"
+            android:typeface="normal"
+            app:layout_constraintBottom_toBottomOf="@+id/tvBurnFreq"
+            app:layout_constraintStart_toEndOf="@+id/tvBurnFreq"
+            app:layout_constraintTop_toTopOf="@+id/tvBurnFreq" />
+
+        <TextView
+            android:id="@+id/tvBurnInt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="I=80%"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvBurnTime"
+            app:layout_constraintStart_toEndOf="@+id/tvBurnTime"
+            app:layout_constraintTop_toTopOf="@+id/tvBurnTime" />
+
+        <TextView
+            android:id="@+id/tvBurnCycle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cycle=0"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvBurnInt"
+            app:layout_constraintEnd_toEndOf="@+id/tvBurnStatus"
+            app:layout_constraintTop_toTopOf="@+id/tvBurnInt" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Parameters"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/tvBurnTime"
+            app:layout_constraintEnd_toEndOf="@+id/tvBurnInt"
+            app:layout_constraintStart_toStartOf="@+id/tvBurnFreq"
+            app:layout_constraintTop_toBottomOf="@+id/tvBurnModule" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

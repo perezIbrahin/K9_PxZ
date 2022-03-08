@@ -18,6 +18,12 @@ public class Status {
     public String BLE_CONNECTED="connected";
     public String BLE_DISCONNECTED="disconnected";
     //
+    public int STATUS_SERIAL_LINK=2;
+    public int STATUS_SCAN =4;
+
+    //pass data between activity
+
+
 
 
 }

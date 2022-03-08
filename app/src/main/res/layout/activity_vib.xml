@@ -46,7 +46,7 @@
                     android:layout_marginStart="16dp"
                     android:background="@drawable/btn_roundr_corner"
                     android:drawableStart="@drawable/ic_baseline_toggle_on_24"
-                    android:text="Sleep"
+                    android:text="Lock"
                     app:layout_constraintStart_toEndOf="@+id/btnWakeUpMode1"
                     app:layout_constraintTop_toTopOf="@+id/btnWakeUpMode1" />
 

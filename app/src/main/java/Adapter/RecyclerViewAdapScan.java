@@ -16,9 +16,11 @@ import java.util.ArrayList;
 
 import Interface.RecyclerViewClickInterface;
 import Model.ModelScan;
+import Util.Status;
 
 public class RecyclerViewAdapScan extends RecyclerView.Adapter<RecyclerViewAdapScan.ViewHolder>{
     private static final String TAG = "RecyclerViewAdapScan";
+    private Status status=new Status();
 
     public RecyclerViewAdapScan() {
     }
@@ -55,7 +57,7 @@ public class RecyclerViewAdapScan extends RecyclerView.Adapter<RecyclerViewAdapS
             @Override
             public void onClick(View v) {
                 String value=holder.tvUUid.getText().toString();
-                recyclerViewClickInterface.onItemPostSelect(holder.getAdapterPosition(),value);
+                recyclerViewClickInterface.onItemPostSelect(status.STATUS_SCAN,value);
                 Toast.makeText(v.getContext(), "Selected device:"+value, Toast.LENGTH_SHORT).show();
             }
         });
@@ -77,9 +79,9 @@ public class RecyclerViewAdapScan extends RecyclerView.Adapter<RecyclerViewAdapS
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvname=itemView.findViewById(R.id.tvScanName);
-            tvUUid=itemView.findViewById(R.id.tvScanUUID);
-            tvRssi=itemView.findViewById(R.id.tvSvanRssi);
+            tvname=itemView.findViewById(R.id.tvBurnModule);
+            tvUUid=itemView.findViewById(R.id.tvBurnFreq);
+            tvRssi=itemView.findViewById(R.id.tvBurnStatus);
         }
 
 

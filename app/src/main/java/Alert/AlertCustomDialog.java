@@ -31,6 +31,7 @@ public class AlertCustomDialog extends AppCompatActivity {
         this.recyclerViewClickInterface = recyclerViewClickInterface;
     }
 
+    //not used
     public void  alertDialogUUID(String uuid){
         //final String getUUID = uuid;
         Status status=new Status();

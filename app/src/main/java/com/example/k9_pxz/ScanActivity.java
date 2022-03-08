@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import Adapter.RecyclerViewAdapScan;
+import Alert.CustomAlert;
 import Bluetooth.BluetoothCharacter;
 import Interface.RecyclerViewClickInterface;
 import Model.ModelScan;
@@ -46,6 +47,7 @@ import Util.Status;
 
 public class ScanActivity extends AppCompatActivity implements RecyclerViewClickInterface, View.OnClickListener {
     private static final String TAG = "ScanActivity";
+    Status status = new Status();
 
     //RecyclerView
     private RecyclerView recyclerViewScan;
@@ -78,10 +80,14 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
     public static final String SHARED_PREFS = "sharedPrefs";
     //variables to save text
     public static final String BLE_ADD = "text";
-
+    public static final String SYSTEM_SERIAL_NUMBER = "serial";
     //private String
-    private String BLE_ADD_GOT="0";
+    private String BLE_ADD_GOT = "0";
+    private String SERIAL_NUMBER = "0";
+    CustomAlert customAlert;
 
+    public String DATA_BLE_ADD="DATA_BLE_ADD";
+    public String DATA_SYSTEM_SERIAL="DATA_SYSTEM_SERIAL";
 
 
     @Override
@@ -150,16 +156,27 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
     }
 
     //clean model
-    private  void cleanModel(){
+    private void cleanModel() {
         modelScan.clear();
     }
 
     @Override
     public void onItemPostSelect(int position, String value) {
-        Log.d(TAG, "onItemPostSelect: pos:"+position+":value:"+value);
-        if(value!=null){
-            BLE_ADD_GOT=value;
-            saveData();
+        Log.d(TAG, "onItemPostSelect: pos:" + position + ":value:" + value);
+        if (value != null) {
+            if (position == status.STATUS_SERIAL_LINK) {
+                saveData(value);
+            } else if (position == status.STATUS_SCAN) {
+                BLE_ADD_GOT = value;
+                //text to get serial number
+                //CustomAlert
+                customAlert = new CustomAlert(this, this);
+                Log.d(TAG, "onItemPostSelect:BLE_ADD_GOT "+BLE_ADD_GOT);
+                if(BLE_ADD_GOT!=null){
+                    customAlert.showDialogSerialLink(BLE_ADD_GOT);//BLE_ADD_GOT
+                }
+
+            }
         }
     }
 
@@ -168,14 +185,26 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
         if (v == btnScan) {
             proceedScan();
         } else if (v == btnHome) {
-            Bundle bundle = new Bundle();
-            Log.d(TAG, "onClick: get address "+BLE_ADD_GOT);
+            goHome();
+            /*Bundle bundle = new Bundle();
+            Log.d(TAG, "onClick: get address " + BLE_ADD_GOT);
             bundle.putString("myAdd", BLE_ADD_GOT);
             Intent intent = new Intent(ScanActivity.this, MainActivity.class);
             intent.putExtras(bundle);
             startActivity(intent);
-            //launchActivity(MainActivity.class);
+            //launchActivity(MainActivity.class);*/
         }
+    }
+
+    //go to home
+    private void goHome(){
+        Bundle bundle = new Bundle();
+        Log.d(TAG, "onClick: get address " + BLE_ADD_GOT);
+        bundle.putString(DATA_BLE_ADD, BLE_ADD_GOT);//
+        bundle.putString(DATA_SYSTEM_SERIAL, SERIAL_NUMBER);//
+        Intent intent = new Intent(ScanActivity.this, MainActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private void launchActivity(Class mclass) {
@@ -324,18 +353,21 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
             }
 
             //Insert data into the model
-            if(mBluetoothDevice!=null){
+            if (mBluetoothDevice != null) {
                 try {
-                    if(mBluetoothDevice.getName()!=null){
-                        Log.d(TAG, "onScanResult:name: "+ mBluetoothDevice.getName());
-                        getBluetoothDevice(mBluetoothDevice.getName(), mBluetoothDevice.getAddress(),"remote");
-                    }else{
-                        getBluetoothDevice("N/A", mBluetoothDevice.getAddress(),"remote");
+                    if (mBluetoothDevice.getName() != null) {
+                        Log.d(TAG, "onScanResult:name: " + mBluetoothDevice.getName());
+                        if (mBluetoothDevice.getName().equalsIgnoreCase("KZ")) {
+                            getBluetoothDevice(mBluetoothDevice.getName(), mBluetoothDevice.getAddress(), "remote");
+                        }
+
+                    } else {
+                        getBluetoothDevice("N/A", mBluetoothDevice.getAddress(), "remote");
                     }
-                }catch (Exception e){
-                    Log.d(TAG, "onScanResult: exception"+e.getMessage());
+                } catch (Exception e) {
+                    Log.d(TAG, "onScanResult: exception" + e.getMessage());
                 }
-            }else{
+            } else {
                 Log.d(TAG, "onScanResult: bluetooth device null");
             }
         }
@@ -448,7 +480,7 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
     }
 
     //scan start
-    private void scanStart(){
+    private void scanStart() {
         Log.d(TAG, "scanStart: ");
         cleanModel();
         runProgressDialog();
@@ -483,32 +515,31 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
     }
 
     //organize list
-    private void organizeList(){
+    private void organizeList() {
         //ArrayList<ModelScan> modelScan = new ArrayList<>();
-        Log.d(TAG, "organizeList: modelScan size"+modelScan.size());
+        Log.d(TAG, "organizeList: modelScan size" + modelScan.size());
         //HashSet  hashSet = new HashSet();
         HashSet<ModelScan> hashSet = new HashSet<ModelScan>();
         hashSet.addAll(modelScan);
         modelScan.clear();
         modelScan.addAll(hashSet);
-        Log.d(TAG, "organizeList: model scan size after"+modelScan.size());
+        Log.d(TAG, "organizeList: model scan size after" + modelScan.size());
     }
 
     //-----------Save/Load data----------------//
     //Method. to take care of save data
-    public void saveData() {
+    public void saveData(String serial) {
+        SERIAL_NUMBER=serial;
         //shared preferences
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);//mode private means no other app can change it
         SharedPreferences.Editor editor = sharedPreferences.edit();//enable to change the value
         editor.putString(BLE_ADD, BLE_ADD_GOT);//get the text from the editText
+        editor.putString(SYSTEM_SERIAL_NUMBER, serial);//get the text from the editText
         editor.apply();
-        Toast.makeText(this, "Data Saved", Toast.LENGTH_SHORT).show();
+        //12ez567890Toast.makeText(this, "Data Saved", Toast.LENGTH_SHORT).show();
+
+        goHome();
     }
 
-    /*
-    //Method to load the data
-    public void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);//mode private means no other app can change it
-        text_ble_add = sharedPreferences.getString(BLE_ADD, "");
-    }*/
+    //
 }

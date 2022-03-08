@@ -10,7 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+import Alert.AlertCustomDialog;
+import Alert.CustomAlert;
+import Interface.RecyclerViewClickInterface;
+import Util.Status;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface {
     private static final String TAG = " MainActivity";
     //GUI
     private Button btnMainK9;
@@ -21,12 +26,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //shared preferences
     public static final String SHARED_PREFS1 = "sharedPrefs";
     //variables to save text
-    public static final String BLE_ADD_K9 = "text";
+    public static final String BLE_ADD_K9 = "00:00:00:00:00";
+    public static final String SERIAL_K9="serial";
     //variables to save text
     public static final String BLE_ADD = "text";
 
     //private String
     private String myBleAdd="0";
+    private String mySerialAdd="0";
+
+    public String DATA_BLE_ADD="DATA_BLE_ADD";
+    public String DATA_SYSTEM_SERIAL="DATA_SYSTEM_SERIAL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +84,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v == btnMainSett) {
             launchActivity(SettActivity.class);
         }else if (v == btnMainInfo) {
-            launchActivity(InfoActivity.class);
+            CustomAlert customAlert=new CustomAlert(this,this);
+            customAlert.showAlertInfo(mySerialAdd);
+
+            //launchActivity(InfoActivity.class);
         }
         else if (v == btnMainSleep) {
             launchActivity(SleepActivity.class);
@@ -85,13 +98,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void getExtrasFromAct(){
         Bundle bundle = getIntent().getExtras();
         if (bundle!= null) {
-            String add = bundle.getString("myAdd");
-            Log.d(TAG, "getExtrasFromAct: "+add);
+            //String add = bundle.getString("myAdd");
+            String add = bundle.getString(DATA_BLE_ADD);
+            String serial = bundle.getString(DATA_SYSTEM_SERIAL);
+
+            Log.d(TAG, "getExtrasFromAct: "+add+".serial:"+serial);
+
             if(add.equalsIgnoreCase(myBleAdd)){
                 Log.d(TAG, "getExtrasFromAct: same address");
             }else{
                 Log.d(TAG, "getExtrasFromAct: address change");
                 myBleAdd=add;
+                mySerialAdd=serial;
                 saveData();
             }
         }
@@ -120,14 +138,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS1, MODE_PRIVATE);//mode private means no other app can change it
         SharedPreferences.Editor editor = sharedPreferences.edit();//enable to change the value
         editor.putString(BLE_ADD_K9, myBleAdd);//get the text from the editText
+        editor.putString(SERIAL_K9, mySerialAdd);//get the text from the editText
         editor.apply();
         //Toast.makeText(this, "Data Saved", Toast.LENGTH_SHORT).show();
     }
-
 
     //Method to load the data
     public void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS1, MODE_PRIVATE);//mode private means no other app can change it
         myBleAdd = sharedPreferences.getString(BLE_ADD, "");
+        mySerialAdd=sharedPreferences.getString(SERIAL_K9, "");
+    }
+
+    @Override
+    public void onItemPostSelect(int position, String value) {
+
     }
 }

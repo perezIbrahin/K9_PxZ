@@ -13,6 +13,11 @@ import static Bluetooth.UUID.UUID_SERVICE_INTENSITY;
 import static Bluetooth.UUID.UUID_SERVICE_PROCESS_VALUE;
 import static Bluetooth.UUID.UUID_SERVICE_TIME;
 import static Bluetooth.UUID.UUID_SERVICE_TRANSDUCERS;
+import static Util.ColdDown.MODULE1;
+import static Util.ColdDown.MODULE2;
+import static Util.ColdDown.MODULE3;
+import static Util.ColdDown.MODULE4;
+import static Util.ColdDown.MODULE5;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -73,8 +78,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import Alert.CustomAlert;
 import Bluetooth.BluetoothCharacter;
+import Interface.RecyclerViewClickInterface;
 import Util.BluetoothStatus;
+import Util.ColdDown;
 import Util.DayOfWeek;
 import Util.Feedback;
 import Util.Flags;
@@ -88,7 +96,7 @@ import Util.TagRefrence;
 import Util.TherapyMessage;
 import Util.ToastMessage;
 
-public class VibActivity extends AppCompatActivity implements View.OnClickListener {
+public class VibActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface {
     private static final String TAG = "VibActivity";
     //private static final BluetoothGattCharacteristic TODO = ;
     //GUI
@@ -286,9 +294,25 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private SendReceive sendReceive = new SendReceive();//list of value
     private Flags mFlags = new Flags();
     private Setpoint setpoint = new Setpoint();// get list of setpoints
+    private CustomAlert customAlert;
+
     //Bluetooth extras
     public final static String EXTRA_DATA =
             "com.example.bluetooth.le.EXTRA_DATA";
+
+
+    /*
+    * get timer selected for transducers
+    * */
+    //get in memory the time that transducer work to use it for cooling down
+    private int TIMER_MODULE_1=0;
+    private int TIMER_MODULE_2=0;
+    private int TIMER_MODULE_3=0;
+    private int TIMER_MODULE_4=0;
+    private int TIMER_MODULE_5=0;
+    private int TRANSD_SELECTED_OLD=0;
+    private int TRANSD_SELECTED_NEW=0;
+
 
     //Class
     public BluetoothCharacter bluetoothCharacter = new BluetoothCharacter();
@@ -532,6 +556,10 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //-------------init--------------
     //  first time
     private void firstTime() {
+        //
+        customAlert=new CustomAlert(this,VibActivity.this);
+
+
         initVisGUI();
         displayMode(mTagReference.SELECTED_ZONE_UNKNOWN);
         displayTimerMinSec(mTagReference.TIME_ZERO);
@@ -648,11 +676,10 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //*Condition before to start therapy
     private void beforeOnTherapy(int input) {
         //check transducers!!
-
-
         if (input == setPointsBluetooth.INT_BLE_CMD_START) {
             invisibleSleepModeBtn(); //Invisible sleep mode buttons
             invisibleWakeUpModeBtn();
+            invisibleHomeKey();
             isTherapyOn = true; //set flag
             alertDialogBeforeStart();  //alert dialog first
             displayMode(mTagReference.SELECTED_THERAPY_RUNNING); // display test
@@ -766,6 +793,11 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onItemPostSelect(int position, String value) {
+
+    }
+
     //start therapy
     private class StartTherapyThread1 implements Runnable {
         @Override
@@ -824,9 +856,13 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    //*force to stop
+    //force to stop
     private void forceStop() {
         beforeStopTherapy(setPointsBluetooth.INT_BLE_CMD_STOP);
+        //
+
+        TRANSD_SELECTED_OLD=currentTransdA;//save value of cyrrent transd
+
         timerForceSop = new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long l) {
@@ -846,6 +882,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         enableAllSetPoints();
         btnStopDoVisible();//Visible stuff
         invisibleSideRailIcon();
+        visibleHomeKey();
     }
 
     //Condition before to stoptherapy
@@ -1065,7 +1102,49 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         return ret;
     }
 
+    //--------------Cold down operations--------------------//
+    //get old transducer selected
+
+
+
+
+    private int setMemoryColdDown(int module, int getTimer){
+        ColdDown coldDown=new ColdDown();
+        try {
+            if(module>0){
+                switch (module){
+                    case MODULE1:
+                        TIMER_MODULE_1=coldDown.setWorkingTimeTransd(getTimer);
+                        break;
+                    case MODULE2:
+                        TIMER_MODULE_2=coldDown.setWorkingTimeTransd(getTimer);
+                        break;
+                    case MODULE3:
+                        TIMER_MODULE_3=coldDown.setWorkingTimeTransd(getTimer);
+                        break;
+                    case MODULE4:
+                        TIMER_MODULE_4=coldDown.setWorkingTimeTransd(getTimer);
+                        break;
+                    case MODULE5:
+                        TIMER_MODULE_5=coldDown.setWorkingTimeTransd(getTimer);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + module);
+                }
+                return 0;
+            }
+        }catch (Exception e){
+            Log.d(TAG, "setMemoryColdDown: Exception"+e.getMessage());
+        }
+        return -1;
+    }
+
+
+
+
+
     //----------------Display-------------------//
+
     //*update animation icon timer
     private void animationNotification(boolean input) {
         if (ivNotification != null) {
@@ -1642,6 +1721,9 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     //------------------Confirmation---------------//
+
+
+
     //set icon green
     private boolean setGraphicButtonRequest(Button button) {
         int textSize = 40;
@@ -1933,6 +2015,15 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
 
     //------------------Visible/Invisible---------------//
 
+    //invisible home key
+    private void invisibleHomeKey(){
+        btnGoHome.setVisibility(View.INVISIBLE);
+    }
+
+    //visible home key
+    private void visibleHomeKey(){
+        btnGoHome.setVisibility(View.VISIBLE);
+    }
     //init visible GUI
     private boolean initVisGUI() {
         //icon of selected transducer
@@ -2314,7 +2405,10 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
      */
     //Before start
     private void alertDialogCheckTransd() {
-        try {
+
+        customAlert.alertDialogCheckSelectedTransd(getApplicationContext());
+        //?
+        /*try {
             AlertDialog.Builder builder = new AlertDialog.Builder(VibActivity.this);//, R.style.Theme_AppCompat_Light
             builder.setTitle(R.string.alert_Title);
             builder.setIcon(R.drawable.ic_warning_black_24dp);
@@ -2337,7 +2431,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             textView.setGravity(Gravity.CENTER);
         } catch (Exception e) {
             Log.d(TAG, "alertDialogBeforeStart: Exception" + e);
-        }
+        }*/
     }
 
     //Before start

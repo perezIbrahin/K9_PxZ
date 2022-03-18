@@ -2762,6 +2762,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
                 //return;
             }
             mGatt = device.connectGatt(getApplicationContext(), true, gattCallback);
+            mBLEScanner.stopScan(mScanCallback);
         }
     }
 
@@ -3049,7 +3050,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
                 Message msg = null;
                 getParamUpdateValueGui(msg, valueInt);
             } else {
-                Toast.makeText(this, "Failed to send data!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Failed to send data!", Toast.LENGTH_SHORT).show();
             }
         }
         return false;

@@ -8,12 +8,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+//import android.widget.Toast;
 
-import Alert.AlertCustomDialog;
+//import Alert.AlertCustomDialog;
 import Alert.CustomAlert;
 import Interface.RecyclerViewClickInterface;
-import Util.Status;
+//import Util.Status;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface {
     private static final String TAG = " MainActivity";
@@ -99,19 +99,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bundle bundle = getIntent().getExtras();
         if (bundle!= null) {
             //String add = bundle.getString("myAdd");
-            String add = bundle.getString(DATA_BLE_ADD);
-            String serial = bundle.getString(DATA_SYSTEM_SERIAL);
+            String add="KZ";
+            String serial="00:00:00:00:00";
 
-            Log.d(TAG, "getExtrasFromAct: "+add+".serial:"+serial);
+            try {
+                if(DATA_BLE_ADD!=null){
+                    add = bundle.getString(DATA_BLE_ADD);
 
-            if(add.equalsIgnoreCase(myBleAdd)){
-                Log.d(TAG, "getExtrasFromAct: same address");
-            }else{
-                Log.d(TAG, "getExtrasFromAct: address change");
-                myBleAdd=add;
-                mySerialAdd=serial;
-                saveData();
+                    if(add.equalsIgnoreCase(myBleAdd)){
+                        Log.d(TAG, "getExtrasFromAct: same address");
+                    }else{
+                        Log.d(TAG, "getExtrasFromAct: address change");
+                        myBleAdd=add;
+                        mySerialAdd=serial;
+                        saveData();
+                    }
+                }
+                if(DATA_SYSTEM_SERIAL!=null){
+                    serial = bundle.getString(DATA_SYSTEM_SERIAL);
+                    Log.d(TAG, "getExtrasFromAct: "+add+".serial:"+serial);
+                }
+
+
+
+
+            }catch (Exception e){
+                Log.d(TAG, "getExtrasFromAct: "+e.getMessage());
             }
+
+
         }
     }
 

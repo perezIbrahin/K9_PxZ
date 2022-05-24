@@ -45,14 +45,22 @@ public class TagRefrence {
     public final String SELECTED_STRING_INT_4 = "70";
     public final String SELECTED_STRING_INT_5 = "90";
 
+
     //set point of time
     public final String TIME_PRE = "t";
     public final String TIME_UNIT = "mm";
-    public final String SELECTED_STRING_TIME_1 = "5";
-    public final String SELECTED_STRING_TIME_2 = "10";
-    public final String SELECTED_STRING_TIME_3 = "15";
-    public final String SELECTED_STRING_TIME_4 = "20";
-    public final String SELECTED_STRING_TIME_5 = "25";
+    public final String SELECTED_STRING_TIME_1 = "5:00";
+    public final String SELECTED_STRING_TIME_2 = "10:00";
+    public final String SELECTED_STRING_TIME_3 = "15:00";
+    public final String SELECTED_STRING_TIME_4 = "20:00";
+    public final String SELECTED_STRING_TIME_5 = "25:00";
+
+    public final int SELECTED_INT_TIME_1 = 5;
+    public final int SELECTED_INT_TIME_2 = 10;
+    public final int SELECTED_INT_TIME_3 = 15;
+    public final int SELECTED_INT_TIME_4 = 20;
+    public final int SELECTED_INT_TIME_5 = 25;
+    public final int SELECTED_INT_TIME_0 = 0;
 
     //set point of transdA
     public final String TRAND_A_PRE = "trnda";
@@ -71,7 +79,7 @@ public class TagRefrence {
     public final String SELECTED_STRING_RB_B5 = "5";
 
     //timer 00:00
-    public final String TIME_ZERO = "00m:00s";
+    public final String TIME_ZERO = "00:00";
 
     //commands
     public final String ST_SELECTED_STOPPED = "stopped";

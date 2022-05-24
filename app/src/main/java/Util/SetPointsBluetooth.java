@@ -39,50 +39,72 @@ public class SetPointsBluetooth {
 
 
     //--------------------------------------------
+    public final int INT_BLE_SP_CLEAN = -1;
     //Frequency
-    public final int INT_BLE_SP_FREQ1 = 0x10;
-    public final int INT_BLE_SP_FREQ2 = 0X11;
-    public final int INT_BLE_SP_FREQ3 = 0X12;
-    public final int INT_BLE_SP_FREQ4 = 0X13;
-    public final int INT_BLE_SP_FREQ5 = 0X14;
+
+
+    public final int INT_BLE_SP_FREQ1 = 10;
+    public final int INT_BLE_SP_FREQ2 = 11;
+    public final int INT_BLE_SP_FREQ3 = 12;
+    public final int INT_BLE_SP_FREQ4 = 13;
+    public final int INT_BLE_SP_FREQ5 = 14;
+    public final int INT_BLE_SP_FREQ_MAX = 15;
+    public final int INT_BLE_SP_FREQ_NONE = 19;
+
     //Intensity
-    public final int INT_BLE_SP_INT1 = 0X20;
-    public final int INT_BLE_SP_INT2 = 0X21;
-    public final int INT_BLE_SP_INT3 = 0X22;
-    public final int INT_BLE_SP_INT4 = 0X23;
-    public final int INT_BLE_SP_INT5 = 0X24;
+    public final int INT_BLE_SP_INT1 = 20;
+    public final int INT_BLE_SP_INT2 = 21;
+    public final int INT_BLE_SP_INT3 = 22;
+    public final int INT_BLE_SP_INT4 = 23;
+    public final int INT_BLE_SP_INT5 = 24;
+    public final int INT_BLE_SP_INT_MAX = 25;
+    public final int INT_BLE_SP_INT_NONE = 29;
     //Time
+    public final int INT_BLE_SP_TIME1 = 30;
+    public final int INT_BLE_SP_TIME2 = 31;
+    public final int INT_BLE_SP_TIME3 = 32;
+    public final int INT_BLE_SP_TIME4 = 33;
+    public final int INT_BLE_SP_TIME5 = 34;
+    public final int INT_BLE_SP_TIME_NONE = 39;
+/*
     public final int INT_BLE_SP_TIME1 = 0X30;
     public final int INT_BLE_SP_TIME2 = 0X31;
     public final int INT_BLE_SP_TIME3 = 0X32;
     public final int INT_BLE_SP_TIME4 = 0X33;
     public final int INT_BLE_SP_TIME5 = 0X34;
+    public final int INT_BLE_SP_TIME_NONE = 0x39;*/
+
     //Transducers Left
-    public final int INT_BLE_SP_TRA1 = 0X40;
-    public final int INT_BLE_SP_TRA2 = 0X41;
-    public final int INT_BLE_SP_TRA3 = 0X42;
-    public final int INT_BLE_SP_TRA4 = 0X43;
-    public final int INT_BLE_SP_TRA5 = 0X44;
+    public final int INT_BLE_SP_TRA1 = 40;
+    public final int INT_BLE_SP_TRA2 = 41;
+    public final int INT_BLE_SP_TRA3 = 42;
+    public final int INT_BLE_SP_TRA4 = 43;
+    public final int INT_BLE_SP_TRA5 = 44;
+    public final int INT_BLE_SP_TRA_NONE = 49;
     //Transducers Right
-    public final int INT_BLE_SP_TRB1 = 0X50;
-    public final int INT_BLE_SP_TRB2 = 0X51;
-    public final int INT_BLE_SP_TRB3 = 0X52;
-    public final int INT_BLE_SP_TRB4 = 0X53;
-    public final int INT_BLE_SP_TRB5 = 0X54;
+    public final int INT_BLE_SP_TRB1 = 50;
+    public final int INT_BLE_SP_TRB2 = 51;
+    public final int INT_BLE_SP_TRB3 = 52;
+    public final int INT_BLE_SP_TRB4 = 53;
+    public final int INT_BLE_SP_TRB5 = 54;
+    public final int INT_BLE_SP_TRB_NONE = 59;
     //cooling boxes
-    public final int INT_BLE_SP_COOL_BOX1 = 0X70;
-    public final int INT_BLE_SP_COOL_BOX2 = 0X72;
-    public final int INT_BLE_SP_COOL_BOX3 = 0X73;
-    public final int INT_BLE_SP_COOL_BOX4 = 0X74;
-    public final int INT_BLE_SP_COOL_BOX5 = 0X75;
+    public final int INT_BLE_SP_COOL_BOX1 = 70;
+    public final int INT_BLE_SP_COOL_BOX2 = 72;
+    public final int INT_BLE_SP_COOL_BOX3 = 73;
+    public final int INT_BLE_SP_COOL_BOX4 = 74;
+    public final int INT_BLE_SP_COOL_BOX5 = 75;
 
     //commands string
-    public final int INT_BLE_CMD_START = 0X61;
-    public final int INT_BLE_CMD_STOP = 0x62;
-    public final int INT_BLE_CMD_SLEEP = 0X03;
-    public final int INT_BLE_CMD_WAKE = 0X04;
-    public final int INT_BLE_SP_COOL_ALL_STOP = 0X65;
-    public final int INT_BLE_SP_COOL_ALL_INIT = 0X66;
+    public final int INT_BLE_CMD_INIT = 60;
+    public final int INT_BLE_CMD_START = 61;
+    public final int INT_BLE_CMD_STOP = 62;
+    public final int INT_BLE_CMD_SLEEP = 03;
+    public final int INT_BLE_CMD_WAKE = 04;
+    public final int INT_BLE_SP_COOL_ALL_STOP = 65;
+    public final int INT_BLE_SP_COOL_ALL_INIT = 66;
+    public final int INT_BLE_CMD_END = 68;
+    public final int INT_BLE_CMD_NONE = 69;
 
     //Frequency
     private int BLE_SP_FREQ1 = 0x10;

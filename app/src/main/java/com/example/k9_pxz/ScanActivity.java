@@ -357,7 +357,7 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
                 try {
                     if (mBluetoothDevice.getName() != null) {
                         Log.d(TAG, "onScanResult:name: " + mBluetoothDevice.getName());
-                        if (mBluetoothDevice.getName().equalsIgnoreCase("KZ")) {
+                        if (mBluetoothDevice.getName().contains("K9_pvz")) {
                             getBluetoothDevice(mBluetoothDevice.getName(), mBluetoothDevice.getAddress(), "remote");
                         }
 

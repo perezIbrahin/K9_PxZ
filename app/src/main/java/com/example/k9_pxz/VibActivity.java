@@ -104,6 +104,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
 
     //Old GUI
     //buttons
+    private Button btnMaxInflate = null;
     private Button btnPercussion = null;
     private Button btnVibration = null;
     private Button btnStart = null;
@@ -159,7 +160,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private ImageView ivB3 = null;
     private ImageView ivB4 = null;
     private ImageView ivB5 = null;
-    private ImageView ivBody=null;
+    private ImageView ivBody = null;
 
     //textview
     private TextView tvTitlePage = null;
@@ -191,8 +192,8 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private boolean isAlertDialogForceStopShowing = false;
 
     //variables
-
-    private String myBleAdd="0";//Address used to connect BLE
+    private String myBleAdd2 = "90:FD:9F:0A:F5:F6";
+    private String myBleAdd = "90:FD:9F:0A:F5:F6";//Address used to connect BLE
     private boolean bleIsScanner = false;
     // setup UI handler
     private final static int UPDATE_DEVICE = 0;
@@ -302,21 +303,23 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
 
 
     /*
-    * get timer selected for transducers
-    * */
+     * get timer selected for transducers
+     * */
     //get in memory the time that transducer work to use it for cooling down
-    private int TIMER_MODULE_1=0;
-    private int TIMER_MODULE_2=0;
-    private int TIMER_MODULE_3=0;
-    private int TIMER_MODULE_4=0;
-    private int TIMER_MODULE_5=0;
-    private int TRANSD_SELECTED_OLD=0;
-    private int TRANSD_SELECTED_NEW=0;
+    private int TIMER_MODULE_1 = 0;
+    private int TIMER_MODULE_2 = 0;
+    private int TIMER_MODULE_3 = 0;
+    private int TIMER_MODULE_4 = 0;
+    private int TIMER_MODULE_5 = 0;
+    private int TRANSD_SELECTED_OLD = 0;
+    private int TRANSD_SELECTED_NEW = 0;
 
 
     //Class
     public BluetoothCharacter bluetoothCharacter = new BluetoothCharacter();
     public Status statusSystem = new Status();//status of the system
+
+    AlertDialog alt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -357,7 +360,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
                     //                                          int[] grantResults)
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
-                    return;
+                   // return;
                 }
                 startActivityForResult(enableBtIntent, bluetoothCharacter.REQUEST_ENABLE_BLE);
             } else {
@@ -420,6 +423,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private void eventControl() {
         if (true) {
             //btn
+            btnMaxInflate.setOnClickListener(this);
             btnGoHome.setOnClickListener(this);
             btnPercussion.setOnClickListener(this);
             btnVibration.setOnClickListener(this);
@@ -467,14 +471,16 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View view) {
         try {
-            if (view == btnPercussion) {//mode percussion
+            if (view == btnMaxInflate) {
+
+            } else if (view == btnPercussion) {//mode percussion
                 selectedMode(MODE_PERCUSSION);
             } else if (view == btnVibration) {//mode vibration
                 selectedMode(MODE_PERCUSSION_VIBRATION);
             } else if (view == btnStart) {//start therapy
-                if(checkTransducersSelected(currentTransdA, currentTransdB)){
+                if (checkTransducersSelected(currentTransdA, currentTransdB)) {
                     beforeOnTherapy(setPointsBluetooth.INT_BLE_CMD_START);
-                }else{
+                } else {
                     alertDialogCheckTransd();
                 }
             } else if (view == btnStop) {//stop therapy
@@ -543,8 +549,8 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
                 Toast.makeText(this, "Disable function!", Toast.LENGTH_SHORT).show();
                 //wakeUp(false);
             } else if (view == btnWakeUpMode) {//wake up
-                wakeUp(true);
-            } else if(view==btnGoHome){
+               wakeUp(true);
+            } else if (view == btnGoHome) {
                 goHome();
             }
 
@@ -557,12 +563,13 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //  first time
     private void firstTime() {
         //
-        customAlert=new CustomAlert(this,VibActivity.this);
+        customAlert = new CustomAlert(this, VibActivity.this);
 
 
         initVisGUI();
         displayMode(mTagReference.SELECTED_ZONE_UNKNOWN);
         displayTimerMinSec(mTagReference.TIME_ZERO);
+        runLoadingSystem(true);//loading dialog
     }
 
     //init GUI
@@ -574,7 +581,8 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //private void old gui
     private void initOldGui() {
         //buttons
-        btnGoHome=findViewById(R.id.btnHome);
+        btnMaxInflate = findViewById(R.id.btnMaxInflate);
+        btnGoHome = findViewById(R.id.btnHome);
         btnPercussion = (Button) findViewById(R.id.btnPercussion);
         btnVibration = (Button) findViewById(R.id.btnVibration);
         btnStart = (Button) findViewById(R.id.btnStart);
@@ -631,7 +639,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         ivB3 = (ImageView) findViewById(R.id.ivB3);
         ivB4 = (ImageView) findViewById(R.id.ivB4);
         ivB5 = (ImageView) findViewById(R.id.ivB5);
-        ivBody=findViewById(R.id.ivBody);
+        ivBody = findViewById(R.id.ivBody);
         //
         //
         tvFBTime = (TextView) findViewById(R.id.tvFbTimer);
@@ -861,7 +869,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         beforeStopTherapy(setPointsBluetooth.INT_BLE_CMD_STOP);
         //
 
-        TRANSD_SELECTED_OLD=currentTransdA;//save value of cyrrent transd
+        TRANSD_SELECTED_OLD = currentTransdA;//save value of cyrrent transd
 
         timerForceSop = new CountDownTimer(3000, 1000) {
             @Override
@@ -990,22 +998,22 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     //check to have transducerA and Transducer B selected
-    private boolean checkTransducersSelected(int trandA, int trandB){
-        Log.d(TAG, "checkTransducersSelected: A:"+trandA+ "B:"+trandB);
+    private boolean checkTransducersSelected(int trandA, int trandB) {
+        Log.d(TAG, "checkTransducersSelected: A:" + trandA + "B:" + trandB);
         try {
-            if(trandA>0 && trandB>0){
-                Log.d(TAG, "checkTransducersSelected: A:"+trandA+ "B:"+trandB);
-                if (trandA+16==trandB){
-                    return  true;
-                }else{
-                    Log.d(TAG, "checkTransducersSelected: A:"+trandA+ "B:"+trandB);
+            if (trandA > 0 && trandB > 0) {
+                Log.d(TAG, "checkTransducersSelected: A:" + trandA + "B:" + trandB);
+                if (trandA + 16 == trandB) {
+                    return true;
+                } else {
+                    Log.d(TAG, "checkTransducersSelected: A:" + trandA + "B:" + trandB);
                     return false;
                 }
             }
-        }catch ( Exception e){
-            Log.d(TAG, "checkTransducersSelected: "+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "checkTransducersSelected: " + e.getMessage());
         }
-        return  false;
+        return false;
     }
 
     //wake up mode
@@ -1106,41 +1114,36 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //get old transducer selected
 
 
-
-
-    private int setMemoryColdDown(int module, int getTimer){
-        ColdDown coldDown=new ColdDown();
+    private int setMemoryColdDown(int module, int getTimer) {
+        ColdDown coldDown = new ColdDown();
         try {
-            if(module>0){
-                switch (module){
+            if (module > 0) {
+                switch (module) {
                     case MODULE1:
-                        TIMER_MODULE_1=coldDown.setWorkingTimeTransd(getTimer);
+                        TIMER_MODULE_1 = coldDown.setWorkingTimeTransd(getTimer);
                         break;
                     case MODULE2:
-                        TIMER_MODULE_2=coldDown.setWorkingTimeTransd(getTimer);
+                        TIMER_MODULE_2 = coldDown.setWorkingTimeTransd(getTimer);
                         break;
                     case MODULE3:
-                        TIMER_MODULE_3=coldDown.setWorkingTimeTransd(getTimer);
+                        TIMER_MODULE_3 = coldDown.setWorkingTimeTransd(getTimer);
                         break;
                     case MODULE4:
-                        TIMER_MODULE_4=coldDown.setWorkingTimeTransd(getTimer);
+                        TIMER_MODULE_4 = coldDown.setWorkingTimeTransd(getTimer);
                         break;
                     case MODULE5:
-                        TIMER_MODULE_5=coldDown.setWorkingTimeTransd(getTimer);
+                        TIMER_MODULE_5 = coldDown.setWorkingTimeTransd(getTimer);
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + module);
                 }
                 return 0;
             }
-        }catch (Exception e){
-            Log.d(TAG, "setMemoryColdDown: Exception"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "setMemoryColdDown: Exception" + e.getMessage());
         }
         return -1;
     }
-
-
-
 
 
     //----------------Display-------------------//
@@ -1186,10 +1189,10 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     //launch home activity
-    private void goHome(){
-        if(isTherapyOn){
+    private void goHome() {
+        if (isTherapyOn) {
             alertDialogLivePage();
-        }else{
+        } else {
             launchActivity(MainActivity.class);
 
         }
@@ -1265,7 +1268,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //display therapy status
     private void displayTherapyStatus(String message) {
         if (message != null && tvFBStatus != null) {
-            Log.d(TAG, "displayTherapyStatus: "+message);
+            Log.d(TAG, "displayTherapyStatus: " + message);
             //tvFBStatus.setText(message);
         }
     }
@@ -1276,7 +1279,6 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         if (time != null) {
             tvFBTime.setText(time);
         }
-
     }
 
     //update ui from ble
@@ -1723,7 +1725,6 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //------------------Confirmation---------------//
 
 
-
     //set icon green
     private boolean setGraphicButtonRequest(Button button) {
         int textSize = 40;
@@ -2016,14 +2017,15 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     //------------------Visible/Invisible---------------//
 
     //invisible home key
-    private void invisibleHomeKey(){
+    private void invisibleHomeKey() {
         btnGoHome.setVisibility(View.INVISIBLE);
     }
 
     //visible home key
-    private void visibleHomeKey(){
+    private void visibleHomeKey() {
         btnGoHome.setVisibility(View.VISIBLE);
     }
+
     //init visible GUI
     private boolean initVisGUI() {
         //icon of selected transducer
@@ -2047,12 +2049,12 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     //invisible Body
-    private void invisibleBody(){
+    private void invisibleBody() {
         ivBody.setVisibility(View.INVISIBLE);
     }
 
     //visible Body
-    private void visibleBody(){
+    private void visibleBody() {
         ivBody.setVisibility(View.VISIBLE);
     }
 
@@ -2174,7 +2176,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         //tvFBFreq.setVisibility(View.INVISIBLE);
         //tvFBInt.setVisibility(View.INVISIBLE);
         //tvFBMode.setVisibility(View.INVISIBLE);
-       // tvFBZone.setVisibility(View.INVISIBLE);
+        // tvFBZone.setVisibility(View.INVISIBLE);
         //
         tvLabelFreq.setVisibility(View.INVISIBLE);
         tvLabelInt.setVisibility(View.INVISIBLE);
@@ -2214,6 +2216,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         btnInt3.setVisibility(View.INVISIBLE);
         btnInt4.setVisibility(View.INVISIBLE);
         btnInt5.setVisibility(View.INVISIBLE);
+        btnMaxInflate.setVisibility(View.INVISIBLE);
     }
 
     //visible all Int buttons
@@ -2223,6 +2226,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         btnInt3.setVisibility(View.VISIBLE);
         btnInt4.setVisibility(View.VISIBLE);
         btnInt5.setVisibility(View.VISIBLE);
+        btnMaxInflate.setVisibility(View.VISIBLE);
     }
 
     //invisible all  Time buttons
@@ -2287,7 +2291,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
 
     //invisible btnSync
     private void invisibleBtnSync() {
-       // btnSync.setVisibility(View.INVISIBLE);
+        // btnSync.setVisibility(View.INVISIBLE);
     }
 
     //visible btnSync
@@ -2553,6 +2557,51 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         }).start();
     }
 
+    //loading system
+    private void runLoadingSystem(boolean enable) {
+        try {
+            if (enable) {
+
+                LayoutInflater inflater = getLayoutInflater();
+                View promptsView = inflater.inflate(R.layout.layout_load_system, null);
+                AlertDialog.Builder alertdialog = new AlertDialog.Builder(VibActivity.this);
+                alertdialog.setView(promptsView);
+                alt = alertdialog.create();
+                alt.show();
+            } else {
+                if (alt != null) {
+                    alt.dismiss();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //bluetooth connected
+    private void bluetoothConnected(){
+        Log.d(TAG, "bluetoothConnected: visible icons");
+        runLoadingSystem(false);//remove loading dialog
+        try {
+            visibleAllSleep();
+            visibleBody();
+            //
+            visibleSleepModeBtn();
+            invisibleWakeUpModeBtn();
+        }catch (Exception e){
+            Log.d(TAG, "bluetoothConnected: Exception:"+e.getMessage());
+
+        }
+
+        //visible all buttons
+        //wakeUp(true);
+
+       // turnOnScreen();
+
+
+
+    }
+
 
     //------------------Bluetooth---------------//
 
@@ -2675,7 +2724,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             mLeDeviceListAdapter.notifyDataSetChanged();
             //Log.d(TAG, "onScanResult: !!!!!!!!!!!!!!");
             //Connect with the device
-            if (deviceFound.equalsIgnoreCase(myBleAdd)) {
+            if (deviceFound.equalsIgnoreCase(myBleAdd2)) {
                 connectToDevice(result.getDevice());
                 Log.d(TAG, "I got it: ------------" + deviceFound + "----------------");
                 bleIsScanner = false;
@@ -2789,6 +2838,8 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
                 case BluetoothProfile.STATE_CONNECTED:
                     Log.d(TAG, "onConnectionStateChange: STATE_CONNECTED ");
                     getParamUpdateDevGui(msg, statusSystem.BLE_CONNECTED);
+
+
                     break;
                 case BluetoothProfile.STATE_DISCONNECTING:
                     Log.d(TAG, "onConnectionStateChange: STATE_DISCONNECTING ");
@@ -2805,6 +2856,9 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
                 case BluetoothProfile.STATE_CONNECTED:
                     Log.i("gattCallback", "STATE_CONNECTED");
                     getParamUpdateDevGui(msg, statusSystem.BLE_CONNECTED);
+
+                    bluetoothConnected();
+
 
                     //discover serices
                     if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
@@ -2936,7 +2990,6 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
         } catch (Exception e) {
             Log.d(TAG, "closeBroadcast: Exception" + e.getMessage());
         }
-
     }
 
     //set descriptor
@@ -3203,7 +3256,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private void getParamUpdateValueGui(Message msg, int valueUpdate) {
         try {
             String mValue = String.valueOf(valueUpdate);
-            Log.d(TAG, "getParamUpdateValueGui:value: "+mValue);
+            Log.d(TAG, "getParamUpdateValueGui:value: " + mValue);
 
             if (mValue != null) {
                 msg = Message.obtain();
@@ -3262,10 +3315,10 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
             int valueInt = Integer.parseInt(value);
             updateFeedbackValue(valueInt);
             updateUIfromBle(valueInt);
-            Log.d(TAG, "updateValue: "+value);
+            Log.d(TAG, "updateValue: " + value);
 
         } catch (Exception e) {
-            Log.d(TAG, "updateValue: Exception "+e.getMessage());
+            Log.d(TAG, "updateValue: Exception " + e.getMessage());
         }
     }
 
@@ -3291,22 +3344,20 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
 
     //------------get extrass-----------------//
     //get extras from activity
-    private void getExtrasFromAct(){
+    private void getExtrasFromAct() {
         Bundle bundle = getIntent().getExtras();
-        if (bundle!= null) {
+        if (bundle != null) {
 
             String add = bundle.getString("vibAdd");
-            if(add!=null){
-                Log.d(TAG, "Vibration getExtrasFromAct: "+add);
-                if(add.equalsIgnoreCase(myBleAdd)){
+            if (add != null) {
+                Log.d(TAG, "Vibration getExtrasFromAct: " + add);
+                if (add.equalsIgnoreCase(myBleAdd)) {
                     Log.d(TAG, "getExtrasFromAct: same address");
-                }else{
+                } else {
                     Log.d(TAG, "getExtrasFromAct: address change");
-                    myBleAdd=add;
+                    myBleAdd = add;
                 }
-
             }
-
         }
     }
 

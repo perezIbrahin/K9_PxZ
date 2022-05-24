@@ -78,5 +78,14 @@
     <dimen name="dim_btn_set_W">100dp</dimen>
     <!-- end dim margin-->
 
+    <!--side rail-->
+    <dimen name="dim_head_sr_H">140dp</dimen>
+    <dimen name="dim_head_sr_W">15dp</dimen>
+
+    <!--side rail-->
+    <dimen name="dim_sr_H">100dp</dimen>
+    <dimen name="dim_sr_W">15dp</dimen>
+    <!-- end dim margin-->
+
 
 </resources>

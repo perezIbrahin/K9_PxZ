@@ -138,11 +138,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Bundle bundle = new Bundle();
                 Log.d(TAG, "passBleAddToVib "+add);
                 bundle.putString("vibAdd", add);
-                Intent intent = new Intent(MainActivity.this, VibActivity.class);
+                Intent intent = new Intent(MainActivity.this, VibrationPercussionActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
-
         }catch (Exception e){
             Log.d(TAG, "passBleAddToVib: exception"+e.getMessage());
         }

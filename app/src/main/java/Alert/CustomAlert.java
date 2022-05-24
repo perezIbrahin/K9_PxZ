@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.icu.text.CaseMap;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -293,12 +294,12 @@ public class CustomAlert extends AppCompatActivity {
         final EditText userInput = (EditText) promptsView
                 .findViewById(R.id.user_input_serial);
 
-        final TextView tvLinkBle= (TextView) promptsView
+        final TextView tvLinkBle = (TextView) promptsView
                 .findViewById(R.id.tvLinkBle);
-        if(uuid!=null){
+        if (uuid != null) {
             tvLinkBle.setText(uuid);
-            Log.d(TAG, "onClick: uuid"+uuid);
-        }else{
+            Log.d(TAG, "onClick: uuid" + uuid);
+        } else {
             Log.d(TAG, "onClick: uuid null");
             tvLinkBle.setText("00:00:00:00:00");
         }
@@ -386,12 +387,12 @@ public class CustomAlert extends AppCompatActivity {
 
         final TextView tvSerialNumber = (TextView) promptsView
                 .findViewById(R.id.tvAboutSerialNumber);
-        if(serial!=null){
+        if (serial != null) {
             tvSerialNumber.setText(serial);
-        }else{
+        } else {
             tvSerialNumber.setText("unknown");
         }
-        
+
         // set dialog message
         alertDialogBuilder
                 .setCancelable(false)
@@ -406,6 +407,53 @@ public class CustomAlert extends AppCompatActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
         // show it
         alertDialog.show();
+    }
+
+    //validation data failed
+    public void showLoadSystem(boolean input, AlertDialog alertDialog) {
+        Log.d(TAG, "showLoadSystem: ");
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.layout_load_system, null);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setView(promptsView);
+
+        final TextView tvSerialNumber = (TextView) promptsView
+                .findViewById(R.id.tvAboutSerialNumber);
+
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }
+                );
+        // create alert dialog
+        alertDialog = alertDialogBuilder.create();
+        if (input) {
+            if (alertDialog != null) {
+                Log.d(TAG, "showLoadSystem: true");
+                // show it
+
+                alertDialog.show();
+            }
+
+        } else {
+            if (alertDialog != null) {
+                alertDialog.dismiss();
+
+            }
+        }
+
+    }
+
+    //alert before leave therapy
+    public void alertDialogLivePage() {
+
+
     }
 
 

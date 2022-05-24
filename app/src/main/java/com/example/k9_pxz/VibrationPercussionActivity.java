@@ -2564,6 +2564,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 case 4:
                     sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.FREQUENCY, setPointsBluetooth.INT_BLE_SP_FREQ5));
                     break;
+                case 5:
+                    sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.FREQUENCY, setPointsBluetooth.INT_BLE_SP_FREQ_MAX));
+                    break;
             }
         }
 

@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 //import android.widget.Toast;
 
 //import Alert.AlertCustomDialog;
 import Alert.CustomAlert;
 import Interface.RecyclerViewClickInterface;
+import Util.Rev;
 //import Util.Status;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface {
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnMainSett;
     private Button btnMainInfo;
     private Button btnMainSleep;
+    private TextView tvRev;
 
     //shared preferences
     public static final String SHARED_PREFS1 = "sharedPrefs";
@@ -30,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String SERIAL_K9="serial";
     //variables to save text
     public static final String BLE_ADD = "text";
+
+
 
     //private String
     private String myBleAdd="0";
@@ -47,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         eventsBtn();
 
         getExtrasFromAct();//get extras from other activity
+
+        //revision
+        addingRev();
     }
 
     @Override
@@ -60,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainSett = findViewById(R.id.btnMainSet);
         btnMainInfo = findViewById(R.id.btnMainInfo);
         btnMainSleep = findViewById(R.id.btnMainSllep);
+        tvRev=findViewById(R.id.tvRev);
     }
 
     private void eventsBtn() {
@@ -168,5 +177,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemPostSelect(int position, String value) {
 
+    }
+
+
+    //adding revision
+    private void addingRev(){
+        Rev rev=new Rev();
+        tvRev.setText(rev.APP_REV);
     }
 }

@@ -21,6 +21,7 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothSocket;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -50,12 +51,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 import Adapter.RecyclerViewAdaptBtnF;
@@ -87,7 +91,7 @@ import Util.TagRefrence;
 import Util.TextSize;
 import Util.Util_Dialog;
 import Util.Util_timer;
-
+import static java.util.UUID.fromString;
 public class VibrationPercussionActivity extends AppCompatActivity implements View.OnClickListener, InterfaceSetupInfo, RecyclerViewClickInterface {
     private static final String TAG = "VibrationPercussionActi";
 
@@ -95,6 +99,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private String myBleAdd = "00:00:00:00:00";//Address used to connect BLE
     private boolean bleIsScanner = false;
 
+    private final String KZ_BLE_ADDRESS = "BC:33:AC:CB:F6:9D";
+    //private static final UUID KZ_SERVICE_UUID =UUID_SERVICE_COMMANDS;
     //button command
     private Button btnStart;
     private Button btnStop;
@@ -167,6 +173,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private K9Alert k9Alert;
     private AlertDialog.Builder alertDialogBuilder;
     private AlertDialog alertDialog;
+
+    //SendData BleKz=new SendData();
 
     AlertDialog.Builder builder;
     AlertDialog progressDialog;
@@ -792,7 +800,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                }else {
+                } else {
                     Log.d(TAG, "updateButtonsFrequencyF: empty");
                 }
                 updateGUIRecyclerViewF();
@@ -2591,6 +2599,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 case 4:
                     sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.INTENSITY, setPointsBluetooth.INT_BLE_SP_INT5));
                     break;
+                case 5:
+                    Log.d(TAG, "sendSpInt: 5");
+                    //sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.INTENSITY, setPointsBluetooth.INT_BLE_SP_INT5));
+                    maxIntensity();
+                    break;
             }
         }
     }
@@ -3176,5 +3189,43 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         return "0";
     }
 
+
+    //max intensity
+    private void maxIntensity() {
+       /* Log.d(TAG, "maxIntensity: ");
+        //BleKz.run();
+        BluetoothSocket btSocket = null;
+        BluetoothDevice device = null;
+
+        BluetoothAdapter bt;
+
+        BluetoothAdapter bleAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
+        Log.d(TAG, "maxIntensity: " + bleAdapter.toString());
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            //return;
+        }
+        Set<BluetoothDevice> pairedDevices = bleAdapter.getBondedDevices();
+        Log.d(TAG, "maxIntensity: paired:" + pairedDevices);
+        try {
+            btSocket = device.createRfcommSocketToServiceRecord(uuid.UUID_SERVICE_COMMANDS);
+            btSocket.
+
+        } catch (Exception e) {
+            Log.d(TAG, "maxIntensity: ex:" + e.getMessage());
+        }
+        try {
+            btSocket.connect();
+        } catch (IOException e) {
+
+        }*/
+    }
 
 }

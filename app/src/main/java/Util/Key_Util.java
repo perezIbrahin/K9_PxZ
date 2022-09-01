@@ -16,7 +16,7 @@ public class Key_Util {
     public String KEY_ADDRESS_K9 = "aKeyK9";
     public String KEY_ADDRESS_KZ = "bKeyKz";
     public String KEY_ADDRESS_BED = "cKeyBed";
-    public String KEY_ADDRESS_DEFAULT = "00:00:00:00:00";
+    public String KEY_ADDRESS_DEFAULT = "90:FD:9F:0A:FA:92";
 
 
     public final String NAME_BLE_BED = "BED";

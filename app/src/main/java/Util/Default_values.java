@@ -5,11 +5,11 @@ public class Default_values {
     public String TEXT_INT = "init";
     //Frequency
     public String DEF_FREQ1 = "10";
-    public String DEF_FREQ2 = "15";
-    public String DEF_FREQ3 = "20";
-    public String DEF_FREQ4 = "25";
-    public String DEF_FREQ5 = "30";
-    public String DEF_FREQ_MAX = "35";
+    public String DEF_FREQ2 = "20";
+    public String DEF_FREQ3 = "25";
+    public String DEF_FREQ4 = "30";
+    public String DEF_FREQ5 = "35";
+    public String DEF_FREQ_MAX = "37";
     //Intensity
     public String DEF_INT1 = "10";
     public String DEF_INT2 = "25";

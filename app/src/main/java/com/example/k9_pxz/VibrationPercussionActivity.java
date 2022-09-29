@@ -2557,7 +2557,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 Log.d(TAG, "getParamUpdateValueGui3:cooling");
                 controlIconCoolingTransd(mSp);
             }
-            beep.beep_key();
+            //beep
+            beepSound();
         } catch (Exception e) {
             Log.d(TAG, "getParamUpdateValueGui: Exception" + e.getMessage());
         }
@@ -2606,6 +2607,16 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         } catch (Exception e) {
             Log.d(TAG, "updateConnectionState: ex" + e.getMessage());
         }
+    }
+
+    //beep
+    private void beepSound(){
+        Log.d(TAG, "beepSound: ");
+        if (!isFlagSetConnection) {
+            setConnetion();
+        }
+
+        beep.beep_key();
     }
 
     //Display data

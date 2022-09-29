@@ -65,6 +65,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private K9Alert k9Alert;
     private Util_Dialog utilDialog = new Util_Dialog();
 
+    //load manual
+    // creating a variable
+    // for PDF view.
+    //PDFView pdfView;
+    // url of our PDF file.
+    String pdfurl = "https://drive.google.com/file/d/1hzyLk88dUOuFaFJyDvU_75f4rKXdtHmK/view?usp=sharing";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

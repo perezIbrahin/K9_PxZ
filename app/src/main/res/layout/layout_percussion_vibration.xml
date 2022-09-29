@@ -550,11 +550,12 @@
         android:id="@+id/btnSelPerc"
         android:layout_width="@dimen/dim_select_pv_W"
         android:layout_height="@dimen/dim_select_pv_H"
+        android:layout_marginTop="16dp"
         android:background="@drawable/btn_select_percus"
         android:text="@string/string_name_select_perc"
         android:textSize="@dimen/dim_text_select_pv_main"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="@+id/btnModeStart"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/btnModeStart"
         app:layout_constraintTop_toBottomOf="@+id/cardView3" />
 

@@ -2,12 +2,11 @@ package Alert;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,12 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.k9_pxz.R;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import Interface.InterfaceSetupInfo;
 import Util.Configuration;
 import Util.Message;
+import Util.Rev;
 import Util.Util_Dialog;
 
 public class K9Alert extends AppCompatActivity {
@@ -28,7 +25,8 @@ public class K9Alert extends AppCompatActivity {
     InterfaceSetupInfo interfaceSetupInfo;
     Message message = new Message();
     Configuration configuration = new Configuration();
-    Util_Dialog util_dialog=new Util_Dialog();
+    Util_Dialog util_dialog = new Util_Dialog();
+    Rev rev = new Rev();
 
     public K9Alert(InterfaceSetupInfo interfaceSetupInfo, Context context) {
         this.interfaceSetupInfo = interfaceSetupInfo;
@@ -44,6 +42,7 @@ public class K9Alert extends AppCompatActivity {
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             alertDialogBuilder.setTitle(title);
             alertDialogBuilder.setView(promptsView);
+
 
             // set dialog message
             alertDialogBuilder
@@ -67,23 +66,47 @@ public class K9Alert extends AppCompatActivity {
             alertDialog.show();
 
 
-        }catch (Exception e){
-            Log.d(TAG, "alertDialogLivePage: "+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogLivePage: " + e.getMessage());
         }
     }
 
+    //alert dialig missing settings
     public void alertDialogMissingPara(String title) {
         try {
-           // LayoutInflater li = LayoutInflater.from(context);
-            //View promptsView = li.inflate(R.layout.layout_dialog, null);
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_check_configuration, null);
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setTitle(title);
-            //alertDialogBuilder.setView(promptsView);
+            //alertDialogBuilder.setTitle(title);
+            alertDialogBuilder.setView(promptsView);
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDialogConfRev);
+            tvRev.setText(rev.APP_REV_PAGE_51);
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnConfConfirm);
+
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_SIDERAIL", util_dialog.LOCATION_CONFIRM_SIDERAIL);
+                            alertDialog.dismiss();
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogSiderail: ex:" + e.getMessage());
+                }
+            }
 
             // set dialog message
             alertDialogBuilder
                     .setCancelable(false)
-                    .setPositiveButton("Cancel",
+                    .setPositiveButton("OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
@@ -91,34 +114,78 @@ public class K9Alert extends AppCompatActivity {
                             }
                     );
             // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder.create();
+            //AlertDialog alertDialog = alertDialogBuilder.create();
             // show it
             alertDialog.show();
 
 
-        }catch (Exception e){
-            Log.d(TAG, "alertDialogMissingPara: "+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogMissingPara: " + e.getMessage());
         }
     }
 
+    //side rail dialog
     public void alertDialogSiderail(String title) {
         try {
-            // LayoutInflater li = LayoutInflater.from(context);
-            //View promptsView = li.inflate(R.layout.layout_dialog, null);
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_dialog_siderail, null);
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setTitle(title);
-            alertDialogBuilder.setIcon(R.drawable.ic_warning_black_24dp);
+            alertDialogBuilder.setView(promptsView);
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDilgSrRev);
+            tvRev.setText(rev.APP_REV_PAGE_50);
+
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnConfConfirm);
+            final Button btnCancel = (Button) promptsView.findViewById(R.id.btnSRCancel);
+
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_SIDERAIL", util_dialog.LOCATION_CONFIRM_SIDERAIL);
+                            alertDialog.dismiss();
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogSiderail: ex:" + e.getMessage());
+                }
+            }
+
+            //button cancel
+            if (btnCancel != null) {
+                try {
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogSiderail: ex:" + e.getMessage());
+                }
+            }
+
+
             //alertDialogBuilder.setView(promptsView);
 
             // set dialog message
             alertDialogBuilder
                     .setCancelable(false)
+
                     .setNegativeButton("Confirm",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_SIDERAIL", util_dialog.LOCATION_CONFIRM_SIDERAIL);
                                 }
                             })
+
                     .setPositiveButton("Cancel",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -126,12 +193,11 @@ public class K9Alert extends AppCompatActivity {
                                 }
                             }
                     );
-            // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder.create();
+
             // show it
             alertDialog.show();
-        }catch (Exception e){
-            Log.d(TAG, "alertDialogSiderail: "+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogSiderail: " + e.getMessage());
         }
     }
 
@@ -159,8 +225,8 @@ public class K9Alert extends AppCompatActivity {
             // show it
             Log.d(TAG, "alertDialogConnectionFail: show");
             alertDialog.show();
-        }catch (Exception e){
-            Log.d(TAG, "alertDialogConnectionFail: "+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogConnectionFail: " + e.getMessage());
         }
     }
 
@@ -189,8 +255,8 @@ public class K9Alert extends AppCompatActivity {
             // show it
             Log.d(TAG, "alertDialogConnectionFail: show");
             alertDialog.show();
-        }catch (Exception e){
-            Log.d(TAG, "alertDialogConnectionFail: "+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogConnectionFail: " + e.getMessage());
         }
     }
 

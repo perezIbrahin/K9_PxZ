@@ -149,6 +149,28 @@
     <string name="string_permission_help_text">The permission is missing.\n\nTo grant this permission click on Settings, then Permissions and turn the permission on.\n\nThen click back twice to return to the app</string>
     <string name="string_permission_quit">Exit App</string>
     <string name="string_settings">Settings</string>
+    <string name="string_dial_side_rail">Confirm that Siderails are Up Patient is Centered</string>
+    <string name="string_dial_configuration">Check the settings!</string>
+    <string name="string_text_check_freq">Check frequency</string>
+    <string name="string_text_check_tim">Check timer</string>
+    <string name="string_text_check_int">Check intensity</string>
+    <string name="string_text_check_transdA">Check transducers A</string>
+    <string name="string_text_check_transdB">Check transducers B</string>
+
+    <string name="string_name_therapy">Percussion/Vibration Therapy</string>
+    <string name="string_name_btn_main">K-9</string>
+    <string name="string_name_select_perc">Percussion</string>
+    <string name="string_name_select_vib">Vibration</string>
+
+    <!-- name button dialog siderail -->
+    <string name="string_btn_SR_confirm">Confirm</string>
+    <string name="string_btn_SR_cancel">Cancel</string>
+
+    <string name="string_text_pres_start">Press to start.</string>
+
+
+
+
 
 
 </resources>

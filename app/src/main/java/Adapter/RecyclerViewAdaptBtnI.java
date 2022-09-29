@@ -58,7 +58,7 @@ public class RecyclerViewAdaptBtnI extends RecyclerView.Adapter<RecyclerViewAdap
         if (modelBtn.getBtnStatus().equalsIgnoreCase(default_values.DEF_STATUS_CHECKED)) {
             holder.button.setTextSize(textSize.TEXT_SIZE_30);
         } else {
-            holder.button.setTextSize(textSize.TEXT_SIZE_20);
+            holder.button.setTextSize(textSize.TEXT_SIZE_30);
         }
     }
 

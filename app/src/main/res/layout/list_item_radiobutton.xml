@@ -7,8 +7,8 @@
 
     <RadioButton
         android:id="@+id/rb"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/dim_rb_sp_W"
+        android:layout_height="@dimen/dim_rb_sp_H"
         android:layout_margin="10dp"
         android:text="RB"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"

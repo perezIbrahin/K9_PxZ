@@ -7,6 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#e74c3c</color>
+    <color name="redDeep">#c0392b</color>
 
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
@@ -27,6 +29,9 @@
     <color name="blueGreyDark">#000a12</color>
     <color name="greenLight">#80e27e</color>
     <color name="greenDark">#087f23</color>
+    <color name="googleGreen">#34a853</color>
+    <color name="googleYellow">#fbbc04</color>
+    <color name="googleBlue">#4285f4</color>
 
     <color name="colorDivider">#000a12</color>
 </resources>

@@ -87,5 +87,39 @@
     <dimen name="dim_sr_W">15dp</dimen>
     <!-- end dim margin-->
 
+    <!--text size-->
+    <dimen name="dim_text_bar_main">24sp</dimen>
+    <dimen name="dim_text_sp_pv">24sp</dimen>
+    <dimen name="dim_text_spv_pv">36sp</dimen>
+    <dimen name="dim_text_sp_min_pv">30sp</dimen>
+    <dimen name="dim_text_btn_main">40sp</dimen>
+    <dimen name="dim_text_btn_home">20sp</dimen>
+    <dimen name="dim_text_dialog_siderail">40sp</dimen>
+
+    <dimen name="dim_text_select_pv_main">18sp</dimen>
+    <dimen name="dim_btn_SR_dialog">22sp</dimen>
+
+    <!--btn bar main size-->
+    <dimen name="dim_btn_bar_H">100dp</dimen>
+    <dimen name="dim_btn_bar_W">120dp</dimen>
+
+    <!--btn icon  main size-->
+    <dimen name="dim_icon_logo_H">100dp</dimen>
+    <dimen name="dim_icon_logo_W">140dp</dimen>
+
+    <!--btn select percussion vibration-->
+    <dimen name="dim_select_pv_H">100dp</dimen>
+    <dimen name="dim_select_pv_W">160dp</dimen>
+
+    <!--size lineal layout perc/vib-->
+    <dimen name="dim_linear_layout_pv_W">140dp</dimen>
+
+    <!--radio buttons size-->
+    <dimen name="dim_rb_sp_H">60dp</dimen>
+    <dimen name="dim_rb_sp_W">80dp</dimen>
+
+    <!--dialog SR buttons   size-->
+    <dimen name="dim_btn_SR_H">160dp</dimen>
+    <dimen name="dim_btn_SR_W">160dp</dimen>
 
 </resources>

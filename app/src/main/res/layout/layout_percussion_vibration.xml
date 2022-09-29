@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5dp"
-    tools:context=".VibrationPercussionActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
@@ -24,7 +23,7 @@
                 android:id="@+id/textView15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tvPageTitle"
+                android:text="@string/string_name_therapy"
                 android:textAlignment="viewStart"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -63,6 +62,8 @@
                 android:background="@android:color/transparent"
                 android:drawableLeft="@drawable/ic_home_black_24dp"
                 android:text="Main"
+                android:textColor="#000000"
+                android:textSize="@dimen/dim_text_btn_home"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -89,7 +90,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:layout_width="120dp"
+            android:layout_width="@dimen/dim_linear_layout_pv_W"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
@@ -107,7 +108,7 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:text="Frequency"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/dim_text_sp_pv"
                     android:textStyle="bold" />
 
                 <View
@@ -150,7 +151,7 @@
                     android:layout_weight="1"
                     android:text="HZ"
                     android:textAlignment="center"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/dim_text_spv_pv"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -161,7 +162,7 @@
 
     <LinearLayout
         android:id="@+id/LLInt"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/dim_linear_layout_pv_W"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
@@ -190,7 +191,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="Intensity"
-                    android:textSize="20dp"
+                    android:textSize="@dimen/dim_text_sp_pv"
                     android:textStyle="bold" />
 
                 <View
@@ -227,13 +228,13 @@
 
                 <TextView
                     android:id="@+id/textView13"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="%"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/dim_text_spv_pv"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -291,7 +292,7 @@
                 android:layout_margin="5dp"
                 android:gravity="center"
                 android:text="Time(min)"
-                android:textSize="20sp"
+                android:textSize="@dimen/dim_text_spv_pv"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -398,10 +399,11 @@
         android:id="@+id/btnModeStop"
         android:layout_width="@dimen/dim_btn_control_start_W"
         android:layout_height="@dimen/dim_btn_control_start_H"
-        android:background="@drawable/btn_stop"
+        android:background="@drawable/btn_stop_red"
         android:text="@string/btnStop"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorFla"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/LLInt"
         app:layout_constraintEnd_toStartOf="@+id/LLInt"
@@ -501,7 +503,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="mm:ss"
-        android:textSize="16sp"
+        android:textSize="@dimen/dim_text_sp_min_pv"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tvtimer"
         app:layout_constraintStart_toEndOf="@+id/tvtimer" />
@@ -544,16 +546,38 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <Button
+        android:id="@+id/btnSelPerc"
+        android:layout_width="@dimen/dim_select_pv_W"
+        android:layout_height="@dimen/dim_select_pv_H"
+        android:background="@drawable/btn_select_percus"
+        android:text="@string/string_name_select_perc"
+        android:textSize="@dimen/dim_text_select_pv_main"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="@+id/btnModeStart"
+        app:layout_constraintStart_toStartOf="@+id/btnModeStart"
+        app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+
+    <Button
+        android:id="@+id/btnSelVib"
+        android:layout_width="@dimen/dim_select_pv_W"
+        android:layout_height="@dimen/dim_select_pv_H"
+        android:background="@drawable/btn_select_vib"
+        android:text="@string/string_name_select_vib"
+        android:textSize="@dimen/dim_text_select_pv_main"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSelPerc"
+        app:layout_constraintEnd_toEndOf="@+id/btnModeStop"
+        app:layout_constraintStart_toStartOf="@+id/btnModeStop"
+        app:layout_constraintTop_toTopOf="@+id/btnSelPerc" />
+
     <TextView
-        android:id="@+id/tvPressStart"
-        android:layout_width="100dp"
+        android:id="@+id/tvReady"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:text="@string/string_text_pres_start"
-        android:textAlignment="center"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/btnReady"
-        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="@+id/btnReady"
         app:layout_constraintTop_toBottomOf="@+id/btnReady" />
 

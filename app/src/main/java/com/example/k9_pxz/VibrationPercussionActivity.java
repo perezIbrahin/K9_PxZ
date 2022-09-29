@@ -86,6 +86,7 @@ import Util.Default_values;
 import Util.IntToArray;
 import Util.Key_Util;
 import Util.RecyclerLocations;
+import Util.Rev;
 import Util.SetPointsBluetooth;
 import Util.TagRefrence;
 import Util.TextSize;
@@ -94,7 +95,13 @@ import Util.Util_timer;
 import static java.util.UUID.fromString;
 public class VibrationPercussionActivity extends AppCompatActivity implements View.OnClickListener, InterfaceSetupInfo, RecyclerViewClickInterface {
     private static final String TAG = "VibrationPercussionActi";
-
+    /*
+     * Project : Percussion Vibration
+     * Desc: Percussion /Vibration
+     * Rev:3.0.1
+     * Prog:Ibrahim
+     * Date:09/28/22
+     * */
     //Bluetooth
     private String myBleAdd = "00:00:00:00:00";//Address used to connect BLE
     private boolean bleIsScanner = false;
@@ -115,6 +122,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private TextView tvOperation;
     private TextView tvTimer;
     private TextView tvCon;
+    private TextView tvRev;
+    private TextView tvPresStart;
 
     //Adapter Frequency
     private RecyclerView recyclerViewF;
@@ -186,6 +195,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     CountDownTimer timerForceSop = null;
     CountDownTimer timerLockColdDown = null;
 
+    //revision
+    private Rev rev = new Rev();
 
     //Bluetooth actions
     public final static String ACTION_GATT_CONNECTED =
@@ -266,16 +277,31 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        modifyTopBar();
-        setContentView(R.layout.activity_vibration_percussion);
+
+        //screen full size
+        screenFullSize();
+        //load layout
+        loadLayout(R.layout.layout_percussion_vibration);
+        //remove menu bar
+        removeMenuBar();
+        //remove action bar from top
+        removeActionBar();
+
+        //modifyTopBar();
+        //setContentView(R.layout.activity_vibration_percussion);
+        //init all components
         initGUI();
+        //init bluetooth and broadcast
         initOther();
+        //init paremetriz for app
         initApp();
+        //buttons events
         eventBtn();
-        //loading
+        //loading alert dialog
         alertDialogLoading(true);
+        //Adding revision
+        displaySoftRev(rev.APP_REV_PAGE_11);
 
 
     }
@@ -283,9 +309,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        //bluetooth scan
         launchBleScan();
-
-
     }
 
     @Override
@@ -296,6 +321,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     @Override
     protected void onPause() {
         super.onPause();
+        //cancel scan
         cancelBleScan();
     }
 
@@ -372,6 +398,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         tvOperation = findViewById(R.id.tvOpe);
         tvTimer = findViewById(R.id.tvtimer);
         tvCon = findViewById(R.id.tvCon);
+        tvRev=findViewById(R.id.tvVibRev);
+        tvPresStart=findViewById(R.id.tvReady);
     }
 
     //init system
@@ -742,7 +770,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         recyclerViewAdaptIconB = new RecyclerViewAdapticonB(modelIconArrayListB);//modelDevicesArrayList
         recyclerViewIconB.setAdapter(recyclerViewAdaptIconB);
     }
-
+    /*
     // get return from bluetooth and update GUI  frequency
     private boolean updateButtonsFrequencyF(int value) {
         Log.d(TAG, "updateButtonsFrequencyF: ");
@@ -813,6 +841,77 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         //modelBtnFreqArrayList.clear();
         //updateGUIRecyclerViewF();
         return false;
+    }*/
+    // get return from bluetooth and update GUI  frequency
+    private boolean updateButtonsFrequencyF(int value) {
+        Log.d(TAG, "updateButtonsFrequencyF: ");
+        if (value > 0) {
+            try {
+                if (value == setPointsBluetooth.INT_BLE_SP_FREQ_NONE) {
+                    //none
+                    updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                } else if (value == setPointsBluetooth.INT_BLE_SP_FREQ1) {
+                    updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                    updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+
+                } else if (value == setPointsBluetooth.INT_BLE_SP_FREQ2) {
+                    updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                    updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+
+                } else if (value == setPointsBluetooth.INT_BLE_SP_FREQ3) {
+                    updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                    updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                } else if (value == setPointsBluetooth.INT_BLE_SP_FREQ4) {
+                    updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                    updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                } else if (value == setPointsBluetooth.INT_BLE_SP_FREQ5) {
+                    updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                } else if (value == setPointsBluetooth.INT_BLE_SP_FREQ_MAX) {
+                    updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
+                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                } else {
+                    Log.d(TAG, "updateButtonsFrequencyF: empty");
+                }
+                updateGUIRecyclerViewF();
+            } catch (Exception e) {
+                Log.d(TAG, "updateButtonsFrequencyF exception: " + e.getMessage());
+            }
+            updateGUIRecyclerViewF();
+            return true;
+        }
+        //modelBtnFreqArrayList.clear();
+        //updateGUIRecyclerViewF();
+        return false;
     }
 
     // get return from bluetooth and update GUI  Intensity
@@ -827,7 +926,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_INT1) {
-                    updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
@@ -835,7 +934,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_INT2) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
@@ -843,7 +942,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 } else if (value == setPointsBluetooth.INT_BLE_SP_INT3) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
@@ -851,7 +950,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_INT5) {
@@ -859,7 +958,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_INT_MAX) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
@@ -867,7 +966,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                 }
                 updateGUIRecyclerViewI();
             } catch (Exception e) {
@@ -889,35 +988,35 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewT(3, default_values.DEF_TIM4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(4, default_values.DEF_TIM5, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TIME1) {
-                    updateRecyclerViewT(0, default_values.DEF_TIM1, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewT(0, default_values.DEF_TIM1, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewT(1, default_values.DEF_TIM2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(2, default_values.DEF_TIM3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(3, default_values.DEF_TIM4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(4, default_values.DEF_TIM5, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TIME2) {
                     updateRecyclerViewT(0, default_values.DEF_TIM1, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewT(1, default_values.DEF_TIM2, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewT(1, default_values.DEF_TIM2, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewT(2, default_values.DEF_TIM3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(3, default_values.DEF_TIM4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(4, default_values.DEF_TIM5, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TIME3) {
                     updateRecyclerViewT(0, default_values.DEF_TIM1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(1, default_values.DEF_TIM2, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewT(2, default_values.DEF_TIM3, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewT(2, default_values.DEF_TIM3, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewT(3, default_values.DEF_TIM4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(4, default_values.DEF_TIM5, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TIME4) {
                     updateRecyclerViewT(0, default_values.DEF_TIM1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(1, default_values.DEF_TIM2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(2, default_values.DEF_TIM3, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewT(3, default_values.DEF_TIM4, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewT(3, default_values.DEF_TIM4, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewT(4, default_values.DEF_TIM5, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TIME5) {
                     updateRecyclerViewT(0, default_values.DEF_TIM1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(1, default_values.DEF_TIM2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(2, default_values.DEF_TIM3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewT(3, default_values.DEF_TIM4, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewT(4, default_values.DEF_TIM5, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewT(4, default_values.DEF_TIM5, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                 }
                 updateGUIRecyclerViewT();
                 return true;
@@ -933,51 +1032,51 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         if (value > 0) {
             try {
                 if (value == setPointsBluetooth.INT_BLE_SP_TRA_NONE) {
-                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS0);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRA1) {
-                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS1);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRA2) {
-                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS2);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRA3) {
-                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS3);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRA4) {
-                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS4);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRA5) {
-                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS5);
                 }
@@ -997,51 +1096,51 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         if (value > 0) {
             try {
                 if (value == setPointsBluetooth.INT_BLE_SP_TRB_NONE) {
-                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS0);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRB1) {
-                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS1);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRB2) {
-                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS2);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRB3) {
-                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS3);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRB4) {
-                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
-                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS4);
                 } else if (value == setPointsBluetooth.INT_BLE_SP_TRB5) {
-                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_24));
-                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_radio_button_checked_green_24dp));
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS5);
                 }
@@ -1063,15 +1162,16 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 if (value == setPointsBluetooth.INT_BLE_CMD_NONE) {
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
                     return setPointsBluetooth.INT_BLE_CMD_NONE;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_START)) {
-                    btnStart.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_radio_button_checked_green_24dp), null, null, null);
+                    btnStart.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     displayOperation(message.MESSAGE_SYSTEM_RUNNING);
                     return setPointsBluetooth.INT_BLE_CMD_START;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_STOP)) {
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                    btnStop.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_radio_button_checked_green_24dp), null, null, null);
+                    btnStop.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
                     displayOperation(message.MESSAGE_SYSTEM_STOPPED);
                     return setPointsBluetooth.INT_BLE_CMD_STOP;
                 }
@@ -1093,9 +1193,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 case 0:
                     //stop animation
                     btnReady.setVisibility(View.INVISIBLE);
+                    displaytextStart(false);
                     break;
                 case 1: //alert
                     btnReady.setVisibility(View.VISIBLE);
+                    displaytextStart(true);
                     /*if(btnReady.getVisibility()==View.INVISIBLE){
                         btnReady.setVisibility(View.VISIBLE);
                         animationSideRail(btnReady, R.drawable.btn_start_readim, true);
@@ -2456,6 +2558,18 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     }
 
+    //display text press to start
+    private void displaytextStart(boolean input){
+        if(tvPresStart!=null){
+            if(input){
+                tvPresStart.setVisibility(View.VISIBLE);
+                tvPresStart.setText("Press to start");
+            }else{
+                tvPresStart.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
     //-----------Enable---------------------//
     private void enableGui(boolean input) {
         Log.d(TAG, "enableGui: " + input);
@@ -3228,4 +3342,62 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         }*/
     }
 
+
+    /*init system*/
+
+    //load layout
+    private void loadLayout(int layout) {
+        try {
+            //setContentView(R.layout.activity_main);
+            setContentView(layout);
+        } catch (Exception e) {
+            Log.d(TAG, "loadLayout: ex:" + e.getMessage());
+        }
+    }
+
+    //display software revision
+    private void displaySoftRev(String revision) {
+        if (revision != null) {
+            tvRev.setText(revision);
+        }
+    }
+
+    //remove action bar
+    private void removeActionBar() {
+        // Take instance of Action Bar
+        // using getSupportActionBar and
+        // if it is not Null
+        // then call hide function
+        try {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().hide();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "removeActionBar: ex:" + e.getMessage());
+        }
+
+    }
+
+    //remove action bar
+    private void screenFullSize() {
+        try {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } catch (Exception e) {
+            Log.d(TAG, "screenFullSize: ex:" + e.getMessage());
+        }
+    }
+
+    //remove menu bar
+    private void removeMenuBar() {
+        try {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
+
+        } catch (Exception e) {
+            Log.d(TAG, "removeMenuBar: ex:" + e.getMessage());
+        }
+    }
 }

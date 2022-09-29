@@ -2,11 +2,13 @@ package com.example.k9_pxz;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 //import android.widget.Toast;
@@ -18,6 +20,15 @@ import Util.Rev;
 //import Util.Status;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface {
+    /*
+     * Project : Percussion Vibration
+     * Desc: Main Page
+     * Rev:3.0.1
+     * Prog:Ibrahim
+     * Date:09/28/22
+     * */
+
+
     private static final String TAG = " MainActivity";
     //GUI
     private Button btnMainK9;
@@ -30,32 +41,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String SHARED_PREFS1 = "sharedPrefs";
     //variables to save text
     public static final String BLE_ADD_K9 = "00:00:00:00:00";
-    public static final String SERIAL_K9="serial";
+    public static final String SERIAL_K9 = "serial";
     //variables to save text
     public static final String BLE_ADD = "text";
 
 
-
     //private String
-    private String myBleAdd="0";
-    private String mySerialAdd="0";
+    private String myBleAdd = "0";
+    private String mySerialAdd = "0";
+    public String DATA_BLE_ADD = "DATA_BLE_ADD";
+    public String DATA_SYSTEM_SERIAL = "DATA_SYSTEM_SERIAL";
 
-    public String DATA_BLE_ADD="DATA_BLE_ADD";
-    public String DATA_SYSTEM_SERIAL="DATA_SYSTEM_SERIAL";
+    //revision
+    private Rev rev = new Rev();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        //screen full size
+        screenFullSize();
+        //load layout
+        loadLayout(R.layout.layout_main_page);
+        //remove menu bar
+        removeMenuBar();
+        //remove action bar from top
+        removeActionBar();
+        //init
         initGUI();
+        //events btns
         eventsBtn();
-
+        //get info from others pages
         getExtrasFromAct();//get extras from other activity
-
-        //revision
-        addingRev();
+        //Adding revision
+        displaySoftRev(rev.APP_REV_PAGE_10);
     }
+
 
     @Override
     protected void onPostResume() {
@@ -66,15 +86,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initGUI() {
         btnMainK9 = findViewById(R.id.btnMainK9);
         btnMainSett = findViewById(R.id.btnMainSet);
-        btnMainInfo = findViewById(R.id.btnMainInfo);
+        //btnMainInfo = findViewById(R.id.btnMainInfo);
         btnMainSleep = findViewById(R.id.btnMainSllep);
-        tvRev=findViewById(R.id.tvRev);
+        tvRev = findViewById(R.id.tvRev);
     }
 
     private void eventsBtn() {
         btnMainK9.setOnClickListener(this);
         btnMainSett.setOnClickListener(this);
-        btnMainInfo.setOnClickListener(this);
+        //btnMainInfo.setOnClickListener(this);
         btnMainSleep.setOnClickListener(this);
     }
 
@@ -88,52 +108,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == btnMainK9) {
-           // launchActivity(VibActivity.class);
+            // launchActivity(VibActivity.class);
             passBleAddToVib(myBleAdd);
         } else if (v == btnMainSett) {
             launchActivity(SettActivity.class);
-        }else if (v == btnMainInfo) {
-            CustomAlert customAlert=new CustomAlert(this,this);
+        } /*else if (v == btnMainInfo) {
+            CustomAlert customAlert = new CustomAlert(this, this);
             customAlert.showAlertInfo(mySerialAdd);
 
             //launchActivity(InfoActivity.class);
-        }
-        else if (v == btnMainSleep) {
+        } */ else if (v == btnMainSleep) {
             launchActivity(SleepActivity.class);
         }
     }
 
     //get extras from activity
-    private void getExtrasFromAct(){
+    private void getExtrasFromAct() {
         Bundle bundle = getIntent().getExtras();
-        if (bundle!= null) {
+        if (bundle != null) {
             //String add = bundle.getString("myAdd");
-            String add="KZ";
-            String serial="00:00:00:00:00";
+            String add = "KZ";
+            String serial = "00:00:00:00:00";
 
             try {
-                if(DATA_BLE_ADD!=null){
+                if (DATA_BLE_ADD != null) {
                     add = bundle.getString(DATA_BLE_ADD);
 
-                    if(add.equalsIgnoreCase(myBleAdd)){
+                    if (add.equalsIgnoreCase(myBleAdd)) {
                         Log.d(TAG, "getExtrasFromAct: same address");
-                    }else{
+                    } else {
                         Log.d(TAG, "getExtrasFromAct: address change");
-                        myBleAdd=add;
-                        mySerialAdd=serial;
+                        myBleAdd = add;
+                        mySerialAdd = serial;
                         saveData();
                     }
                 }
-                if(DATA_SYSTEM_SERIAL!=null){
+                if (DATA_SYSTEM_SERIAL != null) {
                     serial = bundle.getString(DATA_SYSTEM_SERIAL);
-                    Log.d(TAG, "getExtrasFromAct: "+add+".serial:"+serial);
+                    Log.d(TAG, "getExtrasFromAct: " + add + ".serial:" + serial);
                 }
 
 
-
-
-            }catch (Exception e){
-                Log.d(TAG, "getExtrasFromAct: "+e.getMessage());
+            } catch (Exception e) {
+                Log.d(TAG, "getExtrasFromAct: " + e.getMessage());
             }
 
 
@@ -141,18 +158,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //pass bluettoth address to vibration activity
-    private void passBleAddToVib(String add){
+    private void passBleAddToVib(String add) {
         try {
-            if(add!=null){
+            if (add != null) {
                 Bundle bundle = new Bundle();
-                Log.d(TAG, "passBleAddToVib "+add);
+                Log.d(TAG, "passBleAddToVib " + add);
                 bundle.putString("vibAdd", add);
                 Intent intent = new Intent(MainActivity.this, VibrationPercussionActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
-        }catch (Exception e){
-            Log.d(TAG, "passBleAddToVib: exception"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "passBleAddToVib: exception" + e.getMessage());
         }
     }
 
@@ -171,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS1, MODE_PRIVATE);//mode private means no other app can change it
         myBleAdd = sharedPreferences.getString(BLE_ADD, "");
-        mySerialAdd=sharedPreferences.getString(SERIAL_K9, "");
+        mySerialAdd = sharedPreferences.getString(SERIAL_K9, "");
     }
 
     @Override
@@ -179,10 +196,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //load layout
+    private void loadLayout(int layout) {
+        try {
+            //setContentView(R.layout.activity_main);
+            setContentView(layout);
+        } catch (Exception e) {
+            Log.d(TAG, "loadLayout: ex:" + e.getMessage());
+        }
+    }
 
-    //adding revision
-    private void addingRev(){
-        Rev rev=new Rev();
-        tvRev.setText(rev.APP_REV);
+    //display software revision
+    private void displaySoftRev(String revision) {
+        if (revision != null) {
+            tvRev.setText(revision);
+        }
+    }
+
+    //remove action bar
+    private void removeActionBar() {
+        // Take instance of Action Bar
+        // using getSupportActionBar and
+        // if it is not Null
+        // then call hide function
+        try {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().hide();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "removeActionBar: ex:" + e.getMessage());
+        }
+
+    }
+
+    //remove action bar
+    private void screenFullSize() {
+        try {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } catch (Exception e) {
+            Log.d(TAG, "screenFullSize: ex:" + e.getMessage());
+        }
+    }
+
+    //remove menu bar
+    private void removeMenuBar() {
+        try {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
+
+        } catch (Exception e) {
+            Log.d(TAG, "removeMenuBar: ex:" + e.getMessage());
+        }
     }
 }

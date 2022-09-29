@@ -6,7 +6,7 @@
             android:width="3dip"
             android:color="@color/colorDivider" />
         <corners android:radius="10dip" />
-        <solid android:color="@color/colorAmber" />
+        <solid android:color="@color/colorGray" />
         <padding
             android:bottom="10dip"
             android:left="10dip"

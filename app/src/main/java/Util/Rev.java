@@ -17,12 +17,15 @@ public class Rev {
     //
     public String APP_REV_PAGE_10 = "P10/R3.0";//09/28/22 main page
     public String APP_REV_PAGE_11 = "P11/R3.0";//09/28/22 percussion and vibration
-    public String APP_REV_PAGE_12 = "P12/R3.0";//Dialog side rail is up
+    public String APP_REV_PAGE_12 = "P12/R3.0";//Sleep
     public String APP_REV_PAGE_13 = "P13/R3.0";//09/28/22 Update GUI. Minor changes.
     public String APP_REV_PAGE_14 = "P14/R3.0";//09/28/22 Update GUI. Minor changes.
 
     //dialog
     public String APP_REV_PAGE_50 = "P50/R3.0";//Dialog side rail is up
     public String APP_REV_PAGE_51 = "P51/R3.0";//Dialog check configuration
+    public String APP_REV_PAGE_52 = "P52/R3.0";//Dialog therapy complete
+    public String APP_REV_PAGE_53 = "P53/R3.0";//Dialog connection lost
+    public String APP_REV_PAGE_54 = "P54/R3.0";//Dialog lock confirmation
 
 }

@@ -2,6 +2,7 @@ package Alert;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ public class K9Alert extends AppCompatActivity {
     Configuration configuration = new Configuration();
     Util_Dialog util_dialog = new Util_Dialog();
     Rev rev = new Rev();
+    CountDownTimer countDownTimer;
 
     public K9Alert(InterfaceSetupInfo interfaceSetupInfo, Context context) {
         this.interfaceSetupInfo = interfaceSetupInfo;
@@ -164,7 +166,7 @@ public class K9Alert extends AppCompatActivity {
                     btnCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            alertDialog.dismiss();
                         }
                     });
                 } catch (Exception e) {
@@ -201,27 +203,48 @@ public class K9Alert extends AppCompatActivity {
         }
     }
 
+    //connection fail
     public void alertDialogConnectionFail(String title) {
         try {
-            // LayoutInflater li = LayoutInflater.from(context);
-            //View promptsView = li.inflate(R.layout.layout_dialog, null);
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_dialog_conection_lost, null);
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setTitle(title);
-            alertDialogBuilder.setIcon(R.drawable.ic_warning_black_24dp);
-            //alertDialogBuilder.setView(promptsView);
-
-            // set dialog message
-            alertDialogBuilder
-                    .setCancelable(false)
-                    .setNegativeButton("Confirm",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_CONN_FAILED", util_dialog.LOCATION_CONFIRM_CONN_FAILED);
-                                }
-                            });
-
+            alertDialogBuilder.setView(promptsView);
             // create alert dialog
             AlertDialog alertDialog = alertDialogBuilder.create();
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDilgConLostRev);
+            tvRev.setText(rev.APP_REV_PAGE_53);
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnConLostConfirm);
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            //send command
+                            try {
+                                //interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_SIDERAIL", util_dialog.LOCATION_CONFIRM_SIDERAIL);
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                            //remove dialog
+                            try {
+                                alertDialog.dismiss();
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                }
+            }
+
             // show it
             Log.d(TAG, "alertDialogConnectionFail: show");
             alertDialog.show();
@@ -230,13 +253,90 @@ public class K9Alert extends AppCompatActivity {
         }
     }
 
+    //therapy complete
     public void alertDialogTherapyDone(String title) {
         try {
-            // LayoutInflater li = LayoutInflater.from(context);
-            //View promptsView = li.inflate(R.layout.layout_dialog, null);
+            Log.d(TAG, "alertDialogTherapyDone: ");
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_therapy_complete, null);
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setTitle(title);
-            alertDialogBuilder.setIcon(R.drawable.ic_notifications_blue_3_24dp);
+            alertDialogBuilder.setView(promptsView);
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDilgCompRev);
+            tvRev.setText(rev.APP_REV_PAGE_52);
+            //display timer
+            final TextView tvTimer = (TextView) promptsView
+                    .findViewById(R.id.tvCompTimer);
+
+            Log.d(TAG, "alertDialogTherapyDone: 2");
+            //timer
+            countDownTimer = new CountDownTimer(20000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    try {
+                        Log.d(TAG, "alertDialogTherapyDone onTick: " + millisUntilFinished / 100);
+                        if (tvTimer != null) {
+                            Log.d(TAG, "alertDialogTherapyDone onTick: " + millisUntilFinished / 100);
+                            String display = String.valueOf(millisUntilFinished / 100);
+                            tvTimer.setText("Dialog wil close in: " + display + " seconds.");
+                        }
+                    } catch (Exception e) {
+                        Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+                    try {
+                        alertDialog.dismiss();
+                    } catch (Exception e) {
+                        Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                    }
+                }
+            }.start();
+
+
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnCompConfirm);
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                if (countDownTimer != null) {
+                                    countDownTimer = null;
+                                }
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                            //send command
+                            try {
+                                interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_SIDERAIL", util_dialog.LOCATION_CONFIRM_SIDERAIL);
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                            //remove dialog
+                            try {
+                                alertDialog.dismiss();
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                }
+            }
+
+            // alertDialogBuilder.setView(promptsView);
+            // alertDialogBuilder.setTitle(title);
+           /* alertDialogBuilder.setIcon(R.drawable.ic_notifications_blue_3_24dp);
             //alertDialogBuilder.setView(promptsView);
 
             // set dialog message
@@ -249,14 +349,69 @@ public class K9Alert extends AppCompatActivity {
                                 }
                             }
                     );
-
+*/
             // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder.create();
+
             // show it
             Log.d(TAG, "alertDialogConnectionFail: show");
             alertDialog.show();
         } catch (Exception e) {
             Log.d(TAG, "alertDialogConnectionFail: " + e.getMessage());
+        }
+    }
+
+    //lock system
+    public void alertDialogLock(String title) {
+        try {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_dialog_p53_lock, null);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setView(promptsView);
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDilgLockRev);
+            tvRev.setText(rev.APP_REV_PAGE_54);
+
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnLockConfirm);
+            final Button btnCancel = (Button) promptsView.findViewById(R.id.btnLockCancel);
+
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_LOCK", util_dialog.LOCATION_CONFIRM_LOCK);
+                            alertDialog.dismiss();
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogLock: ex:" + e.getMessage());
+                }
+            }
+
+            //button cancel
+            if (btnCancel != null) {
+                try {
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertDialog.dismiss();
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogLock: ex:" + e.getMessage());
+                }
+            }
+
+            // show it
+            alertDialog.show();
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogSiderail: " + e.getMessage());
         }
     }
 

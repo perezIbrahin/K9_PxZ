@@ -21,6 +21,10 @@ public class Status {
     public int STATUS_SERIAL_LINK=2;
     public int STATUS_SCAN =4;
 
+    //select mode
+    public int SELECT_MODE_NONE=0;
+    public int SELECT_MODE_PERCUSSION=1;
+    public int SELECT_MODE_VIBRATION=2;
     //pass data between activity
 
 

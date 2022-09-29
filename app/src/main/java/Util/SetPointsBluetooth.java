@@ -1,6 +1,9 @@
 package Util;
 
 public class SetPointsBluetooth {
+    public  int SP_BLE_MODE_NONE = 0;
+    public  int SP_BLE_MODE_PERC = 04;
+    public  int SP_BLE_MODE_VIB = 05;
     //frequency string
     public final String SP_BLE_SP_FREQ1 = "16";
     public final String SP_BLE_SP_FREQ2 = "17";

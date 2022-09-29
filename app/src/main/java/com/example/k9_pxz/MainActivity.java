@@ -11,15 +11,19 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 //import android.widget.Toast;
 
 //import Alert.AlertCustomDialog;
 import Alert.CustomAlert;
+import Alert.K9Alert;
+import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
 import Util.Rev;
+import Util.Util_Dialog;
 //import Util.Status;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface, InterfaceSetupInfo {
     /*
      * Project : Percussion Vibration
      * Desc: Main Page
@@ -33,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //GUI
     private Button btnMainK9;
     private Button btnMainSett;
-    private Button btnMainInfo;
+    private Button btnMainLock;
     private Button btnMainSleep;
     private TextView tvRev;
 
@@ -51,9 +55,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String mySerialAdd = "0";
     public String DATA_BLE_ADD = "DATA_BLE_ADD";
     public String DATA_SYSTEM_SERIAL = "DATA_SYSTEM_SERIAL";
+    //lock
+    private boolean isLockScreen = false;
 
     //revision
     private Rev rev = new Rev();
+
+    //alert
+    private K9Alert k9Alert;
+    private Util_Dialog utilDialog = new Util_Dialog();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         removeActionBar();
         //init
         initGUI();
+        //init other stuff
+        initApp();
         //events btns
         eventsBtn();
         //get info from others pages
@@ -86,15 +98,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initGUI() {
         btnMainK9 = findViewById(R.id.btnMainK9);
         btnMainSett = findViewById(R.id.btnMainSet);
-        //btnMainInfo = findViewById(R.id.btnMainInfo);
+        btnMainLock = findViewById(R.id.btnMainLock);
         btnMainSleep = findViewById(R.id.btnMainSllep);
         tvRev = findViewById(R.id.tvRev);
+    }
+
+    private boolean initApp() {
+        k9Alert = new K9Alert(this, this);
+        //init lock
+        btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_open_24), null, null);
+        btnMainLock.setText("Unlocked");
+        isLockScreen = false;
+
+        return true;
     }
 
     private void eventsBtn() {
         btnMainK9.setOnClickListener(this);
         btnMainSett.setOnClickListener(this);
-        //btnMainInfo.setOnClickListener(this);
+        btnMainLock.setOnClickListener(this);
         btnMainSleep.setOnClickListener(this);
     }
 
@@ -108,10 +130,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == btnMainK9) {
-            // launchActivity(VibActivity.class);
-            passBleAddToVib(myBleAdd);
+            if (!isLockScreen) {
+                passBleAddToVib(myBleAdd);
+            }else{
+                toastMessage();
+            }
         } else if (v == btnMainSett) {
-            launchActivity(SettActivity.class);
+            if (!isLockScreen) {
+                launchActivity(SettActivity.class);
+            }else{
+                toastMessage();
+            }
+
         } /*else if (v == btnMainInfo) {
             CustomAlert customAlert = new CustomAlert(this, this);
             customAlert.showAlertInfo(mySerialAdd);
@@ -119,6 +149,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //launchActivity(InfoActivity.class);
         } */ else if (v == btnMainSleep) {
             launchActivity(SleepActivity.class);
+        } else if (v == btnMainLock) {
+
+            try {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Stuff that updates the UI
+                        k9Alert.alertDialogLock(utilDialog.LOCATION_CONFIRM_LOCK);
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.d(TAG, "alertDialogLock: ex" + e.getMessage());
+            }
         }
     }
 
@@ -250,5 +295,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             Log.d(TAG, "removeMenuBar: ex:" + e.getMessage());
         }
+    }
+
+    @Override
+    public void onItemSetupInfo(String name, String description) {
+        if (description.equalsIgnoreCase(utilDialog.LOCATION_CONFIRM_LOCK)) {
+            setLockScreen();
+        }
+    }
+
+    @Override
+    public void onItemSetupAlarm(String name, String description, String location) {
+
+    }
+
+    //lock/unlock
+    private void setLockScreen(){
+        try {
+            if (!isLockScreen) {
+                Log.d(TAG, "setLockScreen: lock screen" + isLockScreen);
+                btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_24), null, null);
+                btnMainLock.setText("Locked");
+                isLockScreen = true;
+                return;
+            } else if (isLockScreen) {
+                Log.d(TAG, "setLockScreen: unlock screen" + isLockScreen);
+                btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_open_24), null, null);
+                btnMainLock.setText("Unlocked");
+                isLockScreen = false;
+                return;
+            }
+
+        }catch (Exception e){
+            Log.d(TAG, "setLockScreen: ex:"+e.getMessage());
+        }
+    }
+
+    //
+    private void toastMessage(){
+        try {
+            Toast.makeText(getApplicationContext(), "Unlock the screen", Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            Log.d(TAG, "toastMessage: ex:"+e.getMessage());
+        }
+
     }
 }

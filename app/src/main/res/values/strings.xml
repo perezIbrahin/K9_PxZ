@@ -156,17 +156,20 @@
     <string name="string_text_check_int">Check intensity</string>
     <string name="string_text_check_transdA">Check transducers A</string>
     <string name="string_text_check_transdB">Check transducers B</string>
-
+    <string name="string_name_therapy_complete">Therapy complete.</string>
     <string name="string_name_therapy">Percussion/Vibration Therapy</string>
     <string name="string_name_btn_main">K-9</string>
     <string name="string_name_select_perc">Percussion</string>
     <string name="string_name_select_vib">Vibration</string>
+    <string name="string_name_lock">Are you sure?</string>
 
     <!-- name button dialog siderail -->
     <string name="string_btn_SR_confirm">Confirm</string>
     <string name="string_btn_SR_cancel">Cancel</string>
 
     <string name="string_text_pres_start">Press to start.</string>
+    <string name="string_text_lost_connection">Connection lost!</string>
+    <string name="string_text_lost_connection_code">Error code 1001</string>
 
 
 

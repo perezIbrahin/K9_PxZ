@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:padding="20dp">
-
     <ImageView
         android:id="@+id/imageView12"
         android:layout_width="wrap_content"
@@ -19,7 +18,7 @@
         app:srcCompat="@drawable/ic_baseline_warning_amber_56" />
 
     <TextView
-        android:id="@+id/tvDilgSrRev"
+        android:id="@+id/tvDilgLockRev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="rev"
@@ -40,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView12" />
 
     <Button
-        android:id="@+id/btnConfConfirm"
+        android:id="@+id/btnLockConfirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -53,7 +52,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
     <Button
-        android:id="@+id/btnSRCancel"
+        android:id="@+id/btnLockCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="80dp"
@@ -62,9 +61,9 @@
         android:text="@string/string_btn_SR_cancel"
         android:textColor="@color/colorFla"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnConfConfirm"
-        app:layout_constraintStart_toEndOf="@+id/btnConfConfirm"
-        app:layout_constraintTop_toTopOf="@+id/btnConfConfirm"
+        app:layout_constraintBottom_toBottomOf="@+id/btnLockConfirm"
+        app:layout_constraintStart_toEndOf="@+id/btnLockConfirm"
+        app:layout_constraintTop_toTopOf="@+id/btnLockConfirm"
         app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

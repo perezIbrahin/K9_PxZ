@@ -16,10 +16,10 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_warning_amber_56" />
+        app:srcCompat="@drawable/ic_baseline_recommend_48" />
 
     <TextView
-        android:id="@+id/tvDilgSrRev"
+        android:id="@+id/tvDilgCompRev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="rev"
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:text="@string/string_name_lock"
+        android:text="@string/string_name_therapy_complete"
         android:textAlignment="center"
         android:textSize="@dimen/dim_text_dialog_siderail"
         android:textStyle="bold"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView12" />
 
     <Button
-        android:id="@+id/btnConfConfirm"
+        android:id="@+id/btnCompConfirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -52,19 +52,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
-    <Button
-        android:id="@+id/btnSRCancel"
+    <TextView
+        android:id="@+id/tvCompTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/btn_stop_red"
-        android:text="@string/string_btn_SR_cancel"
-        android:textColor="@color/colorFla"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnConfConfirm"
-        app:layout_constraintStart_toEndOf="@+id/btnConfConfirm"
-        app:layout_constraintTop_toTopOf="@+id/btnConfConfirm"
-        app:layout_constraintVertical_bias="1.0" />
+        android:layout_marginTop="20dp"
+        android:text="..."
+        app:layout_constraintEnd_toEndOf="@+id/btnCompConfirm"
+        app:layout_constraintStart_toStartOf="@+id/btnCompConfirm"
+        app:layout_constraintTop_toBottomOf="@+id/btnCompConfirm" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -68,7 +68,7 @@
                 tools:text="." />
 
             <Button
-                android:id="@+id/btnLock"
+                android:id="@+id/btnMainLock"
                 android:text="LOCK"
                 android:layout_width="@dimen/dim_btn_bar_W"
                 android:layout_height="@dimen/dim_btn_bar_H"

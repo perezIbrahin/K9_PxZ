@@ -21,7 +21,6 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
-import android.bluetooth.BluetoothSocket;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -51,15 +50,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 
 import Adapter.RecyclerViewAdaptBtnF;
@@ -88,11 +84,12 @@ import Util.Key_Util;
 import Util.RecyclerLocations;
 import Util.Rev;
 import Util.SetPointsBluetooth;
+import Util.Status;
 import Util.TagRefrence;
 import Util.TextSize;
 import Util.Util_Dialog;
 import Util.Util_timer;
-import static java.util.UUID.fromString;
+
 public class VibrationPercussionActivity extends AppCompatActivity implements View.OnClickListener, InterfaceSetupInfo, RecyclerViewClickInterface {
     private static final String TAG = "VibrationPercussionActi";
     /*
@@ -109,6 +106,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private final String KZ_BLE_ADDRESS = "BC:33:AC:CB:F6:9D";
     //private static final UUID KZ_SERVICE_UUID =UUID_SERVICE_COMMANDS;
     //button command
+    private Button btnSelectPer;
+    private Button btnSelectVib;
+    //
     private Button btnStart;
     private Button btnStop;
     //side rail
@@ -194,6 +194,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private CountDownTimer timerTherapy = null;
     CountDownTimer timerForceSop = null;
     CountDownTimer timerLockColdDown = null;
+    //
+    private Status status = new Status();
 
     //revision
     private Rev rev = new Rev();
@@ -234,6 +236,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     String value = null;
 
     //
+    private boolean isLockMode = false;
+    private int mode = 0;
     private int mProtocol = 0;
     private int mSp = 0;
     //therapy
@@ -287,9 +291,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         removeMenuBar();
         //remove action bar from top
         removeActionBar();
-
-        //modifyTopBar();
-        //setContentView(R.layout.activity_vibration_percussion);
         //init all components
         initGUI();
         //init bluetooth and broadcast
@@ -302,6 +303,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         alertDialogLoading(true);
         //Adding revision
         displaySoftRev(rev.APP_REV_PAGE_11);
+
+        //testing
+        testing();
 
 
     }
@@ -386,6 +390,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     //init GUI
     private void initGUI() {
+        btnSelectPer = findViewById(R.id.btnSelPerc);
+        btnSelectVib = findViewById(R.id.btnSelVib);
         btnMenu = findViewById(R.id.btnMenu);
         btnStart = findViewById(R.id.btnModeStart);
         btnStop = findViewById(R.id.btnModeStop);
@@ -398,8 +404,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         tvOperation = findViewById(R.id.tvOpe);
         tvTimer = findViewById(R.id.tvtimer);
         tvCon = findViewById(R.id.tvCon);
-        tvRev=findViewById(R.id.tvVibRev);
-        tvPresStart=findViewById(R.id.tvReady);
+        tvRev = findViewById(R.id.tvVibRev);
+        tvPresStart = findViewById(R.id.tvReady);
     }
 
     //init system
@@ -488,8 +494,17 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         mGatt = null;*/
     }
 
+    //testing
+    private void testing(){
+       // k9Alert.alertDialogTherapyDone(utilDialog.THERAPY_DONE);
+
+        //k9Alert.alertDialogConnectionFail("s");
+    }
+
     //events
     private void eventBtn() {
+        btnSelectPer.setOnClickListener(this);
+        btnSelectVib.setOnClickListener(this);
         btnStart.setOnClickListener(this);
         btnStop.setOnClickListener(this);
         btnSr1.setOnClickListener(this);
@@ -514,9 +529,76 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             if (!isFlagSetConnection) {
                 setConnetion();
             }
+        } else if (btnSelectPer == v) {
+            if (isTherapyOn == false) {
+                Log.d(TAG, "onClick: isLockMode" + isLockMode);
+                if (isLockMode == false) {
+                    mode = selectMode(status.SELECT_MODE_PERCUSSION);
+                }
 
+            }
+        } else if (btnSelectVib == v) {
+            if (isTherapyOn == false) {
+                Log.d(TAG, "onClick: isLockMode" + isLockMode);
+                if (isLockMode == false) {
+                    mode = selectMode(status.SELECT_MODE_VIBRATION);
+                }
+
+            }
         }
     }
+
+    //event when is selected percussion
+    private int selectMode(int mode) {
+        if (mode == status.SELECT_MODE_PERCUSSION) {
+            //reset flag selected transd
+            flagIsTRA=false;
+            flagIsTRB=false;
+            //clean array list
+            resetCheckBockA();
+            resetCheckBockB();
+            //
+            updateButtonsRbAPercussion(setPointsBluetooth.INT_BLE_SP_TRA_NONE);
+            updateButtonsRbBPercussion(setPointsBluetooth.INT_BLE_SP_TRB_NONE);
+            updateMode(mode);
+            return status.SELECT_MODE_PERCUSSION;
+
+        } else if (mode == status.SELECT_MODE_VIBRATION) {
+            //reset flag selected transd
+            flagIsTRA=false;
+            flagIsTRB=false;
+            resetCheckBockA();
+            resetCheckBockB();
+            updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
+            updateButtonsRbB(setPointsBluetooth.INT_BLE_SP_TRB_NONE);//selection transducer position A
+
+            updateMode(mode);
+            return status.SELECT_MODE_VIBRATION;
+        }
+        return 0;
+    }
+
+    //mode percussion
+
+
+    //mode vibration
+
+    //clean modes-A
+    private void resetCheckBockA() {
+        modelBtnArrayListA.clear();
+        modelIconArrayListA.clear();
+        //reset flag
+    }
+
+    //clean modes-B
+    private void resetCheckBockB() {
+        modelBtnArrayListB.clear();
+        modelIconArrayListB.clear();
+        //reset flag
+    }
+
+    //events when is selected vibration
+
 
     //launch home activity
     private void goHome() {
@@ -770,6 +852,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         recyclerViewAdaptIconB = new RecyclerViewAdapticonB(modelIconArrayListB);//modelDevicesArrayList
         recyclerViewIconB.setAdapter(recyclerViewAdaptIconB);
     }
+
     /*
     // get return from bluetooth and update GUI  frequency
     private boolean updateButtonsFrequencyF(int value) {
@@ -1027,7 +1110,47 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         return false;
     }
 
-    // get return from bluetooth and update GUI  RAdioButton -A
+    //radio buttons just for Percussion
+    private boolean updateButtonsRbAPercussion(int value) {
+        if (value > 0) {
+            try {
+                if (value == setPointsBluetooth.INT_BLE_SP_TRA_NONE) {
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //update iconA
+                    controlIconTransdA(controlGUI.POS0);
+                } else if (value == setPointsBluetooth.INT_BLE_SP_TRA1) {
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //update iconA
+                    controlIconTransdA(controlGUI.POS1);
+                } else if (value == setPointsBluetooth.INT_BLE_SP_TRA2) {
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    //updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //update iconA
+                    controlIconTransdA(controlGUI.POS2);
+                }
+                new_transdA = value;//save in memory
+                updateGUIRecyclerViewRbA();
+                return true;
+
+            } catch (Exception e) {
+                Log.d(TAG, "updateButtonsRbA: " + e.getMessage());
+            }
+        }
+        return false;
+    }
+
+    // Radio buttons for Percussion and vibration update GUI  RAdioButton -A
     private boolean updateButtonsRbA(int value) {
         if (value > 0) {
             try {
@@ -1086,6 +1209,46 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
             } catch (Exception e) {
                 Log.d(TAG, "updateButtonsRbA: " + e.getMessage());
+            }
+        }
+        return false;
+    }
+
+    // get return from bluetooth and update GUI  RAdioButton -B
+    private boolean updateButtonsRbBPercussion(int value) {
+        if (value > 0) {
+            try {
+                if (value == setPointsBluetooth.INT_BLE_SP_TRB_NONE) {
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //update iconB
+                    controlIconTransdB(controlGUI.POS0);
+                } else if (value == setPointsBluetooth.INT_BLE_SP_TRB1) {
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    // updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //update iconB
+                    controlIconTransdB(controlGUI.POS1);
+                } else if (value == setPointsBluetooth.INT_BLE_SP_TRB2) {
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    //updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //update iconB
+                    controlIconTransdB(controlGUI.POS2);
+                }
+                new_transdB = value;//save in memory
+                updateGUIRecyclerViewRbB();
+                return true;
+
+            } catch (Exception e) {
+                Log.d(TAG, "updateButtonsRbB: " + e.getMessage());
             }
         }
         return false;
@@ -1184,6 +1347,29 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         return setPointsBluetooth.INT_BLE_CMD_NONE;
     }
 
+    //get return from bluetooth and update GUI  commands
+    private int updateMode(int value) {
+        if (value > 0) {
+            try {
+                if (value == status.SELECT_MODE_NONE) {
+                    btnSelectPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                } else if ((value == status.SELECT_MODE_PERCUSSION)) {
+                    btnSelectPer.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
+                    btnSelectVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                } else if ((value == status.SELECT_MODE_VIBRATION)) {
+                    btnSelectPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectVib.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
+                }
+                return value;
+
+            } catch (Exception e) {
+                Log.d(TAG, "uupdateCommand: " + e.getMessage());
+            }
+        }
+        return setPointsBluetooth.INT_BLE_CMD_NONE;
+    }
+
     //indication therapy is ready
     private void updateBtnReady(int value) {
         try {
@@ -1194,10 +1380,13 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     //stop animation
                     btnReady.setVisibility(View.INVISIBLE);
                     displaytextStart(false);
+                    lockMode(false);
+
                     break;
                 case 1: //alert
                     btnReady.setVisibility(View.VISIBLE);
                     displaytextStart(true);
+                    lockMode(true);
                     /*if(btnReady.getVisibility()==View.INVISIBLE){
                         btnReady.setVisibility(View.VISIBLE);
                         animationSideRail(btnReady, R.drawable.btn_start_readim, true);
@@ -2324,6 +2513,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         }
     }
 
+    /*get all the feedback from the bluetooth and upgade ion the GUI*/
     //get parameters value
     private void getParamUpdateValueGui3(int value0, int value1, int value2, int value3) {
         try {
@@ -2350,13 +2540,18 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 updateFbCommands(mSp);
             } else if (mProtocol == bleProtocol.RBA) {
                 Log.d(TAG, "getParamUpdateValueGui3: RBA");
-                modelBtnArrayListA.clear();
-                modelIconArrayListA.clear();
-                updateFbRBA(mSp);
+                // modelBtnArrayListA.clear();
+                //modelIconArrayListA.clear();
+                resetCheckBockA();
+                //check mode
+                updateFbRBA(mode, mSp);
+
+
             } else if (mProtocol == bleProtocol.RBB) {
-                modelBtnArrayListB.clear();
-                modelIconArrayListB.clear();
-                updateFbRBb(mSp);
+                resetCheckBockB();
+                //modelBtnArrayListB.clear();
+                //modelIconArrayListB.clear();
+                updateFbRBb(mode, mSp);
 
             } else if (mProtocol == bleProtocol.COOLING) {
                 Log.d(TAG, "getParamUpdateValueGui3:cooling");
@@ -2559,12 +2754,12 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //display text press to start
-    private void displaytextStart(boolean input){
-        if(tvPresStart!=null){
-            if(input){
+    private void displaytextStart(boolean input) {
+        if (tvPresStart != null) {
+            if (input) {
                 tvPresStart.setVisibility(View.VISIBLE);
                 tvPresStart.setText("Press to start");
-            }else{
+            } else {
                 tvPresStart.setVisibility(View.INVISIBLE);
             }
         }
@@ -2579,9 +2774,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             updateButtonsFrequencyF(setPointsBluetooth.INT_BLE_SP_FREQ_NONE);//frequency
             updateButtonsIntensity(setPointsBluetooth.INT_BLE_SP_INT_NONE);//intensity
             updateButtonsTime(setPointsBluetooth.INT_BLE_SP_TIME_NONE);//time
-            //
-            updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
-            updateButtonsRbB(setPointsBluetooth.INT_BLE_SP_TRB_NONE);//selection transducer position A
+            //just for testing
+            //updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
+            //updateButtonsRbB(setPointsBluetooth.INT_BLE_SP_TRB_NONE);//selection transducer position A
 
             updateCommand(setPointsBluetooth.INT_BLE_CMD_NONE);
             //
@@ -2877,23 +3072,33 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //update displayRBA
-    private void updateFbRBA(int value) {
+    private void updateFbRBA(int mode, int value) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 // Stuff that updates the UI
-                flagIsTRA = updateButtonsRbA(value);
+                if (mode == status.SELECT_MODE_PERCUSSION) {
+                    flagIsTRA = updateButtonsRbAPercussion(value);
+                } else if (mode == status.SELECT_MODE_VIBRATION) {
+                    flagIsTRA = updateButtonsRbA(value);
+                }
+                //flagIsTRA = updateButtonsRbA(value);
             }
         });
     }
 
     //update displayRBB
-    private void updateFbRBb(int value) {
+    private void updateFbRBb(int mode, int value) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (mode == status.SELECT_MODE_PERCUSSION) {
+                    flagIsTRB = updateButtonsRbBPercussion(value);
+                } else if (mode == status.SELECT_MODE_VIBRATION) {
+                    flagIsTRB = updateButtonsRbB(value);
+                }
                 // Stuff that updates the UI
-                flagIsTRB = updateButtonsRbB(value);
+                //flagIsTRB = updateButtonsRbB(value);
             }
         });
     }
@@ -2973,6 +3178,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private void stopTherapy() {
         sendSpCommand(controlGUI.CMD_OFF, isTherapyOn);
         //cleanFlagAfterStop();
+        cancelReady();
     }
 
     //clean flag after stop
@@ -3399,5 +3605,18 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         } catch (Exception e) {
             Log.d(TAG, "removeMenuBar: ex:" + e.getMessage());
         }
+    }
+
+
+    //lock mode
+    private void lockMode(boolean input) {
+        isLockMode = input;
+    }
+
+    //cancel ready
+    private void cancelReady() {
+        lockMode(false);
+        isFlagIsSr = false;
+        updateBtnReady(controlGUI.POS0);//invisible ready
     }
 }

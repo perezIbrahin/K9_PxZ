@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnMainSett;
     private Button btnMainLock;
     private Button btnMainSleep;
+    private Button btnMainManual;
     private TextView tvRev;
 
     //shared preferences
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // for PDF view.
     //PDFView pdfView;
     // url of our PDF file.
-    String pdfurl = "https://drive.google.com/file/d/1hzyLk88dUOuFaFJyDvU_75f4rKXdtHmK/view?usp=sharing";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainSett = findViewById(R.id.btnMainSet);
         btnMainLock = findViewById(R.id.btnMainLock);
         btnMainSleep = findViewById(R.id.btnMainSllep);
+        btnMainManual=findViewById(R.id.btnManual);
         tvRev = findViewById(R.id.tvRev);
     }
 
@@ -125,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainSett.setOnClickListener(this);
         btnMainLock.setOnClickListener(this);
         btnMainSleep.setOnClickListener(this);
+        btnMainManual.setOnClickListener(this);
     }
 
     private void launchActivity(Class mclass) {
@@ -149,12 +152,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 toastMessage();
             }
 
-        } /*else if (v == btnMainInfo) {
-            CustomAlert customAlert = new CustomAlert(this, this);
-            customAlert.showAlertInfo(mySerialAdd);
-
-            //launchActivity(InfoActivity.class);
-        } */ else if (v == btnMainSleep) {
+        } else if (v == btnMainManual) {
+            launchActivity(ManualActivity.class);
+        }  else if (v == btnMainSleep) {
             launchActivity(SleepActivity.class);
         } else if (v == btnMainLock) {
 
@@ -323,13 +323,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "setLockScreen: lock screen" + isLockScreen);
                 btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_24), null, null);
                 btnMainLock.setText("Locked");
+
                 isLockScreen = true;
+                displayLock(isLockScreen);
                 return;
             } else if (isLockScreen) {
                 Log.d(TAG, "setLockScreen: unlock screen" + isLockScreen);
                 btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_open_24), null, null);
                 btnMainLock.setText("Unlocked");
                 isLockScreen = false;
+                displayLock(isLockScreen);
                 return;
             }
 
@@ -346,5 +349,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, "toastMessage: ex:"+e.getMessage());
         }
 
+    }
+
+    //show lock icon on the start button
+    private void displayLock(boolean input){
+        if(input){
+            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_phonelink_lock_48));
+        }else{
+            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_add_to_home_screen_48));
+        }
     }
 }

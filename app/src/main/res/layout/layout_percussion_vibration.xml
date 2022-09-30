@@ -111,6 +111,17 @@
                     android:textSize="@dimen/dim_text_sp_pv"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/textView11"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:text="HZ"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/dim_text_spv_pv"
+                    android:textStyle="bold" />
+
                 <View
                     android:id="@+id/divider4"
                     android:layout_width="match_parent"
@@ -142,17 +153,6 @@
                     android:layout_marginBottom="20dp"
                     android:layout_weight="1"
                     android:background="?android:attr/listDivider" />
-
-                <TextView
-                    android:id="@+id/textView11"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:text="HZ"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/dim_text_spv_pv"
-                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -194,6 +194,17 @@
                     android:textSize="@dimen/dim_text_sp_pv"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="%"
+                    android:textSize="@dimen/dim_text_spv_pv"
+                    android:textStyle="bold" />
+
                 <View
                     android:id="@+id/divider7"
                     android:layout_width="match_parent"
@@ -225,17 +236,6 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:background="?android:attr/listDivider" />
-
-                <TextView
-                    android:id="@+id/textView13"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="%"
-                    android:textSize="@dimen/dim_text_spv_pv"
-                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -306,7 +306,6 @@
         android:layout_marginEnd="16dp"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout"
         app:layout_constraintTop_toTopOf="@+id/linearLayout">
 
@@ -331,7 +330,6 @@
         android:layout_marginStart="16dp"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintStart_toEndOf="@+id/linearLayout"
         app:layout_constraintTop_toTopOf="@+id/linearLayout">
 
@@ -502,7 +500,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:text="mm:ss"
+        android:text="mim:sec"
         android:textSize="@dimen/dim_text_sp_min_pv"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tvtimer"
@@ -551,7 +549,7 @@
         android:layout_width="@dimen/dim_select_pv_W"
         android:layout_height="@dimen/dim_select_pv_H"
         android:layout_marginTop="16dp"
-        android:background="@drawable/btn_select_percus"
+        android:background="@drawable/btn_sp1"
         android:text="@string/string_name_select_perc"
         android:textSize="@dimen/dim_text_select_pv_main"
         app:layout_constraintEnd_toEndOf="@+id/btnModeStart"
@@ -563,7 +561,7 @@
         android:id="@+id/btnSelVib"
         android:layout_width="@dimen/dim_select_pv_W"
         android:layout_height="@dimen/dim_select_pv_H"
-        android:background="@drawable/btn_select_vib"
+        android:background="@drawable/btn_sp1"
         android:text="@string/string_name_select_vib"
         android:textSize="@dimen/dim_text_select_pv_main"
         app:layout_constraintBottom_toBottomOf="@+id/btnSelPerc"
@@ -573,13 +571,34 @@
 
     <TextView
         android:id="@+id/tvReady"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:text="@string/string_text_pres_start"
-        android:textSize="16sp"
+        android:textAlignment="center"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/btnReady"
         app:layout_constraintStart_toStartOf="@+id/btnReady"
         app:layout_constraintTop_toBottomOf="@+id/btnReady" />
+
+    <ImageView
+        android:id="@+id/imageView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/btnSelPerc"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="@+id/btnSelPerc"
+        app:layout_constraintTop_toBottomOf="@+id/btnSelPerc"
+        app:srcCompat="@drawable/ic_baseline_sensors_48" />
+
+    <ImageView
+        android:id="@+id/imageView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/btnSelVib"
+        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintStart_toStartOf="@+id/btnSelVib"
+        app:layout_constraintTop_toBottomOf="@+id/btnSelPerc"
+        app:srcCompat="@drawable/ic_baseline_water_48" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

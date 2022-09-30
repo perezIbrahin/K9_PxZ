@@ -75,6 +75,7 @@ import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
 import Model.ModelBtn;
 import Util.Beep;
+import Util.Bitwise;
 import Util.ConcatDataWriteBle;
 import Util.ControlGUI;
 import Util.Cooling;
@@ -495,8 +496,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //testing
-    private void testing(){
-       // k9Alert.alertDialogTherapyDone(utilDialog.THERAPY_DONE);
+    private void testing() {
+        // k9Alert.alertDialogTherapyDone(utilDialog.THERAPY_DONE);
 
         //k9Alert.alertDialogConnectionFail("s");
     }
@@ -519,7 +520,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     public void onClick(View v) {
         if (btnStart == v) {
             //beep.beep_key();
-            condStartTherapy(flagIsFreq, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
+            condStartTherapy(flagIsFreq,flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
         } else if (btnStop == v) {
             stopTherapy();
         } else if (btnMenu == v) {
@@ -552,8 +553,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private int selectMode(int mode) {
         if (mode == status.SELECT_MODE_PERCUSSION) {
             //reset flag selected transd
-            flagIsTRA=false;
-            flagIsTRB=false;
+            flagIsTRA = false;
+            flagIsTRB = false;
             //clean array list
             resetCheckBockA();
             resetCheckBockB();
@@ -565,8 +566,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
         } else if (mode == status.SELECT_MODE_VIBRATION) {
             //reset flag selected transd
-            flagIsTRA=false;
-            flagIsTRB=false;
+            flagIsTRA = false;
+            flagIsTRB = false;
             resetCheckBockA();
             resetCheckBockB();
             updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
@@ -582,7 +583,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
 
     //mode vibration
-
     //clean modes-A
     private void resetCheckBockA() {
         modelBtnArrayListA.clear();
@@ -598,7 +598,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //events when is selected vibration
-
 
     //launch home activity
     private void goHome() {
@@ -688,7 +687,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         }
         return false;
     }
-
 
     /*Adapter frequency*/
     //inject data to the inject data Model Basic
@@ -1328,13 +1326,13 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
                     return setPointsBluetooth.INT_BLE_CMD_NONE;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_START)) {
-                    btnStart.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
+                    btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48));
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     displayOperation(message.MESSAGE_SYSTEM_RUNNING);
                     return setPointsBluetooth.INT_BLE_CMD_START;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_STOP)) {
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                    btnStop.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
+                    btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
                     displayOperation(message.MESSAGE_SYSTEM_STOPPED);
                     return setPointsBluetooth.INT_BLE_CMD_STOP;
                 }
@@ -1346,6 +1344,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         }
         return setPointsBluetooth.INT_BLE_CMD_NONE;
     }
+
+
 
     //get return from bluetooth and update GUI  commands
     private int updateMode(int value) {
@@ -2610,7 +2610,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //beep
-    private void beepSound(){
+    private void beepSound() {
         Log.d(TAG, "beepSound: ");
         if (!isFlagSetConnection) {
             setConnetion();
@@ -3121,11 +3121,14 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             public void run() {
                 // Stuff that updates the UI
                 int ret = updateCommand(value);
+                //
                 if (ret == setPointsBluetooth.INT_BLE_CMD_NONE) {
                 } else if (ret == setPointsBluetooth.INT_BLE_CMD_START) {
                     updateBtnReady(controlGUI.POS0);
                     launchRunTherapy(valueTimerTherapy, countInterval);
+                    displayStartCommand("Running");
                 } else if (ret == setPointsBluetooth.INT_BLE_CMD_STOP) {
+                    displayStartCommand("Start");
                     if (isFlagTimerElapsed) {
                         notificationTimerElapsed();
                     } else {
@@ -3135,6 +3138,25 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 }
             }
         });
+    }
+
+    //display start command
+    private void displayStartCommand(String input) {
+        if (input != null) {
+            try {
+                if (btnStart != null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            btnStart.setText(input);
+
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "displayStartCommand: ex:" + e.getMessage());
+            }
+        }
     }
 
     //display textView Timer
@@ -3150,21 +3172,33 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     //------------------Operation--------------------//
     //
-    private void condStartTherapy(boolean flagIsFreq, boolean flagIsTim, boolean flagIsTRA, boolean flagIsTRB, boolean flagIsSR) {
+    private void condStartTherapy(boolean flagIsFreq, boolean flagIsInt, boolean flagIsTim, boolean flagIsTRA, boolean flagIsTRB, boolean flagIsSR) {
         if (true) {
-            if (flagIsFreq && flagIsTim && flagIsTim && flagIsTRA && flagIsTRB && !flagIsSR) {
+            if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && !flagIsSR) {
                 //check side rail
                 k9Alert.alertDialogSiderail(utilDialog.LOCATION_CONFIRM_SIDERAIL);
                 return;
-            } else if (flagIsFreq && flagIsTim && flagIsTim && flagIsTRA && flagIsTRB && flagIsSR) {
+            } else if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && flagIsSR) {
                 startTherapy();
             } else {
                 //missing parameter
-                k9Alert.alertDialogMissingPara(utilDialog.LOCATION_MISSING_PARAMS);
+                int status = checkMissingParam(flagIsFreq,  flagIsInt , flagIsTim, flagIsTRA, flagIsTRB, flagIsSR);
+                Log.d(TAG, "condStartTherapy: status:" + status);
+                k9Alert.alertDialogMissingPara(utilDialog.LOCATION_MISSING_PARAMS, status);
                 return;
             }
         }
     }
+
+
+    //check which parameter is missing
+    private int checkMissingParam(boolean frq, boolean intens, boolean time, boolean rba, boolean rbb, boolean siderail) {
+        /*insert a bit in position according to the inputs*/
+        Bitwise bitwise = new Bitwise();
+        Log.d(TAG, "checkMissingParam: time"+time);
+        return bitwise.operationBit(frq, intens, time, rba, rbb, siderail);
+    }
+
 
     //control operation start
     private void startTherapy() {
@@ -3617,7 +3651,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             Log.d(TAG, "removeMenuBar: ex:" + e.getMessage());
         }
     }
-
 
     //lock mode
     private void lockMode(boolean input) {

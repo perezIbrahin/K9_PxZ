@@ -17,8 +17,8 @@
     <dimen name="dim_btn_control_W">100dp</dimen>
     <dimen name="dim_btn_control_H">100dp</dimen>
 
-    <dimen name="dim_btn_control_start_W">150dp</dimen>
-    <dimen name="dim_btn_control_start_H">150dp</dimen>
+    <dimen name="dim_btn_control_start_W">160dp</dimen>
+    <dimen name="dim_btn_control_start_H">160dp</dimen>
 
     <dimen name="dim_btn_control_stop_W">150dp</dimen>
     <dimen name="dim_btn_control_stop_H">150dp</dimen>
@@ -106,6 +106,9 @@
     <!--btn icon  main size-->
     <dimen name="dim_icon_logo_H">100dp</dimen>
     <dimen name="dim_icon_logo_W">140dp</dimen>
+
+    <dimen name="dim_icon_logoa_H">100dp</dimen>
+    <dimen name="dim_icon_logoa_W">200dp</dimen>
 
     <!--btn select percussion vibration-->
     <dimen name="dim_select_pv_H">100dp</dimen>

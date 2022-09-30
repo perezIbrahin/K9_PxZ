@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.k9_pxz.R;
 
 import Interface.InterfaceSetupInfo;
+import Util.Bitwise;
 import Util.Configuration;
 import Util.Message;
 import Util.Rev;
@@ -73,9 +75,31 @@ public class K9Alert extends AppCompatActivity {
         }
     }
 
+    //notifications about selected parametres
+    private void displayText(TextView tv, String text) {
+        if (tv != null) {
+            tv.setText(text);
+            tv.setTextSize(26f);
+        } else {
+            Log.d(TAG, "SetImageView: null");
+        }
+    }
+
+    //ading text
+    private String addingText(String input, String newtext) {
+        if (input.length() > 5) {
+            return input + "\r\n" + newtext;
+        }
+        return newtext;
+    }
+
+
     //alert dialig missing settings
-    public void alertDialogMissingPara(String title) {
+    public void alertDialogMissingPara(String title, int status) {
         try {
+            Bitwise bitwise = new Bitwise();
+
+
             LayoutInflater li = LayoutInflater.from(context);
             View promptsView = li.inflate(R.layout.layout_check_configuration, null);
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -85,6 +109,54 @@ public class K9Alert extends AppCompatActivity {
             final TextView tvRev = (TextView) promptsView
                     .findViewById(R.id.tvDialogConfRev);
             tvRev.setText(rev.APP_REV_PAGE_51);
+
+
+            final TextView tvCheck0 = (TextView) promptsView.findViewById(R.id.tvCheck0);
+            String text = "0";
+
+
+            //
+            for (int i = 0; i < 5; i++) {
+                if (i == 0) {
+
+                    if (!bitwise.isBitEnable(status, i)) {
+                        String newText = "Missing Frequency";
+                        text = addingText(text, newText);
+                        displayText(tvCheck0, text);
+                    }
+                } else if (i == 1) {
+
+                    if (!bitwise.isBitEnable(status, i)) {
+                        String newText = "Missing Intensity";
+                        text = addingText(text, newText);
+                        displayText(tvCheck0, text);
+                    }
+                } else if (i == 2) {
+                    if (!bitwise.isBitEnable(status, i)) {
+                        String newText = "Missing Timer";
+                        text = addingText(text, newText);
+                        displayText(tvCheck0, text);
+                    }
+
+
+                } else if (i == 3) {
+                    if (!bitwise.isBitEnable(status, i)) {
+                        String newText = "Missing Select location -A";
+                        text = addingText(text, newText);
+                        displayText(tvCheck0, text);
+                    }
+
+                } else if (i == 4) {
+                    if (!bitwise.isBitEnable(status, i)) {
+                        String newText = "Missing Select location -B";
+                        text = addingText(text, newText);
+                        displayText(tvCheck0, text);
+                    }
+
+                }
+
+            }
+
 
             AlertDialog alertDialog = alertDialogBuilder.create();
             final Button btnConf = (Button) promptsView.findViewById(R.id.btnConfConfirm);

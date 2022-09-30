@@ -171,5 +171,8 @@
     <string name="string_text_lost_connection">Connection lost!</string>
     <string name="string_text_lost_connection_code">Error code 1001</string>
 
+    <!-- start button -->
+    <string name="string_text_btn_start">Start</string>
+    <string name="string_text_btn_running">Running</string>
 
 </resources>

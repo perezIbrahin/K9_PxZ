@@ -69,14 +69,13 @@
 
             <Button
                 android:id="@+id/btnMainLock"
-                android:text="LOCK"
                 android:layout_width="@dimen/dim_btn_bar_W"
                 android:layout_height="@dimen/dim_btn_bar_H"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:drawableTop="@drawable/ic_baseline_lock_24"
+                android:drawableTop="@drawable/ic_baseline_lock_open_24"
                 android:padding="5dp"
-
+                android:text="LOCK"
                 android:textColor="@color/black"
                 android:textSize="@dimen/dim_text_bar_main"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -94,6 +93,7 @@
         android:layout_margin="10dp"
         android:layout_marginBottom="92dp"
         android:background="@drawable/btn_main"
+        android:drawableBottom="@drawable/ic_baseline_lock_open_48"
         android:elevation="10dp"
         android:padding="30dp"
         android:text="@string/string_name_btn_main"
@@ -138,12 +138,12 @@
 
     <ImageView
         android:id="@+id/imageView9"
-        android:layout_width="@dimen/dim_icon_logo_W"
-        android:layout_height="@dimen/dim_icon_logo_H"
+        android:layout_width="@dimen/dim_icon_logoa_W"
+        android:layout_height="@dimen/dim_icon_logoa_H"
         android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView10"
         app:layout_constraintHorizontal_bias="0.467"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView10"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         app:srcCompat="@drawable/iturn" />
 
@@ -152,9 +152,8 @@
         android:layout_width="@dimen/dim_icon_logo_W"
         android:layout_height="40dp"
         app:layout_constraintBottom_toTopOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="@+id/imageView9"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/imageView9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/iturna" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

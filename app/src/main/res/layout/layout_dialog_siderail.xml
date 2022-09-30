@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:text="@string/string_name_lock"
+        android:text="@string/string_dial_side_rail"
         android:textAlignment="center"
         android:textSize="@dimen/dim_text_dialog_siderail"
         android:textStyle="bold"

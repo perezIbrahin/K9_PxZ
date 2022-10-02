@@ -158,7 +158,7 @@
     <string name="string_text_check_transdB">Check transducers B</string>
     <string name="string_name_therapy_complete">Therapy complete.</string>
     <string name="string_name_therapy">Percussion/Vibration Therapy</string>
-    <string name="string_name_btn_main">K-9</string>
+    <string name="string_name_btn_main" translatable="false">K-9</string>
     <string name="string_name_select_perc">Percussion</string>
     <string name="string_name_select_vib">Vibration</string>
     <string name="string_name_lock">Are you sure?</string>
@@ -171,8 +171,51 @@
     <string name="string_text_lost_connection">Connection lost!</string>
     <string name="string_text_lost_connection_code">Error code 1001</string>
 
+    <!-- main screen  button -->
+    <string name="string_text_main_manual">Manual</string>
+    <string name="string_text_main_lock">Lock</string>
+    <string name="string_text_main_sleep">Sleep</string>
+
+    <!-- percussion and vibration screen  button -->
+    <string name="string_text_pv__btn_main">Main</string>
+    <string name="string_text_pv_tv_minsec">min:sec</string>
+    <string name="string_text_pv_tv_freq">Frequency</string>
+    <string name="string_text_pv_tv_tim">Time(min)</string>
+
+    <!-- sleep screen  button -->
+    <string name="string_text_btn_sleep">Sleep</string>
+
+    <!-- dialog loading screen  button -->
+
+    <string name="string_text_dial_loading">Loading. Please wait...&quot;</string>
+    <string name="string_text_dial_enter_pass">Enter password : </string>
+
+
     <!-- start button -->
     <string name="string_text_btn_start">Start</string>
     <string name="string_text_btn_running">Running</string>
+
+    <!-- spare text-->
+    <string name="string_text_spare1" translatable="false">spare</string>
+    <string name="string_text_spare2" translatable="false">spare</string>
+    <string name="string_text_spare3" translatable="false">spare</string>
+    <string name="string_text_spare4" translatable="false">spare</string>
+    <string name="string_text_spare5" translatable="false">spare</string>
+    <string name="string_text_spare6" translatable="false">spare</string>
+    <string name="string_text_spare7" translatable="false">spare</string>
+    <string name="string_text_spare8" translatable="false">spare</string>
+    <string name="string_text_spare9" translatable="false">spare</string>
+    <string name="string_text_spare10" translatable="false">spare</string>
+
+    <!-- language translation-->
+    <string-array name="language_option">
+        <item>English</item>
+        <item>German</item>
+        <item>France</item>
+        <item>Italian</item>
+        <item>Spanish</item>
+
+    </string-array>
+    <string name="string_text_pv_tv_int">Intensity</string>
 
 </resources>

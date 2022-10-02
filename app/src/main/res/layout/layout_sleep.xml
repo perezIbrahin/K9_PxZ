@@ -10,7 +10,7 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:elevation="10dp"
-        android:text="Wake-up"
+        android:text="@string/string_text_btn_sleep"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

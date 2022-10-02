@@ -2,23 +2,27 @@ package com.example.k9_pxz;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.widget.Toast;
 
 //import Alert.AlertCustomDialog;
-import Alert.CustomAlert;
 import Alert.K9Alert;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
+import Util.LocaleHelper;
 import Util.Rev;
 import Util.Util_Dialog;
 //import Util.Status;
@@ -41,7 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnMainSleep;
     private Button btnMainManual;
     private TextView tvRev;
-
+    private Spinner mLanguage;
+    private TextView tvTherapyName;
+    ArrayAdapter<String> mAdapter;
     //shared preferences
     public static final String SHARED_PREFS1 = "sharedPrefs";
     //variables to save text
@@ -66,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private K9Alert k9Alert;
     private Util_Dialog utilDialog = new Util_Dialog();
 
+    //language
+    private String language="en";
+
     //load manual
     // creating a variable
     // for PDF view.
@@ -88,8 +97,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initGUI();
         //init other stuff
         initApp();
+        //init array for language
+        initArrayLang();
         //events btns
         eventsBtn();
+        //events spinner language
+        eventSpinnerLanguage();
         //get info from others pages
         getExtrasFromAct();//get extras from other activity
         //Adding revision
@@ -108,8 +121,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainSett = findViewById(R.id.btnMainSet);
         btnMainLock = findViewById(R.id.btnMainLock);
         btnMainSleep = findViewById(R.id.btnMainSllep);
-        btnMainManual=findViewById(R.id.btnManual);
+        btnMainManual = findViewById(R.id.btnManual);
         tvRev = findViewById(R.id.tvRev);
+        mLanguage = (Spinner) findViewById(R.id.spinnerLang);
+        tvTherapyName = findViewById(R.id.tvTherapyName);
     }
 
     private boolean initApp() {
@@ -137,24 +152,113 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //init array spinner language
+    private void initArrayLang() {
+        Context context = LocaleHelper.setLocale(MainActivity.this, "en");
+        Resources resources = context.getResources();
+        ArrayAdapter mAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.language_option));
+        mLanguage.setAdapter(mAdapter);
+
+        //get language
+        if (LocaleHelper.getLanguage(MainActivity.this).equalsIgnoreCase("en")) {
+            mLanguage.setSelection(mAdapter.getPosition("English"));
+        } else if (LocaleHelper.getLanguage(MainActivity.this).equalsIgnoreCase("de")) {
+            mLanguage.setSelection(mAdapter.getPosition("German"));
+        } else if (LocaleHelper.getLanguage(MainActivity.this).equalsIgnoreCase("fr")) {
+            mLanguage.setSelection(mAdapter.getPosition("France"));
+        } else if (LocaleHelper.getLanguage(MainActivity.this).equalsIgnoreCase("it")) {
+            mLanguage.setSelection(mAdapter.getPosition("Italian"));
+        } else {
+            mLanguage.setSelection(mAdapter.getPosition("Spanish"));
+        }
+    }
+
+    //load all the text according to the language
+    private void loadContentByLanguage(Resources resources) {
+        btnMainManual.setText(resources.getString(R.string.string_text_main_manual));
+        btnMainLock.setText(resources.getString(R.string.string_text_main_lock));
+        btnMainSleep.setText(resources.getString(R.string.string_text_main_sleep));
+        tvTherapyName.setText(resources.getString(R.string.string_name_therapy));
+
+    }
+
+    //events language
+    private void eventSpinnerLanguage() {
+        mLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int i, long id) {
+                Context context;
+                Resources resources;
+                switch (i) {
+                    case 0:
+                        context = LocaleHelper.setLocale(MainActivity.this, "en");//english
+                        language="en";
+                        resources = context.getResources();
+                        loadContentByLanguage(resources);
+
+                        break;
+                    case 1:
+                        context = LocaleHelper.setLocale(MainActivity.this, "de");//germany
+                        language="de";
+                        resources = context.getResources();
+                        loadContentByLanguage(resources);
+
+                        break;
+                    case 2:
+                        context = LocaleHelper.setLocale(MainActivity.this, "fr");//fr
+                        language="fr";
+                        resources = context.getResources();
+                        loadContentByLanguage(resources);
+
+                        break;
+                    case 3:
+                        context = LocaleHelper.setLocale(MainActivity.this, "it");//it
+                        language="it";
+                        resources = context.getResources();
+                        loadContentByLanguage(resources);
+
+                        break;
+                    case 4:
+                        context = LocaleHelper.setLocale(MainActivity.this, "es");//sp
+                        language="es";
+                        resources = context.getResources();
+                        loadContentByLanguage(resources);
+
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    //shared preferences
+
+
+    //load preferences
+
     @Override
     public void onClick(View v) {
         if (v == btnMainK9) {
             if (!isLockScreen) {
                 passBleAddToVib(myBleAdd);
-            }else{
+            } else {
                 toastMessage();
             }
         } else if (v == btnMainSett) {
             if (!isLockScreen) {
                 launchActivity(SettActivity.class);
-            }else{
+            } else {
                 toastMessage();
             }
 
         } else if (v == btnMainManual) {
             launchActivity(ManualActivity.class);
-        }  else if (v == btnMainSleep) {
+        } else if (v == btnMainSleep) {
             launchActivity(SleepActivity.class);
         } else if (v == btnMainLock) {
 
@@ -215,7 +319,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (add != null) {
                 Bundle bundle = new Bundle();
                 Log.d(TAG, "passBleAddToVib " + add);
-                bundle.putString("vibAdd", add);
+                bundle.putString("vibAdd", add);//send bluetooth address
+                bundle.putString("language", language);//send bluetooth address
                 Intent intent = new Intent(MainActivity.this, VibrationPercussionActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -317,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //lock/unlock
-    private void setLockScreen(){
+    private void setLockScreen() {
         try {
             if (!isLockScreen) {
                 Log.d(TAG, "setLockScreen: lock screen" + isLockScreen);
@@ -336,26 +441,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
 
-        }catch (Exception e){
-            Log.d(TAG, "setLockScreen: ex:"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "setLockScreen: ex:" + e.getMessage());
         }
     }
 
     //
-    private void toastMessage(){
+    private void toastMessage() {
         try {
             Toast.makeText(getApplicationContext(), "Unlock the screen", Toast.LENGTH_SHORT).show();
-        }catch (Exception e){
-            Log.d(TAG, "toastMessage: ex:"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "toastMessage: ex:" + e.getMessage());
         }
 
     }
 
     //show lock icon on the start button
-    private void displayLock(boolean input){
-        if(input){
+    private void displayLock(boolean input) {
+        if (input) {
             btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_phonelink_lock_48));
-        }else{
+        } else {
             btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_add_to_home_screen_48));
         }
     }

@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -43,6 +44,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -82,6 +84,7 @@ import Util.Cooling;
 import Util.Default_values;
 import Util.IntToArray;
 import Util.Key_Util;
+import Util.LocaleHelper;
 import Util.RecyclerLocations;
 import Util.Rev;
 import Util.SetPointsBluetooth;
@@ -125,7 +128,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private TextView tvCon;
     private TextView tvRev;
     private TextView tvPresStart;
-
+    private TextView tvTextFrq;
+    private TextView tvTextInt;
+    private TextView tvTextTime;
     //Adapter Frequency
     private RecyclerView recyclerViewF;
     private RecyclerView recyclerViewI;
@@ -280,6 +285,12 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     int moduleA = 0;
     int moduleB = 0;
 
+    //Language
+    private String language = "en";
+    private Resources resources;
+    //
+    private String dialogSideRailLang="0";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -298,6 +309,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         initOther();
         //init paremetriz for app
         initApp();
+        //init language
+        initLang();
         //buttons events
         eventBtn();
         //loading alert dialog
@@ -407,6 +420,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         tvCon = findViewById(R.id.tvCon);
         tvRev = findViewById(R.id.tvVibRev);
         tvPresStart = findViewById(R.id.tvReady);
+        //
+        tvTextFrq=findViewById(R.id.tvTextFreq);
+        tvTextInt=findViewById(R.id.tvtextInt);
+        tvTextTime=findViewById(R.id.tvTextTime);
     }
 
     //init system
@@ -448,6 +465,32 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             launchBleScan();
         }
         return true;
+    }
+
+    //init language
+    //init array spinner language
+    private void initLang() {
+        Log.d(TAG, "initLang: language:" + language);
+        Context context = LocaleHelper.setLocale(VibrationPercussionActivity.this, language);
+        resources = context.getResources();
+        loadContentByLanguage(resources);
+        //send type of language to alert
+        //k9Alert = new K9Alert(language);
+    }
+
+    //load all the text according to the language
+    private void loadContentByLanguage(Resources resources) {
+        btnStart.setText(resources.getString(R.string.btnStart));
+        btnStop.setText(resources.getString(R.string.btnStop));
+        btnSelectPer.setText(resources.getString(R.string.string_name_select_perc));
+        btnSelectVib.setText(resources.getString(R.string.string_name_select_vib));
+        tvPresStart.setText(resources.getString(R.string.string_text_pres_start));
+        tvTextFrq.setText(resources.getString(R.string.string_text_pv_tv_freq));
+        tvTextInt.setText(resources.getString(R.string.string_text_pv_tv_int));
+        tvTextTime.setText(resources.getString(R.string.string_text_pv_tv_tim));
+        //dialog with language
+        dialogSideRailLang=resources.getString(R.string.string_dial_side_rail);
+
     }
 
     //close connection
@@ -520,7 +563,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     public void onClick(View v) {
         if (btnStart == v) {
             //beep.beep_key();
-            condStartTherapy(flagIsFreq,flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
+            condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
         } else if (btnStop == v) {
             stopTherapy();
         } else if (btnMenu == v) {
@@ -636,7 +679,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         try {
             Bundle bundle = getIntent().getExtras();
             if (bundle != null || oldAddress == null) {
+                //get bluetooth address
                 String add = bundle.getString("vibAdd");
+                //get language
+                language = bundle.getString("language");
                 if (add != null) {
                     Log.d(TAG, "Vibration getExtrasFromAct: " + add);
                     if (add.equalsIgnoreCase(oldAddress)) {
@@ -1323,12 +1369,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 if (value == setPointsBluetooth.INT_BLE_CMD_NONE) {
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-
                     return setPointsBluetooth.INT_BLE_CMD_NONE;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_START)) {
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48));
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                    displayOperation(message.MESSAGE_SYSTEM_RUNNING);
+                    displayOperation(resources.getString(R.string.string_text_btn_running));
                     return setPointsBluetooth.INT_BLE_CMD_START;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_STOP)) {
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
@@ -1344,7 +1389,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         }
         return setPointsBluetooth.INT_BLE_CMD_NONE;
     }
-
 
 
     //get return from bluetooth and update GUI  commands
@@ -2769,7 +2813,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         if (tvPresStart != null) {
             if (input) {
                 tvPresStart.setVisibility(View.VISIBLE);
-                tvPresStart.setText("Press to start");
+                tvPresStart.setText(resources.getString(R.string.string_text_pres_start));
+                //tvPresStart.setText("Press to start");
             } else {
                 tvPresStart.setVisibility(View.INVISIBLE);
             }
@@ -3176,15 +3221,15 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         if (true) {
             if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && !flagIsSR) {
                 //check side rail
-                k9Alert.alertDialogSiderail(utilDialog.LOCATION_CONFIRM_SIDERAIL);
+                k9Alert.alertDialogSiderail(dialogSideRailLang);
                 return;
             } else if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && flagIsSR) {
                 startTherapy();
             } else {
                 //missing parameter
-                int status = checkMissingParam(flagIsFreq,  flagIsInt , flagIsTim, flagIsTRA, flagIsTRB, flagIsSR);
+                int status = checkMissingParam(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, flagIsSR);
                 Log.d(TAG, "condStartTherapy: status:" + status);
-                k9Alert.alertDialogMissingPara(utilDialog.LOCATION_MISSING_PARAMS, status);
+                k9Alert.alertDialogMissingPara(language, status);
                 return;
             }
         }
@@ -3195,7 +3240,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private int checkMissingParam(boolean frq, boolean intens, boolean time, boolean rba, boolean rbb, boolean siderail) {
         /*insert a bit in position according to the inputs*/
         Bitwise bitwise = new Bitwise();
-        Log.d(TAG, "checkMissingParam: time"+time);
+        Log.d(TAG, "checkMissingParam: time" + time);
         return bitwise.operationBit(frq, intens, time, rba, rbb, siderail);
     }
 

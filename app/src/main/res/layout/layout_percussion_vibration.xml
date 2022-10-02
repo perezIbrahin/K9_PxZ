@@ -20,7 +20,7 @@
             android:layout_margin="5dp">
 
             <TextView
-                android:id="@+id/textView15"
+                android:id="@+id/tvTextPvTitile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/string_name_therapy"
@@ -102,12 +102,12 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/tvTextFreq"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="Frequency"
+                    android:text="@string/string_text_pv_tv_freq"
                     android:textSize="@dimen/dim_text_sp_pv"
                     android:textStyle="bold" />
 
@@ -184,13 +184,13 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView12"
+                    android:id="@+id/tvtextInt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Intensity"
+                    android:text="@string/string_text_pv_tv_int"
                     android:textSize="@dimen/dim_text_sp_pv"
                     android:textStyle="bold" />
 
@@ -286,12 +286,12 @@
                 android:background="?android:attr/listDivider" />
 
             <TextView
-                android:id="@+id/textView14"
+                android:id="@+id/tvTextTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:gravity="center"
-                android:text="Time(min)"
+                android:text="@string/string_text_pv_tv_tim"
                 android:textSize="@dimen/dim_text_spv_pv"
                 android:textStyle="bold" />
 
@@ -500,7 +500,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:text="mim:sec"
+        android:text="@string/string_text_pv_tv_minsec"
         android:textSize="@dimen/dim_text_sp_min_pv"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tvtimer"

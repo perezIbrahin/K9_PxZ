@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">K9_PxZ</string>
+    <string name="string_text_main_manual">Manuelle</string>
+    <string name="string_text_main_lock">serrure</string>
+    <string name="string_text_pv__btn_main">Principal</string>
+    <string name="string_text_main_sleep">Dormir</string>
+    <string name="string_text_pv_tv_freq">Fréquence</string>
+    <string name="string_text_pv_tv_int">Intensité</string>
+    <string name="string_text_pv_tv_tim">Temps(min)</string>
+    <string name="string_text_dial_loading">Chargement. Veuillez patienter..&quot;</string>
+    <string name="string_text_dial_enter_pass">Entrez le mot de passe :</string>
+    <string name="string_text_btn_start">Commencer</string>
+    <string name="string_text_btn_running">Course</string>
+    <string name="string_text_lost_connection">Connexion perdue!</string>
+    <string name="string_text_pres_start">Appuyez sur pour commencer.</string>
+    <string name="string_btn_SR_cancel">Annuler</string>
+    <string name="string_btn_SR_confirm">Confirmer</string>
+    <string name="string_name_lock">Es-tu sûr?</string>
+    <string name="string_name_select_vib">Vibration</string>
+    <string name="string_name_select_perc">Percussion</string>
+    <string name="string_name_therapy">Thérapie par percussion/vibration</string>
+    <string name="string_name_therapy_complete">Thérapie terminée.</string>
+    <string name="string_text_check_transdB">Vérifier les transducteurs B</string>
+    <string name="string_text_check_transdA">Vérifier les transducteurs A</string>
+    <string name="string_text_check_int">Vérifier l’intensité</string>
+    <string name="string_text_check_tim">Vérifier la minuterie</string>
+    <string name="string_text_check_freq">Vérifier la fréquence</string>
+    <string name="string_dial_configuration">Vérifiez les paramètres!</string>
+    <string name="string_dial_side_rail">Confirmez que siderails est centré sur le patient</string>
+    <string name="string_settings">Paramètres</string>
+    <string name="btnStart">Commencer</string>
+    <string name="btnStop">arrêter</string>
+</resources>

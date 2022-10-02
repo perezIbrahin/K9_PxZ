@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:layout_marginBottom="204dp"
-        android:text="Loading. Please wait...&quot;"
+        android:text="@string/string_text_dial_loading"
         android:textSize="@dimen/dim_text_dialog_siderail"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

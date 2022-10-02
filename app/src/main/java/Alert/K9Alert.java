@@ -2,6 +2,7 @@ package Alert;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.example.k9_pxz.R;
+import com.example.k9_pxz.VibrationPercussionActivity;
 
 import Interface.InterfaceSetupInfo;
 import Util.Bitwise;
 import Util.Configuration;
+import Util.LocaleHelper;
 import Util.Message;
 import Util.Rev;
 import Util.Util_Dialog;
@@ -31,13 +34,21 @@ public class K9Alert extends AppCompatActivity {
     Util_Dialog util_dialog = new Util_Dialog();
     Rev rev = new Rev();
     CountDownTimer countDownTimer;
+    Context context;
+    //to get language
+    String language = "en";
+    Context contextLang;
+    //user internal
+    private Context contextLoc;
+    private Resources resources;
+
 
     public K9Alert(InterfaceSetupInfo interfaceSetupInfo, Context context) {
         this.interfaceSetupInfo = interfaceSetupInfo;
         this.context = context;
+        contextLang = context;
     }
 
-    Context context;
 
     public void alertDialogLivePage(String title) {
         try {
@@ -97,9 +108,10 @@ public class K9Alert extends AppCompatActivity {
     //alert dialig missing settings
     public void alertDialogMissingPara(String title, int status) {
         try {
+            //get bit active
             Bitwise bitwise = new Bitwise();
 
-
+            //
             LayoutInflater li = LayoutInflater.from(context);
             View promptsView = li.inflate(R.layout.layout_check_configuration, null);
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -120,20 +132,23 @@ public class K9Alert extends AppCompatActivity {
                 if (i == 0) {
 
                     if (!bitwise.isBitEnable(status, i)) {
-                        String newText = "Missing Frequency";
+                        //String newText = "Missing Frequency";
+                        String newText = resources.getString(R.string.string_text_check_freq);
                         text = addingText(text, newText);
                         displayText(tvCheck0, text);
                     }
                 } else if (i == 1) {
 
                     if (!bitwise.isBitEnable(status, i)) {
-                        String newText = "Missing Intensity";
+                        //String newText = "Missing Intensity";
+                        String newText = resources.getString(R.string.string_text_check_int);
                         text = addingText(text, newText);
                         displayText(tvCheck0, text);
                     }
                 } else if (i == 2) {
                     if (!bitwise.isBitEnable(status, i)) {
-                        String newText = "Missing Timer";
+                        //String newText = "Missing Timer";
+                        String newText = resources.getString(R.string.string_text_check_tim);
                         text = addingText(text, newText);
                         displayText(tvCheck0, text);
                     }
@@ -207,10 +222,19 @@ public class K9Alert extends AppCompatActivity {
             alertDialogBuilder.setView(promptsView);
             // create alert dialog
             AlertDialog alertDialog = alertDialogBuilder.create();
-            //set the revision
+            //get text view revision
             final TextView tvRev = (TextView) promptsView
                     .findViewById(R.id.tvDilgSrRev);
+            //set text revision
             tvRev.setText(rev.APP_REV_PAGE_50);
+            //get text view for text
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvTextDialogSR);
+            //set text
+            if(title!=null){
+                tvTextDialogSR.setText(title);
+            }
+
 
             //get buttons
             final Button btnConf = (Button) promptsView.findViewById(R.id.btnConfConfirm);

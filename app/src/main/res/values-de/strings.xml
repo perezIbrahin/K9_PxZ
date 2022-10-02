@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">K9_PxZ</string>
+    <string name="string_text_main_manual">Manuell</string>
+    <string name="string_text_main_lock">Schleuse</string>
+    <string name="string_text_main_sleep">Schlafen</string>
+    <string name="string_text_pv__btn_main">Hauptsächlich</string>
+    <string name="string_text_pv_tv_freq">Frequenz</string>
+    <string name="string_text_pv_tv_int">Intensität</string>
+    <string name="string_text_pv_tv_tim">Zeit(min)</string>
+    <string name="string_text_dial_loading">Laden. Bitte warten..&quot;</string>
+    <string name="string_text_dial_enter_pass">Passwort eingeben :</string>
+    <string name="string_text_btn_start">Anfangen</string>
+    <string name="string_text_btn_running">Ausgeführte</string>
+    <string name="string_text_lost_connection">Verbindung verloren!</string>
+    <string name="string_text_pres_start">Drücken Sie die Taste, um zu starten.</string>
+    <string name="string_btn_SR_cancel">Abbrechen</string>
+    <string name="string_btn_SR_confirm">Bestätigen</string>
+    <string name="string_name_lock">Bist du sicher?</string>
+    <string name="string_name_select_vib">Schwingung</string>
+    <string name="string_name_select_perc">Schlagzeug</string>
+    <string name="string_name_therapy">"Perkussions-/Vibrationstherapie "</string>
+    <string name="string_name_therapy_complete">Therapie abgeschlossen.</string>
+    <string name="string_text_check_transdB">Prüfwandler B</string>
+    <string name="string_text_check_transdA">Prüfwandler A</string>
+    <string name="string_text_check_int">Intensität prüfen</string>
+    <string name="string_text_check_tim">Timer prüfen</string>
+    <string name="string_text_check_freq">Häufigkeit prüfen</string>
+    <string name="string_dial_configuration">Überprüfen Sie die Einstellungen!</string>
+    <string name="string_dial_side_rail">Bestätigen Sie, dass die Seitengitter bis zum Patienten zentriert sind</string>
+    <string name="string_settings">Einstellungen</string>
+    <string name="btnStart">Anfangen</string>
+    <string name="btnStop">aufhören</string>
+</resources>

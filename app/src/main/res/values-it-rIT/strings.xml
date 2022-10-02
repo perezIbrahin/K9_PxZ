@@ -31,4 +31,6 @@
     <string name="string_settings">Impostazioni</string>
     <string name="btnStart">Inizio</string>
     <string name="btnStop">fermarsi</string>
+    <string name="string_text_action_locked">Bloccato</string>
+    <string name="string_text_action_unlocked">Sbloccato</string>
 </resources>

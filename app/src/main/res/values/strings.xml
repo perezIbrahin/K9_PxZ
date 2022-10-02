@@ -195,6 +195,12 @@
     <string name="string_text_btn_start">Start</string>
     <string name="string_text_btn_running">Running</string>
 
+    <!-- lock actions  -->
+    <string name="string_text_action_locked">Locked</string>
+    <string name="string_text_action_unlocked">Unlocked</string>
+
+    <!-- home button  -->
+    <string name="string_text_home">Home</string>
     <!-- spare text-->
     <string name="string_text_spare1" translatable="false">spare</string>
     <string name="string_text_spare2" translatable="false">spare</string>

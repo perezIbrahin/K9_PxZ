@@ -31,4 +31,6 @@
     <string name="string_settings">Configuración</string>
     <string name="btnStart">Empezar</string>
     <string name="btnStop">parar</string>
+    <string name="string_text_action_locked">Cerrado</string>
+    <string name="string_text_action_unlocked">Desbloqueado</string>
 </resources>

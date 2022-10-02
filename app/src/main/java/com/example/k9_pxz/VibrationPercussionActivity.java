@@ -123,6 +123,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private Button btnReady;
     private ImageView ivBle;
     private Button btnMenu;
+    private TextView tvTitle;
     private TextView tvOperation;
     private TextView tvTimer;
     private TextView tvCon;
@@ -288,9 +289,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     //Language
     private String language = "en";
     private Resources resources;
-    //
-    private String dialogSideRailLang="0";
-
+    //Dialog for text alert
+    private String dialogSideRailLang = "0";
+    private String dialogTherapyCompleteLang = "0";
+    private String dialogConfirmLang = "0";
+    private String dialogCancelLang = "0";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -314,7 +317,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         //buttons events
         eventBtn();
         //loading alert dialog
-        alertDialogLoading(true);
+
+
+        alertDialogLoading(true );
         //Adding revision
         displaySoftRev(rev.APP_REV_PAGE_11);
 
@@ -323,6 +328,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
 
     }
+
+    //loading dialog
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -421,9 +428,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         tvRev = findViewById(R.id.tvVibRev);
         tvPresStart = findViewById(R.id.tvReady);
         //
-        tvTextFrq=findViewById(R.id.tvTextFreq);
-        tvTextInt=findViewById(R.id.tvtextInt);
-        tvTextTime=findViewById(R.id.tvTextTime);
+        tvTextFrq = findViewById(R.id.tvTextFreq);
+        tvTextInt = findViewById(R.id.tvtextInt);
+        tvTextTime = findViewById(R.id.tvTextTime);
+        //
+        tvTitle=findViewById(R.id.tvTextPvTitile);
     }
 
     //init system
@@ -468,14 +477,24 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //init language
+
+
     //init array spinner language
     private void initLang() {
         Log.d(TAG, "initLang: language:" + language);
-        Context context = LocaleHelper.setLocale(VibrationPercussionActivity.this, language);
+        //Context context = LocaleHelper.setLocale(VibrationPercussionActivity.this, language);
+        //resources = context.getResources();
+        loadContentByLanguage(getResourcesLanguage(language));
+
+    }
+
+    //get resources for the language
+    private Resources getResourcesLanguage(String language) {
+        Context context;
+        Resources resources;
+        context = LocaleHelper.setLocale(VibrationPercussionActivity.this, language);
         resources = context.getResources();
-        loadContentByLanguage(resources);
-        //send type of language to alert
-        //k9Alert = new K9Alert(language);
+        return resources;
     }
 
     //load all the text according to the language
@@ -488,8 +507,13 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         tvTextFrq.setText(resources.getString(R.string.string_text_pv_tv_freq));
         tvTextInt.setText(resources.getString(R.string.string_text_pv_tv_int));
         tvTextTime.setText(resources.getString(R.string.string_text_pv_tv_tim));
+        tvTitle.setText(resources.getString(R.string.string_name_therapy));
+        btnMenu.setText(resources.getString(R.string.string_text_pv__btn_main));
         //dialog with language
-        dialogSideRailLang=resources.getString(R.string.string_dial_side_rail);
+        dialogSideRailLang = resources.getString(R.string.string_dial_side_rail);
+        dialogTherapyCompleteLang=resources.getString(R.string.string_name_therapy_complete);
+        dialogConfirmLang = resources.getString(R.string.string_btn_SR_confirm);
+        dialogCancelLang = resources.getString(R.string.string_btn_SR_cancel);
 
     }
 
@@ -623,7 +647,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //mode percussion
-
 
     //mode vibration
     //clean modes-A
@@ -1389,7 +1412,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         }
         return setPointsBluetooth.INT_BLE_CMD_NONE;
     }
-
 
     //get return from bluetooth and update GUI  commands
     private int updateMode(int value) {
@@ -3337,6 +3359,19 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             alertDialogBuilder = new AlertDialog.Builder(this);
             //alertDialogBuilder.setTitle(title);
             alertDialogBuilder.setView(promptsView);
+
+            //get text view for dialog
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvDialogLoading);
+            //get language
+            Resources resources=getResourcesLanguage(language);
+            String text=resources.getString(R.string.string_text_dial_loading);
+            //set text
+            if(text!=null){
+                tvTextDialogSR.setText(text);
+            }
+
+
             // set dialog message
             alertDialogBuilder
                     .setCancelable(false);
@@ -3484,7 +3519,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     //norification timer therapy elapsed
     private void notificationTimerElapsed() {
-        k9Alert.alertDialogTherapyDone(utilDialog.THERAPY_DONE);
+        k9Alert.alertDialogTherapyDone(dialogTherapyCompleteLang,dialogConfirmLang);
         isTherapyOn = false;
         beep.beep_disable();
         //cleanDisplayTimer();

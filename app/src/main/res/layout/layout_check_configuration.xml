@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvTextDialogSR"
+        android:id="@+id/tvTextDialogComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
@@ -46,8 +46,8 @@
         android:layout_marginTop="64dp"
         android:text="OK"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/tvTextDialogSR"
-        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogSR" />
+        app:layout_constraintStart_toStartOf="@+id/tvTextDialogComplete"
+        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogComplete" />
 
     <Button
         android:id="@+id/btnConfConfirm"

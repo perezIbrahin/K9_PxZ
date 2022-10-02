@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvTextDialogSR"
+        android:id="@+id/tvTextDialogComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
@@ -50,7 +50,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogSR" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogComplete" />
 
     <TextView
         android:id="@+id/tvCompTimer"

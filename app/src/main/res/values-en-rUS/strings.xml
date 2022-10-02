@@ -31,4 +31,6 @@
     <string name="string_settings">Settings</string>
     <string name="btnStart">start</string>
     <string name="btnStop">stop</string>
+    <string name="string_text_action_locked">Locked</string>
+    <string name="string_text_action_unlocked">Unlocked</string>
 </resources>

@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvTextDialogSR"
+        android:id="@+id/tvTextDialogLock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
@@ -42,20 +42,20 @@
         android:id="@+id/btnLockConfirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/btn_main"
         android:text="@string/string_btn_SR_confirm"
         android:textColor="@color/colorFla"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogSR" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogLock" />
 
     <Button
         android:id="@+id/btnLockCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="28dp"
         android:layout_marginTop="60dp"
         android:background="@drawable/btn_stop_red"
         android:text="@string/string_btn_SR_cancel"

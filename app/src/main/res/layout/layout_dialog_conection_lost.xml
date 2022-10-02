@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvTextDialogSR"
+        android:id="@+id/tvTextDialogComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
@@ -59,9 +59,9 @@
         android:layout_marginTop="24dp"
         android:text="@string/string_text_lost_connection_code"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvTextDialogSR"
-        app:layout_constraintStart_toStartOf="@+id/tvTextDialogSR"
-        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogSR" />
+        app:layout_constraintEnd_toEndOf="@+id/tvTextDialogComplete"
+        app:layout_constraintStart_toStartOf="@+id/tvTextDialogComplete"
+        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogComplete" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

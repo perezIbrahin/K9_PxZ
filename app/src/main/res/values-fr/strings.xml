@@ -31,4 +31,6 @@
     <string name="string_settings">Paramètres</string>
     <string name="btnStart">Commencer</string>
     <string name="btnStop">arrêter</string>
+    <string name="string_text_action_locked">Verrouillé</string>
+    <string name="string_text_action_unlocked">Déverrouillé</string>
 </resources>

@@ -22,6 +22,7 @@ import android.widget.Toast;
 import Alert.K9Alert;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
+import Util.Languages;
 import Util.LocaleHelper;
 import Util.Rev;
 import Util.Util_Dialog;
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //variables to save text
     public static final String BLE_ADD = "text";
 
-
     //private String
     private String myBleAdd = "0";
     private String mySerialAdd = "0";
@@ -64,17 +64,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public String DATA_SYSTEM_SERIAL = "DATA_SYSTEM_SERIAL";
     //lock
     private boolean isLockScreen = false;
-
     //revision
     private Rev rev = new Rev();
-
     //alert
     private K9Alert k9Alert;
     private Util_Dialog utilDialog = new Util_Dialog();
-
     //language
-    private String language="en";
-
+    private Resources resourcesLang;
+    private Languages languages=new Languages();
+    private String language = languages.LANG_EN;
+    private int languagePos = 0;
+    //Store preferences
+    private String KEY_LANGUAGE = languages.LANG_EN;
+    private String KEY_LANGUAGE_POS = "0";
     //load manual
     // creating a variable
     // for PDF view.
@@ -116,6 +118,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loadData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //get preferences saved before
+        getStorePreferences();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //Store preferences
+        storePreferences();
+    }
+
     private void initGUI() {
         btnMainK9 = findViewById(R.id.btnMainK9);
         btnMainSett = findViewById(R.id.btnMainSet);
@@ -155,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //init array spinner language
     private void initArrayLang() {
         Context context = LocaleHelper.setLocale(MainActivity.this, "en");
-        Resources resources = context.getResources();
+        Resources resourcesLang = context.getResources();
         ArrayAdapter mAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.language_option));
         mLanguage.setAdapter(mAdapter);
 
@@ -180,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainSleep.setText(resources.getString(R.string.string_text_main_sleep));
         tvTherapyName.setText(resources.getString(R.string.string_name_therapy));
 
+
     }
 
     //events language
@@ -191,41 +208,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Resources resources;
                 switch (i) {
                     case 0:
-                        context = LocaleHelper.setLocale(MainActivity.this, "en");//english
-                        language="en";
+                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_EN);//english
+                        language = languages.LANG_EN;
+                        languagePos=0;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
 
                         break;
                     case 1:
-                        context = LocaleHelper.setLocale(MainActivity.this, "de");//germany
-                        language="de";
+                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_DE);//germany
+                        language = languages.LANG_DE;
+                        languagePos=1;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
 
                         break;
                     case 2:
-                        context = LocaleHelper.setLocale(MainActivity.this, "fr");//fr
-                        language="fr";
+                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_FR);//fr
+                        language = languages.LANG_FR;
+                        languagePos=2;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
 
                         break;
                     case 3:
-                        context = LocaleHelper.setLocale(MainActivity.this, "it");//it
-                        language="it";
+                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_IT);//it
+                        language = languages.LANG_IT;
+                        languagePos=3;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
 
                         break;
                     case 4:
-                        context = LocaleHelper.setLocale(MainActivity.this, "es");//sp
-                        language="es";
+                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_ES);//sp
+                        language = languages.LANG_ES;
+                        languagePos=4;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
-
                         break;
-
                 }
             }
 
@@ -268,7 +288,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         // Stuff that updates the UI
-                        k9Alert.alertDialogLock(utilDialog.LOCATION_CONFIRM_LOCK);
+                        Resources resources=getResourcesLanguage(language);
+                        //dialog to be display
+                        String text=resources.getString(R.string.string_name_lock);
+                        //button name with language confirm
+                        String nameBtnConfirm=resources.getString(R.string.string_btn_SR_confirm);
+                        //button name with language cancel
+                        String nameBtnCancel=resources.getString(R.string.string_btn_SR_cancel);
+                        //send data to dialog
+                        k9Alert.alertDialogLock(text,nameBtnConfirm,nameBtnCancel);
                     }
                 });
 
@@ -412,7 +440,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemSetupInfo(String name, String description) {
         if (description.equalsIgnoreCase(utilDialog.LOCATION_CONFIRM_LOCK)) {
-            setLockScreen();
+
+            setLockScreen(getResourcesLanguage(language));
         }
     }
 
@@ -421,13 +450,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //get resources for the language
+    private Resources  getResourcesLanguage(String language){
+        Context context;
+        Resources resources;
+        context = LocaleHelper.setLocale(MainActivity.this, language);
+        resources = context.getResources();
+        return resources;
+    }
+
     //lock/unlock
-    private void setLockScreen() {
+    private void setLockScreen(Resources resources) {
         try {
             if (!isLockScreen) {
                 Log.d(TAG, "setLockScreen: lock screen" + isLockScreen);
                 btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_24), null, null);
-                btnMainLock.setText("Locked");
+                btnMainLock.setText(resources.getString(R.string.string_text_action_locked));
 
                 isLockScreen = true;
                 displayLock(isLockScreen);
@@ -435,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (isLockScreen) {
                 Log.d(TAG, "setLockScreen: unlock screen" + isLockScreen);
                 btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_open_24), null, null);
-                btnMainLock.setText("Unlocked");
+                btnMainLock.setText(resources.getString(R.string.string_text_action_unlocked));
                 isLockScreen = false;
                 displayLock(isLockScreen);
                 return;
@@ -463,5 +501,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_add_to_home_screen_48));
         }
+    }
+
+    //store  preferences
+    private void storePreferences() {
+        // Storing data into SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+
+        // Creating an Editor object to edit(write to the file)
+        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
+        // Storing the key and its value as the data fetched from spinner language
+        myEdit.putString(KEY_LANGUAGE, language);
+        //Store position of the spinner
+        myEdit.putInt(KEY_LANGUAGE_POS, languagePos);
+        Log.d(TAG, "storePreferences: language"+language);
+        Log.d(TAG, "storePreferences: language Position"+languagePos);
+
+
+        // Once the changes have been made,
+        // we need to commit to apply those changes made,
+        // otherwise, it will throw an error
+        myEdit.commit();
+    }
+
+    //store  preferences
+    private void getStorePreferences() {
+        // Retrieving the value using its keys the file name
+        // must be same in both saving and retrieving the data
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+
+        // The value will be default as empty string because for
+        // the very first time when the app is opened, there is nothing to show
+        String s1 = sh.getString(KEY_LANGUAGE, "en");
+        int a = sh.getInt(KEY_LANGUAGE_POS, 0);
+        //
+        Log.d(TAG, "getStorePreferences:language "+s1);
+        Log.d(TAG, "getStorePreferences:language Pos: "+a);
+        //int a = sh.getInt("age", 0);
+
+        // We can then use the data
+        if (language != null) {
+            language = s1;
+            //update spinner language
+            loadValueSpinnerLang(a);
+        }
+    }
+
+    //load preferences
+    private void loadValueSpinnerLang(int input) {
+       //
+        mLanguage.setSelection(input);
     }
 }

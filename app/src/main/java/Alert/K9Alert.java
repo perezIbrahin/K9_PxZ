@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,12 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.example.k9_pxz.R;
-import com.example.k9_pxz.VibrationPercussionActivity;
 
 import Interface.InterfaceSetupInfo;
 import Util.Bitwise;
 import Util.Configuration;
-import Util.LocaleHelper;
 import Util.Message;
 import Util.Rev;
 import Util.Util_Dialog;
@@ -96,14 +93,13 @@ public class K9Alert extends AppCompatActivity {
         }
     }
 
-    //ading text
+    //adding text
     private String addingText(String input, String newtext) {
         if (input.length() > 5) {
             return input + "\r\n" + newtext;
         }
         return newtext;
     }
-
 
     //alert dialig missing settings
     public void alertDialogMissingPara(String title, int status) {
@@ -227,9 +223,9 @@ public class K9Alert extends AppCompatActivity {
                     .findViewById(R.id.tvDilgSrRev);
             //set text revision
             tvRev.setText(rev.APP_REV_PAGE_50);
-            //get text view for text
+            //get text view for dialog
             final TextView tvTextDialogSR = (TextView) promptsView
-                    .findViewById(R.id.tvTextDialogSR);
+                    .findViewById(R.id.tvTextDialogComplete);
             //set text
             if(title!=null){
                 tvTextDialogSR.setText(title);
@@ -274,7 +270,7 @@ public class K9Alert extends AppCompatActivity {
             //alertDialogBuilder.setView(promptsView);
 
             // set dialog message
-            alertDialogBuilder
+           /* alertDialogBuilder
                     .setCancelable(false)
 
                     .setNegativeButton("Confirm",
@@ -290,7 +286,7 @@ public class K9Alert extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
                             }
-                    );
+                    );*/
 
             // show it
             alertDialog.show();
@@ -350,7 +346,7 @@ public class K9Alert extends AppCompatActivity {
     }
 
     //therapy complete
-    public void alertDialogTherapyDone(String title) {
+    public void alertDialogTherapyDone(String title, String textBtnConfirm) {
         try {
             Log.d(TAG, "alertDialogTherapyDone: ");
             LayoutInflater li = LayoutInflater.from(context);
@@ -359,13 +355,23 @@ public class K9Alert extends AppCompatActivity {
             alertDialogBuilder.setView(promptsView);
             // create alert dialog
             AlertDialog alertDialog = alertDialogBuilder.create();
+
             //set the revision
             final TextView tvRev = (TextView) promptsView
                     .findViewById(R.id.tvDilgCompRev);
             tvRev.setText(rev.APP_REV_PAGE_52);
+
             //display timer
             final TextView tvTimer = (TextView) promptsView
                     .findViewById(R.id.tvCompTimer);
+
+            //get text view for dialog
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvTextDialogComplete);
+            //set text
+            if(title!=null){
+                tvTextDialogSR.setText(title);
+            }
 
             Log.d(TAG, "alertDialogTherapyDone: 2");
             //timer
@@ -397,6 +403,11 @@ public class K9Alert extends AppCompatActivity {
 
             //get buttons
             final Button btnConf = (Button) promptsView.findViewById(R.id.btnCompConfirm);
+            if (btnConf != null) {
+                btnConf.setText(textBtnConfirm);
+            }
+
+
             //button confirm
             if (btnConf != null) {
                 try {
@@ -457,7 +468,7 @@ public class K9Alert extends AppCompatActivity {
     }
 
     //lock system
-    public void alertDialogLock(String title) {
+    public void alertDialogLock(String title, String confirm, String cancel) {
         try {
             LayoutInflater li = LayoutInflater.from(context);
             View promptsView = li.inflate(R.layout.layout_dialog_p53_lock, null);
@@ -470,9 +481,28 @@ public class K9Alert extends AppCompatActivity {
                     .findViewById(R.id.tvDilgLockRev);
             tvRev.setText(rev.APP_REV_PAGE_54);
 
+
+            //get text view for dialog
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvTextDialogLock);
+            //set text
+            if(title!=null){
+                tvTextDialogSR.setText(title);
+            }
+
             //get buttons
             final Button btnConf = (Button) promptsView.findViewById(R.id.btnLockConfirm);
             final Button btnCancel = (Button) promptsView.findViewById(R.id.btnLockCancel);
+
+            //set text buttons with language confirm
+            if (btnConf!=null){
+                btnConf.setText(confirm);
+            }
+
+            //set text buttons with language cancel
+            if (btnCancel!=null){
+                btnCancel.setText(cancel);
+            }
 
             //button confirm
             if (btnConf != null) {

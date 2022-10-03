@@ -230,10 +230,10 @@
     <!-- language translation-->
     <string-array name="language_option">
         <item>English(en)</item>
-        <item>German(de)</item>
-        <item>French(fr)</item>
-        <item>Italian(it)</item>
-        <item>Spanish(es)</item>
+        <item>Deutsch(de)</item>
+        <item>français(fr)</item>
+        <item>Italiano(it)</item>
+        <item>Español(es)</item>
 
     </string-array>
     <string name="string_text_pv_tv_int">Intensity</string>

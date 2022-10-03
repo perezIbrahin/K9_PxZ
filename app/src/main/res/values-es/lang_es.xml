@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">K9_PxZ</string>
+    <string name="string_text_main_manual">Manual</string>
+    <string name="string_text_main_lock">Bloquear</string>
+    <string name="string_text_pv_tv_freq">Frecuencia</string>
+    <string name="string_text_pv__btn_main">Principal</string>
+    <string name="string_text_main_sleep">Dormir</string>
+    <string name="string_text_pv_tv_int">Intensidad</string>
+    <string name="string_text_pv_tv_tim">Tiempo(min)</string>
+    <string name="string_text_dial_loading">Carga. Espera..&quot;</string>
+    <string name="string_text_dial_enter_pass">Introduzca la contraseña:</string>
+    <string name="string_text_btn_start">Empezar</string>
+    <string name="string_text_btn_running">Corriendo</string>
+    <string name="string_text_lost_connection">¡Conexión perdida!</string>
+    <string name="string_text_pres_start">Pulse para empezar.</string>
+    <string name="string_btn_SR_cancel">Cancelar</string>
+    <string name="string_btn_SR_confirm">Confirmar</string>
+    <string name="string_name_lock">¿Estás seguro?</string>
+    <string name="string_name_select_vib">Vibración</string>
+    <string name="string_name_select_perc">Percusión</string>
+    <string name="string_name_therapy">Terapia de percusión/vibración</string>
+    <string name="string_name_therapy_complete">Terapia completada.</string>
+    <string name="string_text_check_transdB">Comprobar transductores B</string>
+    <string name="string_text_check_transdA">Comprobar transductores A</string>
+    <string name="string_text_check_int">Comprobar la intensidad</string>
+    <string name="string_text_check_tim">Comprobar temporizador</string>
+    <string name="string_text_check_freq">Comprobar frecuencia</string>
+    <string name="string_dial_configuration">¡Comprueba la configuración!</string>
+    <string name="string_dial_side_rail">"Confirme que  barandillas estan arriba y el paciente está centrado."</string>
+    <string name="string_settings">Configuración</string>
+    <string name="btnStart">Empezar</string>
+    <string name="btnStop">parar</string>
+    <string name="string_text_action_locked">Cerrado</string>
+    <string name="string_text_action_unlocked">Desbloqueado</string>
+    <string name="string_text_btn_stopped">Detenido</string>
+    <string name="string_text_btn_ready">Listo</string>
+    <string name="string_sett_link">Enlace</string>
+    <string name="string_sett_burning">Quemar</string>
+    <string name="string_sett_About">Acerca de</string>
+    <string name="string_sett_system">Sistema</string>
+    <string name="string_sett_title">Configuración</string>
+    <string name="string_com_connected">conectado</string>
+    <string name="string_com_discconnected">desconectado</string>
+    <string name="string_text_btn_sleep">despertar</string>
+    <string name="string_text_main_unlock">desbloquear</string>
+
+</resources>

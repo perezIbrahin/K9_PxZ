@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 //import android.widget.Toast;
 
 //import Alert.AlertCustomDialog;
+import java.util.Locale;
+
 import Alert.K9Alert;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
@@ -193,14 +196,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // for testing
+    private void langChange(String languageToLoad){
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
+        this.setContentView(R.layout.layout_main_page);
+
+    }
+
+
     //load all the text according to the language
-    private void loadContentByLanguage(Resources resources) {
-        btnMainManual.setText(resources.getString(R.string.string_text_main_manual));
-        btnMainLock.setText(resources.getString(R.string.string_text_main_lock));
-        btnMainUnlock.setText(resources.getString(R.string.string_text_main_unlock));
-        btnMainSleep.setText(resources.getString(R.string.string_text_main_sleep));
-        tvTherapyName.setText(resources.getString(R.string.string_name_therapy));
-        tvStatusScreen.setText(resources.getString(R.string.string_text_action_unlocked));
+    private void loadContentByLanguage(String language) {
+        Log.d(TAG, "loadContentByLanguage: lang:"+language);
+
+        Context context1 = LocaleHelper.setLocale(MainActivity.this, language);
+        Resources resources1 = context1.getResources();
+
+        if(context1!=null){
+
+            Log.d(TAG, "loadContentByLanguage: resource1 ok");
+        }else{
+            Log.d(TAG, "loadContentByLanguage: resource null");
+        }
+        
+        
+        if(resources1!=null){
+
+            try {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_main_manual));
+                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_main_lock));
+                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_main_unlock));
+                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_main_sleep));
+                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_name_therapy));
+                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_action_unlocked));
+
+
+                        btnMainManual.setText(resources1.getString(R.string.string_text_main_manual));
+                        btnMainLock.setText(resources1.getString(R.string.string_text_main_lock));
+                        btnMainUnlock.setText(resources1.getString(R.string.string_text_main_unlock));
+                        btnMainSleep.setText(resources1.getString(R.string.string_text_main_sleep));
+                        tvTherapyName.setText(resources1.getString(R.string.string_name_therapy));
+                        tvStatusScreen.setText(resources1.getString(R.string.string_text_action_unlocked));
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.d(TAG, "loadContentByLanguage: ex" + e.getMessage());
+            }
+
+
+        }else{
+            Log.d(TAG, "loadContentByLanguage: null");
+        }
+
+
+
+
     }
 
     //events language
@@ -208,45 +266,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int i, long id) {
-                Context context;
-                Resources resources;
-                switch (i) {
-                    case 0:
-                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_EN);//english
-                        language = languages.LANG_EN;
-                        languagePos=0;
-                        resources = context.getResources();
-                        loadContentByLanguage(resources);
-                        break;
-                    case 1:
-                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_DE);//germany
-                        language = languages.LANG_DE;
-                        languagePos=1;
-                        resources = context.getResources();
-                        loadContentByLanguage(resources);
-                        break;
-                    case 2:
-                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_FR);//fr
-                        language = languages.LANG_FR;
-                        languagePos=2;
-                        resources = context.getResources();
-                        loadContentByLanguage(resources);
-                        break;
-                    case 3:
-                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_IT);//it
-                        language = languages.LANG_IT;
-                        languagePos=3;
-                        resources = context.getResources();
-                        loadContentByLanguage(resources);
-                        break;
-                    case 4:
-                        context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_ES);//sp
-                        language = languages.LANG_ES;
-                        languagePos=4;
-                        resources = context.getResources();
-                        loadContentByLanguage(resources);
-                        break;
+
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Context context;
+                            Resources resources;
+                            switch (i) {
+                                case 0:
+                                    context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_EN);//english
+                                    Log.d(TAG, "run: en");
+                                    language = languages.LANG_EN;
+                                    languagePos=0;
+                                    //resources = context.getResources();
+                                    loadContentByLanguage(language);
+                                    break;
+                                case 1:
+                                    context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_DE);//germany
+                                    language = languages.LANG_DE;
+                                    languagePos=1;
+                                    //resources = context.getResources();
+                                    Log.d(TAG, "run: lang"+language);
+                                    loadContentByLanguage(language);
+                                    break;
+                                case 2:
+                                    context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_FR);//fr
+                                    language = languages.LANG_FR;
+                                    languagePos=2;
+                                    //resources = context.getResources();
+                                    Log.d(TAG, "run: lang"+language);
+                                    loadContentByLanguage(language);
+                                    break;
+                                case 3:
+                                    context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_IT);//it
+
+                                    language = languages.LANG_IT;
+                                    languagePos=3;
+                                    Log.d(TAG, "run: lang"+language);
+                                    //resources = context.getResources();
+                                    loadContentByLanguage(language);
+                                    break;
+                                case 4:
+                                    context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_ES);//sp
+                                    language = languages.LANG_ES;
+                                    languagePos=4;
+                                    Log.d(TAG, "run: lang"+language);
+                                    //resources = context.getResources();
+                                    loadContentByLanguage(language);
+                                    break;
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "eventSpinnerLanguage: ex" + e.getMessage());
                 }
+
+
             }
 
             @Override
@@ -602,6 +679,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //load preferences
     private void loadValueSpinnerLang(int input) {
        //
+        Log.d(TAG, "loadValueSpinnerLang: "+input);
         mLanguage.setSelection(input);
     }
 

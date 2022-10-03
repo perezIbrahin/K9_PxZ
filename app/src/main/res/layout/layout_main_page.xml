@@ -58,12 +58,12 @@
 
             <Button
                 android:id="@+id/btnMainSet"
-                android:layout_width="50dp"
+                android:layout_width="80dp"
                 android:layout_height="@dimen/dim_btn_bar_H"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:drawableRight="@drawable/ic_baseline_menu_32"
+                android:drawableRight="@drawable/ic_baseline_menu_48"
                 android:elevation="5dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"

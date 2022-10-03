@@ -75,8 +75,10 @@ public class Bitwise {
     //get bit is in one
     public boolean isBitEnable(int status, int position){
         if((status & (1<<position))>0){
+            Log.d(TAG, "isBitEnable: pos:"+position+". true");
             return  true;
         }
+        Log.d(TAG, "isBitEnable: pos:"+position+". false");
         return false;
     }
 

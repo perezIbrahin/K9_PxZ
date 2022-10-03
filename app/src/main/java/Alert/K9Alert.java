@@ -86,6 +86,7 @@ public class K9Alert extends AppCompatActivity {
     //notifications about selected parametres
     private void displayText(TextView tv, String text) {
         if (tv != null) {
+            Log.d(TAG, "displayText: " + text);
             tv.setText(text);
             tv.setTextSize(26f);
         } else {
@@ -96,13 +97,15 @@ public class K9Alert extends AppCompatActivity {
     //adding text
     private String addingText(String input, String newtext) {
         if (input.length() > 5) {
+            Log.d(TAG, "addingText: input:" + input + ". new text:" + newtext);
             return input + "\r\n" + newtext;
         }
+        Log.d(TAG, "addingText: just new text" + newtext);
         return newtext;
     }
 
     //alert dialig missing settings
-    public void alertDialogMissingPara(String title, int status) {
+    public void alertDialogMissingPara(String title, int status, String textfreq, String textInt, String textTime, String textTrA, String textTrB, String btnConfirm) {
         try {
             //get bit active
             Bitwise bitwise = new Bitwise();
@@ -113,64 +116,91 @@ public class K9Alert extends AppCompatActivity {
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             //alertDialogBuilder.setTitle(title);
             alertDialogBuilder.setView(promptsView);
+
             //set the revision
             final TextView tvRev = (TextView) promptsView
                     .findViewById(R.id.tvDialogConfRev);
-            tvRev.setText(rev.APP_REV_PAGE_51);
+            //set text revision
+            if(tvRev!=null){
+                tvRev.setText(rev.APP_REV_PAGE_51);
+            }
 
 
+            ////set the revision
+            final TextView tvTitle = (TextView) promptsView.findViewById(R.id.tvTextDialogSettTitle);
+            if(tvTitle!=null){
+                tvTitle.setText(title);
+            }
+
+
+            //Add missing parameteres
             final TextView tvCheck0 = (TextView) promptsView.findViewById(R.id.tvCheck0);
             String text = "0";
 
+            //
+            Log.d(TAG, "alertDialogMissingPara: status:" + status);
 
             //
             for (int i = 0; i < 5; i++) {
                 if (i == 0) {
 
-                    if (!bitwise.isBitEnable(status, i)) {
-                        //String newText = "Missing Frequency";
-                        String newText = resources.getString(R.string.string_text_check_freq);
-                        text = addingText(text, newText);
-                        displayText(tvCheck0, text);
+                    if (!bitwise.isBitEnable(status, i)) {//freq
+                        if (textfreq != null) {
+                            String newText = textfreq;
+                            text = addingText(text, newText);
+                            displayText(tvCheck0, text);
+                        }
+
                     }
                 } else if (i == 1) {
-
-                    if (!bitwise.isBitEnable(status, i)) {
-                        //String newText = "Missing Intensity";
-                        String newText = resources.getString(R.string.string_text_check_int);
-                        text = addingText(text, newText);
-                        displayText(tvCheck0, text);
+                    if (!bitwise.isBitEnable(status, i)) {//int
+                        if (textInt != null) {
+                            String newText = textInt;
+                            text = addingText(text, newText);
+                            displayText(tvCheck0, text);
+                        }
                     }
                 } else if (i == 2) {
-                    if (!bitwise.isBitEnable(status, i)) {
+                    if (!bitwise.isBitEnable(status, i)) {//timer
                         //String newText = "Missing Timer";
-                        String newText = resources.getString(R.string.string_text_check_tim);
-                        text = addingText(text, newText);
-                        displayText(tvCheck0, text);
+                        if (textTime != null) {
+                            String newText = textTime;
+                            text = addingText(text, newText);
+                            displayText(tvCheck0, text);
+                        }
                     }
-
-
                 } else if (i == 3) {
-                    if (!bitwise.isBitEnable(status, i)) {
-                        String newText = "Missing Select location -A";
-                        text = addingText(text, newText);
-                        displayText(tvCheck0, text);
+                    if (!bitwise.isBitEnable(status, i)) {//tr-a
+                        if (textTrA != null) {
+                            String newText = textTrA;
+                            text = addingText(text, newText);
+                            displayText(tvCheck0, text);
+                        }
+
                     }
 
                 } else if (i == 4) {
-                    if (!bitwise.isBitEnable(status, i)) {
-                        String newText = "Missing Select location -B";
-                        text = addingText(text, newText);
-                        displayText(tvCheck0, text);
+                    if (!bitwise.isBitEnable(status, i)) {//tr-b
+                        if (textTrB != null) {
+                            String newText = textTrB;
+                            text = addingText(text, newText);
+                            displayText(tvCheck0, text);
+                        }
                     }
 
                 }
 
             }
 
-
             AlertDialog alertDialog = alertDialogBuilder.create();
+
+            //button confirm
             final Button btnConf = (Button) promptsView.findViewById(R.id.btnConfConfirm);
+            //set name of button with language
+            if(btnConf!=null){
+                btnConf.setText(btnConfirm);
+            }
+
 
             //button confirm
             if (btnConf != null) {
@@ -205,7 +235,7 @@ public class K9Alert extends AppCompatActivity {
 
 
         } catch (Exception e) {
-            Log.d(TAG, "alertDialogMissingPara: " + e.getMessage());
+            Log.d(TAG, "alertDialogMissingPara: ex " + e.getMessage());
         }
     }
 
@@ -225,12 +255,11 @@ public class K9Alert extends AppCompatActivity {
             tvRev.setText(rev.APP_REV_PAGE_50);
             //get text view for dialog
             final TextView tvTextDialogSR = (TextView) promptsView
-                    .findViewById(R.id.tvTextDialogComplete);
+                    .findViewById(R.id.tvTextDialogSettTitle);
             //set text
-            if(title!=null){
+            if (title != null) {
                 tvTextDialogSR.setText(title);
             }
-
 
 
             //get buttons
@@ -239,12 +268,12 @@ public class K9Alert extends AppCompatActivity {
             final Button btnCancel = (Button) promptsView.findViewById(R.id.btnSRCancel);
 
             //set text buttons with language confirm
-            if (btnConf!=null){
+            if (btnConf != null) {
                 btnConf.setText(confirm);
             }
 
             //set text buttons with language cancel
-            if (btnCancel!=null){
+            if (btnCancel != null) {
                 btnCancel.setText(cancel);
             }
 
@@ -379,9 +408,9 @@ public class K9Alert extends AppCompatActivity {
 
             //get text view for dialog
             final TextView tvTextDialogSR = (TextView) promptsView
-                    .findViewById(R.id.tvTextDialogComplete);
+                    .findViewById(R.id.tvTextDialogSettTitle);
             //set text
-            if(title!=null){
+            if (title != null) {
                 tvTextDialogSR.setText(title);
             }
 
@@ -498,7 +527,7 @@ public class K9Alert extends AppCompatActivity {
             final TextView tvTextDialogSR = (TextView) promptsView
                     .findViewById(R.id.tvTextDialogLock);
             //set text
-            if(title!=null){
+            if (title != null) {
                 tvTextDialogSR.setText(title);
             }
 
@@ -507,12 +536,12 @@ public class K9Alert extends AppCompatActivity {
             final Button btnCancel = (Button) promptsView.findViewById(R.id.btnLockCancel);
 
             //set text buttons with language confirm
-            if (btnConf!=null){
+            if (btnConf != null) {
                 btnConf.setText(confirm);
             }
 
             //set text buttons with language cancel
-            if (btnCancel!=null){
+            if (btnCancel != null) {
                 btnCancel.setText(cancel);
             }
 

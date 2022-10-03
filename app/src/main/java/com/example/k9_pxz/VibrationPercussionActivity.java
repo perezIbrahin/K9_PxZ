@@ -295,8 +295,17 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private String dialogTherapyCompleteLang = "0";
     private String dialogConfirmLang = "0";
     private String dialogCancelLang = "0";
+    //dialog missing parameteres
+    private String dialogMissTitle = "0";
+    private String dialogMissFreq = "0";
+    private String dialogMissInt = "0";
+    private String dialogMissTime = "0";
+    private String dialogMissTra = "0";
+    private String dialogMissTrb = "0";
+
+
     //Display operations
-    private DisplayOperations displayOperations=new DisplayOperations();
+    private DisplayOperations displayOperations = new DisplayOperations();
 
 
     @Override
@@ -322,7 +331,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         //buttons events
         eventBtn();
         //loading alert dialog
-        alertDialogLoading(true );
+        alertDialogLoading(true);
         //Adding revision
         displaySoftRev(rev.APP_REV_PAGE_11);
 
@@ -435,7 +444,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         tvTextInt = findViewById(R.id.tvtextInt);
         tvTextTime = findViewById(R.id.tvTextTime);
         //
-        tvTitle=findViewById(R.id.tvTextPvTitile);
+        tvTitle = findViewById(R.id.tvTextPvTitile);
     }
 
     //init system
@@ -514,9 +523,16 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         btnMenu.setText(resources.getString(R.string.string_text_pv__btn_main));
         //dialog with language
         dialogSideRailLang = resources.getString(R.string.string_dial_side_rail);
-        dialogTherapyCompleteLang=resources.getString(R.string.string_name_therapy_complete);
+        dialogTherapyCompleteLang = resources.getString(R.string.string_name_therapy_complete);
         dialogConfirmLang = resources.getString(R.string.string_btn_SR_confirm);
         dialogCancelLang = resources.getString(R.string.string_btn_SR_cancel);
+        //dialog missing components
+        dialogMissTitle = resources.getString(R.string.string_dial_configuration);
+        dialogMissFreq = resources.getString(R.string.string_text_check_freq);
+        dialogMissInt = resources.getString(R.string.string_text_check_int);
+        dialogMissTime = resources.getString(R.string.string_text_check_tim);
+        dialogMissTra = resources.getString(R.string.string_text_check_transdA);
+        dialogMissTrb = resources.getString(R.string.string_text_check_transdB);
 
     }
 
@@ -2635,7 +2651,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     //updateConnectionState
     private void updateConnectionState(int input) {
         Log.d(TAG, "updateConnectionState: " + input);
-        Resources resources=getResourcesLanguage(language);
+        Resources resources = getResourcesLanguage(language);
 
 
         try {
@@ -2793,20 +2809,19 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private void displayOperation(String value) {
         if (value != null) {
             try {
-                Resources resources=getResourcesLanguage(language);
-                String text="0";
+                Resources resources = getResourcesLanguage(language);
+                String text = "0";
 
-                if(value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_READY)){
-                    text=resources.getString(R.string.string_text_btn_ready);
-                }else  if(value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_RUNNING)){
-                    text=resources.getString(R.string.string_text_btn_running);
-                }else  if(value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_STOPPED)){
-                    text=resources.getString(R.string.string_text_btn_stopped);
+                if (value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_READY)) {
+                    text = resources.getString(R.string.string_text_btn_ready);
+                } else if (value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_RUNNING)) {
+                    text = resources.getString(R.string.string_text_btn_running);
+                } else if (value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_STOPPED)) {
+                    text = resources.getString(R.string.string_text_btn_stopped);
                 }
-                if(text!=null){
+                if (text != null) {
                     tvOperation.setText(text);
                 }
-
 
 
             } catch (Exception e) {
@@ -3210,7 +3225,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 // Stuff that updates the UI
                 int ret = updateCommand(value);
                 //get language resources
-                Resources resources=getResourcesLanguage(language);
+                Resources resources = getResourcesLanguage(language);
                 //
                 if (ret == setPointsBluetooth.INT_BLE_CMD_NONE) {
                 } else if (ret == setPointsBluetooth.INT_BLE_CMD_START) {
@@ -3266,28 +3281,42 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     //
     private void condStartTherapy(boolean flagIsFreq, boolean flagIsInt, boolean flagIsTim, boolean flagIsTRA, boolean flagIsTRB, boolean flagIsSR) {
         if (true) {
-            if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && !flagIsSR) {
+            try {
                 // Stuff that updates the UI
-                Resources resources=getResourcesLanguage(language);
-                //dialog to be display
-                String text=resources.getString(R.string.string_name_lock);
+                Resources resources = getResourcesLanguage(language);
                 //button name with language confirm
-                String nameBtnConfirm=resources.getString(R.string.string_btn_SR_confirm);
+                String nameBtnConfirm = resources.getString(R.string.string_btn_SR_confirm);
                 //button name with language cancel
-                String nameBtnCancel=resources.getString(R.string.string_btn_SR_cancel);
+                String nameBtnCancel = resources.getString(R.string.string_btn_SR_cancel);
 
-                //check side rail
-                k9Alert.alertDialogSiderail(dialogSideRailLang,nameBtnConfirm,nameBtnCancel);
-                return;
-            } else if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && flagIsSR) {
-                startTherapy();
-            } else {
-                //missing parameter
-                int status = checkMissingParam(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, flagIsSR);
-                Log.d(TAG, "condStartTherapy: status:" + status);
-                k9Alert.alertDialogMissingPara(language, status);
-                return;
+                if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && !flagIsSR) {
+
+                    //dialog to be display
+                    String text = resources.getString(R.string.string_name_lock);
+
+
+                    //check side rail
+                    k9Alert.alertDialogSiderail(dialogSideRailLang, nameBtnConfirm, nameBtnCancel);
+                    return;
+                } else if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && flagIsSR) {
+                    startTherapy();
+                } else {
+                    //missing parameter
+                    int status = checkMissingParam(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, flagIsSR);
+                    Log.d(TAG, "condStartTherapy: status:" + status);
+                    if(dialogMissTitle==null){
+                        Log.d(TAG, "condStartTherapy: dialogMissTitle null");
+                    }
+                    
+                    
+                    k9Alert.alertDialogMissingPara(dialogMissTitle, status, dialogMissFreq, dialogMissInt, dialogMissTime, dialogMissTra, dialogMissTrb, nameBtnConfirm);
+                    return;
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "condStartTherapy: ex:" + e.getMessage());
             }
+
+
         }
     }
 
@@ -3398,10 +3427,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             final TextView tvTextDialogSR = (TextView) promptsView
                     .findViewById(R.id.tvDialogLoading);
             //get language
-            Resources resources=getResourcesLanguage(language);
-            String text=resources.getString(R.string.string_text_dial_loading);
+            Resources resources = getResourcesLanguage(language);
+            String text = resources.getString(R.string.string_text_dial_loading);
             //set text
-            if(text!=null){
+            if (text != null) {
                 tvTextDialogSR.setText(text);
             }
 
@@ -3553,7 +3582,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     //norification timer therapy elapsed
     private void notificationTimerElapsed() {
-        k9Alert.alertDialogTherapyDone(dialogTherapyCompleteLang,dialogConfirmLang);
+        k9Alert.alertDialogTherapyDone(dialogTherapyCompleteLang, dialogConfirmLang);
         isTherapyOn = false;
         beep.beep_disable();
         //cleanDisplayTimer();

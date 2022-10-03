@@ -40,7 +40,7 @@
                     android:padding="5dp">
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/tvSettTitile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -60,6 +60,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
                         android:layout_weight="1"
+                        android:visibility="invisible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -92,6 +93,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="link"
+                        android:visibility="invisible"
                         app:layout_constraintBottom_toTopOf="@+id/ivConnection"
                         app:layout_constraintEnd_toEndOf="@+id/ivConnection" />
 
@@ -102,7 +104,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="783dp"
             android:layout_margin="10dp"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -119,45 +121,56 @@
                     android:orientation="vertical">
 
                     <Button
-                        android:id="@+id/btnBurnStart"
+                        android:id="@+id/btnLink"
                         android:layout_width="@dimen/dim_btn_set_W"
                         android:layout_height="@dimen/dim_btn_set_H"
                         android:layout_margin="5dp"
                         android:background="@drawable/btn_roundr_corner"
-                        android:drawableTop="@drawable/ic_baseline_settings_24"
+                        android:drawableTop="@drawable/ic_baseline_add_link_48"
                         android:elevation="10dp"
                         android:padding="5dp"
-                        android:text="Link" />
+                        android:text="Link"
+                        android:textSize="@dimen/dim_text_24sp" />
 
                     <Button
-                        android:id="@+id/btnBurnStop"
+                        android:id="@+id/btnBurn"
                         android:layout_width="@dimen/dim_btn_set_W"
                         android:layout_height="@dimen/dim_btn_set_H"
                         android:layout_margin="5dp"
                         android:background="@drawable/btn_roundr_corner"
-                        android:drawableTop="@drawable/ic_baseline_settings_24"
+                        android:drawableTop="@drawable/ic_baseline_dataset_linked_48"
                         android:padding="5dp"
-                        android:text="Burning" />
+                        android:text="Burning"
+                        android:textSize="@dimen/dim_text_24sp" />
 
                     <Button
-                        android:id="@+id/btnBurnPause"
+                        android:id="@+id/btnAbout"
                         android:layout_width="@dimen/dim_btn_set_W"
                         android:layout_height="@dimen/dim_btn_set_H"
                         android:layout_margin="5dp"
                         android:background="@drawable/btn_roundr_corner"
-                        android:drawableTop="@drawable/ic_baseline_settings_24"
+                        android:drawableTop="@drawable/ic_baseline_perm_device_information_48"
                         android:padding="5dp"
-                        android:text="Trend" />
+                        android:text="About"
+                        android:textSize="@dimen/dim_text_24sp" />
 
                     <Button
-                        android:id="@+id/btnBurnReport"
+                        android:id="@+id/btnSystem"
                         android:layout_width="@dimen/dim_btn_set_W"
                         android:layout_height="@dimen/dim_btn_set_H"
                         android:layout_margin="5dp"
                         android:background="@drawable/btn_roundr_corner"
-                        android:drawableTop="@drawable/ic_baseline_settings_24"
+                        android:drawableTop="@drawable/ic_baseline_app_settings_alt_48"
                         android:padding="5dp"
-                        android:text="Cloud" />
+                        android:text="System"
+                        android:textSize="@dimen/dim_text_24sp" />
+
+                    <TextView
+                        android:id="@+id/tvSetRev"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="."
+                        android:textAlignment="viewEnd" />
                 </LinearLayout>
             </ScrollView>
         </LinearLayout>

@@ -33,4 +33,15 @@
     <string name="btnStop">aufhören</string>
     <string name="string_text_action_locked">Verschlossen</string>
     <string name="string_text_action_unlocked">Unverschlossen</string>
+    <string name="string_text_btn_stopped">Angehalten</string>
+    <string name="string_text_btn_ready">Fertig</string>
+    <string name="string_sett_link">Verbinden</string>
+    <string name="string_sett_burning">Brennend</string>
+    <string name="string_sett_About">Über</string>
+    <string name="string_sett_system">System</string>
+    <string name="string_sett_title">Einstellungen</string>
+    <string name="string_com_connected">verbunden</string>
+    <string name="string_com_discconnected">getrennt</string>
+    <string name="string_text_btn_sleep">Aufwachen</string>
+    <string name="string_text_main_unlock">aufschließen</string>
 </resources>

@@ -33,4 +33,15 @@
     <string name="btnStop">stop</string>
     <string name="string_text_action_locked">Locked</string>
     <string name="string_text_action_unlocked">Unlocked</string>
+    <string name="string_text_btn_stopped">Stopped</string>
+    <string name="string_text_btn_ready">Ready</string>
+    <string name="string_sett_link">Link</string>
+    <string name="string_sett_burning">Burning</string>
+    <string name="string_sett_About">About</string>
+    <string name="string_sett_system">System</string>
+    <string name="string_sett_title">Settings</string>
+    <string name="string_com_connected">Connected</string>
+    <string name="string_com_discconnected">Disconnected</string>
+    <string name="string_text_btn_sleep">wake-up</string>
+    <string name="string_text_main_unlock">unlock</string>
 </resources>

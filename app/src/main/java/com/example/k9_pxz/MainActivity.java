@@ -43,11 +43,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnMainK9;
     private Button btnMainSett;
     private Button btnMainLock;
+    private Button btnMainUnlock;
     private Button btnMainSleep;
     private Button btnMainManual;
     private TextView tvRev;
     private Spinner mLanguage;
     private TextView tvTherapyName;
+    private TextView tvStatusScreen;
     ArrayAdapter<String> mAdapter;
     //shared preferences
     public static final String SHARED_PREFS1 = "sharedPrefs";
@@ -111,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         displaySoftRev(rev.APP_REV_PAGE_10);
     }
 
-
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -136,20 +137,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainK9 = findViewById(R.id.btnMainK9);
         btnMainSett = findViewById(R.id.btnMainSet);
         btnMainLock = findViewById(R.id.btnMainLock);
+        btnMainUnlock = findViewById(R.id.btnMainUnLock);
         btnMainSleep = findViewById(R.id.btnMainSllep);
         btnMainManual = findViewById(R.id.btnManual);
         tvRev = findViewById(R.id.tvRev);
         mLanguage = (Spinner) findViewById(R.id.spinnerLang);
         tvTherapyName = findViewById(R.id.tvTherapyName);
+        tvStatusScreen= findViewById(R.id.tvScreenStatus);
     }
 
     private boolean initApp() {
         k9Alert = new K9Alert(this, this);
         //init lock
-        btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_open_24), null, null);
-        btnMainLock.setText("Unlocked");
+        //btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_mobile_friendly_32), null, null);
+        btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48));
+       // btnMainLock.setText("Unlocked");
         isLockScreen = false;
-
         return true;
     }
 
@@ -157,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainK9.setOnClickListener(this);
         btnMainSett.setOnClickListener(this);
         btnMainLock.setOnClickListener(this);
+        btnMainUnlock.setOnClickListener(this);
         btnMainSleep.setOnClickListener(this);
         btnMainManual.setOnClickListener(this);
     }
@@ -193,10 +197,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void loadContentByLanguage(Resources resources) {
         btnMainManual.setText(resources.getString(R.string.string_text_main_manual));
         btnMainLock.setText(resources.getString(R.string.string_text_main_lock));
+        btnMainUnlock.setText(resources.getString(R.string.string_text_main_unlock));
         btnMainSleep.setText(resources.getString(R.string.string_text_main_sleep));
         tvTherapyName.setText(resources.getString(R.string.string_name_therapy));
-
-
+        tvStatusScreen.setText(resources.getString(R.string.string_text_action_unlocked));
     }
 
     //events language
@@ -213,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         languagePos=0;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
-
                         break;
                     case 1:
                         context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_DE);//germany
@@ -221,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         languagePos=1;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
-
                         break;
                     case 2:
                         context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_FR);//fr
@@ -229,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         languagePos=2;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
-
                         break;
                     case 3:
                         context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_IT);//it
@@ -237,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         languagePos=3;
                         resources = context.getResources();
                         loadContentByLanguage(resources);
-
                         break;
                     case 4:
                         context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_ES);//sp
@@ -271,38 +271,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else if (v == btnMainSett) {
             if (!isLockScreen) {
-                launchActivity(SettActivity.class);
+                launchActivityWithExtras(SettActivity.class, language);
+                //launchActivity(SettActivity.class);
             } else {
                 toastMessage();
             }
-
         } else if (v == btnMainManual) {
-            launchActivity(ManualActivity.class);
+            launchActivityWithExtras(ManualActivity.class, language);
+            //launchActivity(ManualActivity.class);
         } else if (v == btnMainSleep) {
-            launchActivity(SleepActivity.class);
+            launchActivityWithExtras(SleepActivity.class, language);
+            //launchActivity(SleepActivity.class);
         } else if (v == btnMainLock) {
+            //check status first. ned to be unlocked
+            if(!isLockScreen){
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Stuff that updates the UI
+                            Resources resources=getResourcesLanguage(language);
+                            //dialog to be display
+                            String text=resources.getString(R.string.string_name_lock);
+                            //button name with language confirm
+                            String nameBtnConfirm=resources.getString(R.string.string_btn_SR_confirm);
+                            //button name with language cancel
+                            String nameBtnCancel=resources.getString(R.string.string_btn_SR_cancel);
+                            //send data to dialog
+                            k9Alert.alertDialogLock(text,nameBtnConfirm,nameBtnCancel);
+                        }
+                    });
 
-            try {
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Stuff that updates the UI
-                        Resources resources=getResourcesLanguage(language);
-                        //dialog to be display
-                        String text=resources.getString(R.string.string_name_lock);
-                        //button name with language confirm
-                        String nameBtnConfirm=resources.getString(R.string.string_btn_SR_confirm);
-                        //button name with language cancel
-                        String nameBtnCancel=resources.getString(R.string.string_btn_SR_cancel);
-                        //send data to dialog
-                        k9Alert.alertDialogLock(text,nameBtnConfirm,nameBtnCancel);
-                    }
-                });
-
-            } catch (Exception e) {
-                Log.d(TAG, "alertDialogLock: ex" + e.getMessage());
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogLock: ex" + e.getMessage());
+                }
             }
+
+
+        }else if(v == btnMainUnlock){
+            //check status first. ned to be locked
+            if(isLockScreen){
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Stuff that updates the UI
+                            Resources resources=getResourcesLanguage(language);
+                            //dialog to be display
+                            String text=resources.getString(R.string.string_name_lock);
+                            //button name with language confirm
+                            String nameBtnConfirm=resources.getString(R.string.string_btn_SR_confirm);
+                            //button name with language cancel
+                            String nameBtnCancel=resources.getString(R.string.string_btn_SR_cancel);
+                            //send data to dialog
+                            k9Alert.alertDialogLock(text,nameBtnConfirm,nameBtnCancel);
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogLock: ex" + e.getMessage());
+                }
+            }
+
         }
     }
 
@@ -355,6 +385,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } catch (Exception e) {
             Log.d(TAG, "passBleAddToVib: exception" + e.getMessage());
+        }
+    }
+
+    //launch activity with extra
+    private void launchActivityWithExtras(Class myclass, String language) {
+        try {
+            if (language!= null) {
+                Bundle bundle = new Bundle();
+                Log.d(TAG, "launchActWithExtras " +language);
+                bundle.putString("language", language);//send bluetooth address
+                Intent intent = new Intent(MainActivity.this, myclass);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "launchActWithExtras: exception" + e.getMessage());
         }
     }
 
@@ -464,16 +510,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             if (!isLockScreen) {
                 Log.d(TAG, "setLockScreen: lock screen" + isLockScreen);
-                btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_24), null, null);
-                btnMainLock.setText(resources.getString(R.string.string_text_action_locked));
+               // btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_phonelink_lock_32), null, null);
+               // btnMainLock.setText(resources.getString(R.string.string_text_action_locked));
 
                 isLockScreen = true;
                 displayLock(isLockScreen);
                 return;
             } else if (isLockScreen) {
                 Log.d(TAG, "setLockScreen: unlock screen" + isLockScreen);
-                btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_open_24), null, null);
-                btnMainLock.setText(resources.getString(R.string.string_text_action_unlocked));
+               // btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_mobile_friendly_32), null, null);
+               // btnMainLock.setText(resources.getString(R.string.string_text_action_unlocked));
                 isLockScreen = false;
                 displayLock(isLockScreen);
                 return;
@@ -496,10 +542,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //show lock icon on the start button
     private void displayLock(boolean input) {
+        Resources resources=getResourcesLanguage(language);
+
         if (input) {
             btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_phonelink_lock_48));
+            displayStatusScreen(resources.getString(R.string.string_text_action_locked));
         } else {
-            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_add_to_home_screen_48));
+            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48));
+
+            displayStatusScreen(resources.getString(R.string.string_text_action_unlocked));
         }
     }
 
@@ -552,5 +603,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void loadValueSpinnerLang(int input) {
        //
         mLanguage.setSelection(input);
+    }
+
+    //display status screen
+    private void displayStatusScreen(String status){
+        if(status!=null){
+            tvStatusScreen.setText(status);
+        }
     }
 }

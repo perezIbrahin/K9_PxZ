@@ -82,6 +82,7 @@ import Util.ConcatDataWriteBle;
 import Util.ControlGUI;
 import Util.Cooling;
 import Util.Default_values;
+import Util.DisplayOperations;
 import Util.IntToArray;
 import Util.Key_Util;
 import Util.LocaleHelper;
@@ -294,6 +295,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private String dialogTherapyCompleteLang = "0";
     private String dialogConfirmLang = "0";
     private String dialogCancelLang = "0";
+    //Display operations
+    private DisplayOperations displayOperations=new DisplayOperations();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -317,8 +322,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         //buttons events
         eventBtn();
         //loading alert dialog
-
-
         alertDialogLoading(true );
         //Adding revision
         displaySoftRev(rev.APP_REV_PAGE_11);
@@ -697,7 +700,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         }
     }
 
-    //get the address to connect bluetooth
+    //get the address to connect bluetooth and language
     private String getExtrasFromAct(String oldAddress) {
         try {
             Bundle bundle = getIntent().getExtras();
@@ -1396,12 +1399,13 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_START)) {
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48));
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                    displayOperation(resources.getString(R.string.string_text_btn_running));
+                    displayOperation(displayOperations.DISPLAY_OPE_RUNNING);//running
                     return setPointsBluetooth.INT_BLE_CMD_START;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_STOP)) {
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
-                    displayOperation(message.MESSAGE_SYSTEM_STOPPED);
+
+                    displayOperation(displayOperations.DISPLAY_OPE_STOPPED);//stopped
                     return setPointsBluetooth.INT_BLE_CMD_STOP;
                 }
                 // return true;
@@ -2550,11 +2554,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         return bigInt.toByteArray();
     }
 
-
     //sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.INTENSITY, variables.CMD_INT_1));
 
     //------------Dispay---------------------//
-
 
     //get parameters value
     private void getParamUpdateValueGui2(Message msg, int value0, int value1, int value2, int value3) {
@@ -2633,19 +2635,23 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     //updateConnectionState
     private void updateConnectionState(int input) {
         Log.d(TAG, "updateConnectionState: " + input);
+        Resources resources=getResourcesLanguage(language);
+
+
         try {
             switch (input) {
                 case R.string.ble_connected:
                     Log.d(TAG, "updateComIcon: ble_connected");
                     //Toast.makeText(k9Alert, "Connected", Toast.LENGTH_SHORT).show();
                     //ivBle.setImageResource(R.drawable.ic_baseline_bluetooth_connected_24);
-                    displayConnection("connected");
+                    displayConnection(resources.getString((R.string.string_com_connected)));
                     //enableGui(true);
                     break;
                 case R.string.ble_disconnected:
                     Log.d(TAG, "updateComIcon: ble_disconnected");
                     // ivBle.setImageResource(R.drawable.ic_baseline_bluetooth_disabled_24);
-                    displayConnection("disconnected");
+                    displayConnection(resources.getString((R.string.string_com_discconnected)));
+                    //displayConnection("disconnected");
                     ///**/enableGui(false);
                     break;
                 case R.string.ble_disconnected_requested:
@@ -2787,7 +2793,22 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private void displayOperation(String value) {
         if (value != null) {
             try {
-                tvOperation.setText(value);
+                Resources resources=getResourcesLanguage(language);
+                String text="0";
+
+                if(value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_READY)){
+                    text=resources.getString(R.string.string_text_btn_ready);
+                }else  if(value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_RUNNING)){
+                    text=resources.getString(R.string.string_text_btn_running);
+                }else  if(value.equalsIgnoreCase(displayOperations.DISPLAY_OPE_STOPPED)){
+                    text=resources.getString(R.string.string_text_btn_stopped);
+                }
+                if(text!=null){
+                    tvOperation.setText(text);
+                }
+
+
+
             } catch (Exception e) {
                 Log.d(TAG, "displayOperation: Ex" + e.getMessage());
             }
@@ -2908,7 +2929,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         } else if (description.equalsIgnoreCase(utilDialog.LOCATION_CONFIRM_SIDERAIL)) {//
             isFlagIsSr = true;
             updateSideRail(controlGUI.POS0);
-            displayOperation(message.MESSAGE_SYSTEM_READY);
+            displayOperation(displayOperations.DISPLAY_OPE_READY);//Ready
             //changeStrokeBtnStart(controlGUI.POS1);
             updateBtnReady(controlGUI.POS1);
         }
@@ -3188,14 +3209,18 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             public void run() {
                 // Stuff that updates the UI
                 int ret = updateCommand(value);
+                //get language resources
+                Resources resources=getResourcesLanguage(language);
                 //
                 if (ret == setPointsBluetooth.INT_BLE_CMD_NONE) {
                 } else if (ret == setPointsBluetooth.INT_BLE_CMD_START) {
                     updateBtnReady(controlGUI.POS0);
                     launchRunTherapy(valueTimerTherapy, countInterval);
-                    displayStartCommand("Running");
+                    //update display with language
+                    displayStartCommand(resources.getString(R.string.string_text_btn_running));
                 } else if (ret == setPointsBluetooth.INT_BLE_CMD_STOP) {
-                    displayStartCommand("Start");
+                    displayStartCommand(resources.getString(R.string.string_text_btn_start));
+                    //displayStartCommand("Start");
                     if (isFlagTimerElapsed) {
                         notificationTimerElapsed();
                     } else {
@@ -3242,8 +3267,17 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private void condStartTherapy(boolean flagIsFreq, boolean flagIsInt, boolean flagIsTim, boolean flagIsTRA, boolean flagIsTRB, boolean flagIsSR) {
         if (true) {
             if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && !flagIsSR) {
+                // Stuff that updates the UI
+                Resources resources=getResourcesLanguage(language);
+                //dialog to be display
+                String text=resources.getString(R.string.string_name_lock);
+                //button name with language confirm
+                String nameBtnConfirm=resources.getString(R.string.string_btn_SR_confirm);
+                //button name with language cancel
+                String nameBtnCancel=resources.getString(R.string.string_btn_SR_cancel);
+
                 //check side rail
-                k9Alert.alertDialogSiderail(dialogSideRailLang);
+                k9Alert.alertDialogSiderail(dialogSideRailLang,nameBtnConfirm,nameBtnCancel);
                 return;
             } else if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && flagIsSR) {
                 startTherapy();

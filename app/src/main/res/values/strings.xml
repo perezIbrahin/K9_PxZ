@@ -174,6 +174,7 @@
     <!-- main screen  button -->
     <string name="string_text_main_manual">Manual</string>
     <string name="string_text_main_lock">Lock</string>
+    <string name="string_text_main_unlock">unlock</string>
     <string name="string_text_main_sleep">Sleep</string>
 
     <!-- percussion and vibration screen  button -->
@@ -183,7 +184,7 @@
     <string name="string_text_pv_tv_tim">Time(min)</string>
 
     <!-- sleep screen  button -->
-    <string name="string_text_btn_sleep">Sleep</string>
+    <string name="string_text_btn_sleep">wake-up</string>
 
     <!-- dialog loading screen  button -->
 
@@ -194,7 +195,8 @@
     <!-- start button -->
     <string name="string_text_btn_start">Start</string>
     <string name="string_text_btn_running">Running</string>
-
+    <string name="string_text_btn_stopped">Stopped</string>
+    <string name="string_text_btn_ready">Ready</string>
     <!-- lock actions  -->
     <string name="string_text_action_locked">Locked</string>
     <string name="string_text_action_unlocked">Unlocked</string>
@@ -213,13 +215,25 @@
     <string name="string_text_spare9" translatable="false">spare</string>
     <string name="string_text_spare10" translatable="false">spare</string>
 
+    <!-- setting page -->
+    <string name="string_sett_link">Link</string>
+    <string name="string_sett_burning">Burning</string>
+    <string name="string_sett_About">About</string>
+    <string name="string_sett_system">System</string>
+    <string name="string_sett_title">Settings</string>
+
+    <!-- connection page -->
+    <string name="string_com_connected">Connected</string>
+    <string name="string_com_discconnected">Disconnected</string>
+
+
     <!-- language translation-->
     <string-array name="language_option">
-        <item>English</item>
-        <item>German</item>
-        <item>France</item>
-        <item>Italian</item>
-        <item>Spanish</item>
+        <item>English(en)</item>
+        <item>German(de)</item>
+        <item>French(fr)</item>
+        <item>Italian(it)</item>
+        <item>Spanish(es)</item>
 
     </string-array>
     <string name="string_text_pv_tv_int">Intensity</string>

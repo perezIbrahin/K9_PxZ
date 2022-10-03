@@ -33,4 +33,15 @@
     <string name="btnStop">arrêter</string>
     <string name="string_text_action_locked">Verrouillé</string>
     <string name="string_text_action_unlocked">Déverrouillé</string>
+    <string name="string_text_btn_stopped">Arrêté</string>
+    <string name="string_text_btn_ready">Prêt</string>
+    <string name="string_sett_link">Lien</string>
+    <string name="string_sett_burning">Brûlure</string>
+    <string name="string_sett_About">Environ</string>
+    <string name="string_sett_system">Système</string>
+    <string name="string_sett_title">Paramètres</string>
+    <string name="string_com_connected">connecté</string>
+    <string name="string_com_discconnected">déconnecté</string>
+    <string name="string_text_btn_sleep">réveil</string>
+    <string name="string_text_main_unlock">déverrouiller</string>
 </resources>

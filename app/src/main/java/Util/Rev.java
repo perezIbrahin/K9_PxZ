@@ -19,7 +19,7 @@ public class Rev {
     public String APP_REV_PAGE_11 = "P11/R3.0";//09/28/22 percussion and vibration
     public String APP_REV_PAGE_12 = "P12/R3.0";//Sleep
     public String APP_REV_PAGE_13 = "P13/R3.0";//Manual
-    public String APP_REV_PAGE_14 = "P14/R3.0";//09/28/22 Update GUI. Minor changes.
+    public String APP_REV_PAGE_14 = "P14/R3.0";//Settings
 
     //dialog
     public String APP_REV_PAGE_50 = "P50/R3.0";//Dialog side rail is up

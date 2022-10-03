@@ -210,7 +210,7 @@ public class K9Alert extends AppCompatActivity {
     }
 
     //side rail dialog
-    public void alertDialogSiderail(String title) {
+    public void alertDialogSiderail(String title, String confirm, String cancel) {
         try {
             LayoutInflater li = LayoutInflater.from(context);
             View promptsView = li.inflate(R.layout.layout_dialog_siderail, null);
@@ -232,9 +232,21 @@ public class K9Alert extends AppCompatActivity {
             }
 
 
+
             //get buttons
             final Button btnConf = (Button) promptsView.findViewById(R.id.btnConfConfirm);
+
             final Button btnCancel = (Button) promptsView.findViewById(R.id.btnSRCancel);
+
+            //set text buttons with language confirm
+            if (btnConf!=null){
+                btnConf.setText(confirm);
+            }
+
+            //set text buttons with language cancel
+            if (btnCancel!=null){
+                btnCancel.setText(cancel);
+            }
 
             //button confirm
             if (btnConf != null) {

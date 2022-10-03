@@ -33,4 +33,15 @@
     <string name="btnStop">fermarsi</string>
     <string name="string_text_action_locked">Bloccato</string>
     <string name="string_text_action_unlocked">Sbloccato</string>
+    <string name="string_text_btn_stopped">Fermata</string>
+    <string name="string_text_btn_ready">Pronto</string>
+    <string name="string_sett_link">Collegamento</string>
+    <string name="string_sett_burning">Cocente</string>
+    <string name="string_sett_About">Circa</string>
+    <string name="string_sett_system">Sistema</string>
+    <string name="string_sett_title">Impostazioni</string>
+    <string name="string_com_connected">collegato</string>
+    <string name="string_com_discconnected">Sconnesso</string>
+    <string name="string_text_btn_sleep">sveglia</string>
+    <string name="string_text_main_unlock">sbloccare</string>
 </resources>

@@ -44,4 +44,5 @@
     <string name="string_com_discconnected">getrennt</string>
     <string name="string_text_btn_sleep">Aufwachen</string>
     <string name="string_text_main_unlock">aufschließen</string>
+    <string name="string_name_percussion_therapy">"Perkussions therapie "</string>
 </resources>

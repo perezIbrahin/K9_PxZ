@@ -25,6 +25,8 @@ public class Status {
     public int SELECT_MODE_NONE=0;
     public int SELECT_MODE_PERCUSSION=1;
     public int SELECT_MODE_VIBRATION=2;
+    public int SELECT_MODE_TOTAL_PERCUSSION=3;
+    public int SELECT_MODE_TOTAL_VIBRATION=4;
     //pass data between activity
 
 

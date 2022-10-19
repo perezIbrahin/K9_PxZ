@@ -44,5 +44,6 @@
     <string name="string_com_discconnected">desconectado</string>
     <string name="string_text_btn_sleep">despertar</string>
     <string name="string_text_main_unlock">desbloquear</string>
+    <string name="string_name_percussion_therapy">Terapia de percusión/vibración</string>
 
 </resources>

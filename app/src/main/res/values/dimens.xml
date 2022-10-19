@@ -98,6 +98,7 @@
 
     <dimen name="dim_text_select_pv_main">18sp</dimen>
     <dimen name="dim_btn_SR_dialog">22sp</dimen>
+    <dimen name="dim_btn_total_body">22sp</dimen>
 
     <!--btn bar main size-->
     <dimen name="dim_btn_bar_H">100dp</dimen>

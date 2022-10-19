@@ -582,5 +582,62 @@ public class K9Alert extends AppCompatActivity {
         }
     }
 
+    //aboutsystem
+    public void alertDialogAbout(String title, String confirm) {
+        try {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_dialog_p53_lock, null);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setView(promptsView);
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDilgLockRev);
+            tvRev.setText(rev.APP_REV_PAGE_54);
+
+
+            //get text view for dialog
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvTextDialogLock);
+            //set text
+            if (title != null) {
+                tvTextDialogSR.setText(title);
+            }
+
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnLockConfirm);
+
+
+            //set text buttons with language confirm
+            if (btnConf != null) {
+                btnConf.setText(confirm);
+            }
+
+
+
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_LOCK", util_dialog.LOCATION_CONFIRM_LOCK);
+                            alertDialog.dismiss();
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogLock: ex:" + e.getMessage());
+                }
+            }
+
+            // show it
+            alertDialog.show();
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogSiderail: " + e.getMessage());
+        }
+    }
+
 
 }

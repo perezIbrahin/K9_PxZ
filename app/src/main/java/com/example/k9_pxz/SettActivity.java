@@ -14,13 +14,15 @@ import android.widget.TextView;
 
 import Alert.AlertCustomDialog;
 import Alert.CustomAlert;
+import Alert.K9Alert;
+import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
 import Util.LocaleHelper;
 import Util.Navigation;
 import Util.Rev;
 import Util.Safety;
 
-public class SettActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface {
+public class SettActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface, InterfaceSetupInfo {
     private static final String TAG = "SettActivity";
     Safety safety = new Safety();
     Navigation navigation = new Navigation();
@@ -141,6 +143,9 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
             launchActivity(BurningActivityRutine.class);
         } else if (v == btnAbout) {
             // launchActivity(BurningActivityRutine.class);
+            K9Alert k9Alert=new K9Alert(this,this);
+            //k9Alert.alertDialogAbout("","", "");
+
         } else if (v == btnSystem) {
             //launchActivity(BurningActivityRutine.class);
         }
@@ -155,7 +160,7 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onItemPostSelect(int position, String value) {
-        Log.d(TAG, "onItemPostSelect: " + position + "value:" + value);
+        Log.d(TAG, "onItemPostSelect Activity Setting: " + position + "value:" + value);
         if (value.equalsIgnoreCase(navigation.NAV_LINK)) {
             launchActivity(ScanActivity.class);
         }
@@ -233,5 +238,15 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, "getExtrasFromAct: " + e.getMessage());
         }
         return "en";
+    }
+
+    @Override
+    public void onItemSetupInfo(String name, String description) {
+
+    }
+
+    @Override
+    public void onItemSetupAlarm(String name, String description, String location) {
+
     }
 }

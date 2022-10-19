@@ -44,7 +44,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -94,6 +93,7 @@ import Util.TagRefrence;
 import Util.TextSize;
 import Util.Util_Dialog;
 import Util.Util_timer;
+import Util.Validation;
 
 public class VibrationPercussionActivity extends AppCompatActivity implements View.OnClickListener, InterfaceSetupInfo, RecyclerViewClickInterface {
     private static final String TAG = "VibrationPercussionActi";
@@ -111,8 +111,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private final String KZ_BLE_ADDRESS = "BC:33:AC:CB:F6:9D";
     //private static final UUID KZ_SERVICE_UUID =UUID_SERVICE_COMMANDS;
     //button command
+    //modes
     private Button btnSelectPer;
     private Button btnSelectVib;
+    private Button btnSelectTotalPer;
+    private Button btnSelectTotalVib;
     //
     private Button btnStart;
     private Button btnStop;
@@ -123,6 +126,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private Button btnSr4;
     private Button btnReady;
     private ImageView ivBle;
+    private ImageView ivIconPerc;
+    private ImageView ivIconVib;
     private Button btnMenu;
     private TextView tvTitle;
     private TextView tvOperation;
@@ -133,6 +138,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private TextView tvTextFrq;
     private TextView tvTextInt;
     private TextView tvTextTime;
+    private TextView tvCurrent;
     //Adapter Frequency
     private RecyclerView recyclerViewF;
     private RecyclerView recyclerViewI;
@@ -303,10 +309,15 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private String dialogMissTra = "0";
     private String dialogMissTrb = "0";
 
+    //serial number
+    private String Serial_Number_Product = "12PV123456";
+    //get type of therapy
+    private int typeOfTherapy = 0;
+    private Validation validation = new Validation();
+    private String serialNumber = "0";
 
     //Display operations
     private DisplayOperations displayOperations = new DisplayOperations();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,6 +339,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         initApp();
         //init language
         initLang();
+
         //buttons events
         eventBtn();
         //loading alert dialog
@@ -342,7 +354,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //loading dialog
-
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -425,6 +436,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private void initGUI() {
         btnSelectPer = findViewById(R.id.btnSelPerc);
         btnSelectVib = findViewById(R.id.btnSelVib);
+        btnSelectTotalPer = findViewById(R.id.btnTotalPerc);
+        btnSelectTotalVib = findViewById(R.id.btnTotalVib);
+
         btnMenu = findViewById(R.id.btnMenu);
         btnStart = findViewById(R.id.btnModeStart);
         btnStop = findViewById(R.id.btnModeStop);
@@ -434,6 +448,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         btnSr4 = findViewById(R.id.sr4);
         btnReady = findViewById(R.id.btnReady);
         ivBle = findViewById(R.id.ivBle);
+        ivIconPerc=findViewById(R.id.ivIconPerc);
+        ivIconVib=findViewById(R.id.ivIconVib);
         tvOperation = findViewById(R.id.tvOpe);
         tvTimer = findViewById(R.id.tvtimer);
         tvCon = findViewById(R.id.tvCon);
@@ -445,6 +461,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         tvTextTime = findViewById(R.id.tvTextTime);
         //
         tvTitle = findViewById(R.id.tvTextPvTitile);
+        tvCurrent=findViewById(R.id.tvCurrent);
     }
 
     //init system
@@ -488,8 +505,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         return true;
     }
 
-    //init language
-
 
     //init array spinner language
     private void initLang() {
@@ -513,13 +528,12 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private void loadContentByLanguage(Resources resources) {
         btnStart.setText(resources.getString(R.string.btnStart));
         btnStop.setText(resources.getString(R.string.btnStop));
-        btnSelectPer.setText(resources.getString(R.string.string_name_select_perc));
-        btnSelectVib.setText(resources.getString(R.string.string_name_select_vib));
+
         tvPresStart.setText(resources.getString(R.string.string_text_pres_start));
         tvTextFrq.setText(resources.getString(R.string.string_text_pv_tv_freq));
         tvTextInt.setText(resources.getString(R.string.string_text_pv_tv_int));
         tvTextTime.setText(resources.getString(R.string.string_text_pv_tv_tim));
-        tvTitle.setText(resources.getString(R.string.string_name_therapy));
+
         btnMenu.setText(resources.getString(R.string.string_text_pv__btn_main));
         //dialog with language
         dialogSideRailLang = resources.getString(R.string.string_dial_side_rail);
@@ -534,7 +548,33 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         dialogMissTra = resources.getString(R.string.string_text_check_transdA);
         dialogMissTrb = resources.getString(R.string.string_text_check_transdB);
 
+        //check if percussion or Percussion/Vibration
+        typeOfTherapy =selectTypeOfTherapy(resources,Serial_Number_Product);
     }
+
+    //type of therapy
+    private int selectTypeOfTherapy(Resources resources,String value) {
+        if (checkingInstalledSystem(Serial_Number_Product) == validation.IsPercussion) {
+            tvTitle.setText(resources.getString(R.string.string_name_percussion_therapy));
+            btnSelectPer.setText(resources.getString(R.string.string_name_select_perc));
+            //
+            btnSelectVib.setVisibility(View.INVISIBLE);
+            ivIconVib.setVisibility(View.INVISIBLE);
+            return validation.IsPercussion;
+        } else if (checkingInstalledSystem(Serial_Number_Product) == validation.IsPercussionVibration) {
+            btnSelectVib.setVisibility(View.VISIBLE);
+            ivIconVib.setVisibility(View.VISIBLE);
+            //
+            tvTitle.setText(resources.getString(R.string.string_name_therapy));
+            btnSelectPer.setText(resources.getString(R.string.string_name_select_perc));
+            btnSelectVib.setText(resources.getString(R.string.string_name_select_vib));
+            return validation.IsPercussionVibration;
+        } else {
+
+        }
+        return validation.IsUnknown;
+    }
+
 
     //close connection
     public void close() {
@@ -592,6 +632,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private void eventBtn() {
         btnSelectPer.setOnClickListener(this);
         btnSelectVib.setOnClickListener(this);
+        btnSelectTotalPer.setOnClickListener(this);
+        btnSelectTotalVib.setOnClickListener(this);
         btnStart.setOnClickListener(this);
         btnStop.setOnClickListener(this);
         btnSr1.setOnClickListener(this);
@@ -622,13 +664,28 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 if (isLockMode == false) {
                     mode = selectMode(status.SELECT_MODE_PERCUSSION);
                 }
-
             }
         } else if (btnSelectVib == v) {
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     mode = selectMode(status.SELECT_MODE_VIBRATION);
+                }
+
+            }
+        }else if (btnSelectTotalPer == v) {
+            if (isTherapyOn == false) {
+                Log.d(TAG, "onClick: isLockMode" + isLockMode);
+                if (isLockMode == false) {
+                    mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
+                }
+
+            }
+        }else if (btnSelectTotalVib == v) {
+            if (isTherapyOn == false) {
+                Log.d(TAG, "onClick: isLockMode" + isLockMode);
+                if (isLockMode == false) {
+                    mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
                 }
 
             }
@@ -661,7 +718,33 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
             updateMode(mode);
             return status.SELECT_MODE_VIBRATION;
+        }else if (mode == status.SELECT_MODE_TOTAL_VIBRATION) {
+            //reset flag selected transd
+            flagIsTRA = false;
+            flagIsTRB = false;
+            resetCheckBockA();
+            resetCheckBockB();
+            updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
+            updateButtonsRbB(setPointsBluetooth.INT_BLE_SP_TRB_NONE);//selection transducer position A
+
+            updateMode(mode);
+            return status.SELECT_MODE_TOTAL_VIBRATION;
+        }else if (mode == status.SELECT_MODE_TOTAL_PERCUSSION) {
+            //reset flag selected transd
+            flagIsTRA = false;
+            flagIsTRB = false;
+            resetCheckBockA();
+            resetCheckBockB();
+            updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
+            updateButtonsRbB(setPointsBluetooth.INT_BLE_SP_TRB_NONE);//selection transducer position A
+
+            updateMode(mode);
+            return status.SELECT_MODE_TOTAL_PERCUSSION;
         }
+
+
+
+
         return 0;
     }
 
@@ -682,7 +765,13 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         //reset flag
     }
 
-    //events when is selected vibration
+    //check installed system
+    private int checkingInstalledSystem(String value) {
+        if (value != null) {
+            return validation.validateIsPV(value);
+        }
+        return 0;
+    }
 
     //launch home activity
     private void goHome() {
@@ -725,6 +814,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 String add = bundle.getString("vibAdd");
                 //get language
                 language = bundle.getString("language");
+                //get type of therapy
+                Serial_Number_Product = bundle.getString("serial_number");
+                Log.d(TAG, "getExtrasFromAct: serial_number:" + Serial_Number_Product);
+
                 if (add != null) {
                     Log.d(TAG, "Vibration getExtrasFromAct: " + add);
                     if (add.equalsIgnoreCase(oldAddress)) {
@@ -1409,16 +1502,30 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         if (value > 0) {
             try {
                 if (value == setPointsBluetooth.INT_BLE_CMD_NONE) {
-                    btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                    btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                   // btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    //btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    //added 10/19/22
+                    btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48_wh));
+                    btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
+
+
                     return setPointsBluetooth.INT_BLE_CMD_NONE;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_START)) {
-                    btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48));
-                    btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    //btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48));
+                    //btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+                    //added 10/19/22
+                    btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48_wh));
+                    btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
+
                     displayOperation(displayOperations.DISPLAY_OPE_RUNNING);//running
                     return setPointsBluetooth.INT_BLE_CMD_START;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_STOP)) {
-                    btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    //btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                   // btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
+
+                    //added 10/19/22
+                    btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48_wh));
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
 
                     displayOperation(displayOperations.DISPLAY_OPE_STOPPED);//stopped
@@ -1470,8 +1577,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
                     break;
                 case 1: //alert
-                    btnReady.setVisibility(View.VISIBLE);
-                    displaytextStart(true);
+                    btnReady.setVisibility(View.INVISIBLE);
+                    //btnReady.setVisibility(View.VISIBLE);
+                    //displaytextStart(true);
+                    displaytextStart(false);
                     lockMode(true);
                     /*if(btnReady.getVisibility()==View.INVISIBLE){
                         btnReady.setVisibility(View.VISIBLE);
@@ -2603,10 +2712,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         try {
             mProtocol = value0;
             mSp = value1;
-            String mValue0 = String.valueOf(value0);
-            String mValue1 = String.valueOf(value1);
+            String mValue0 = String.valueOf(value0);//protocol
+            String mValue1 = String.valueOf(value1);//setpoint
             String mValue2 = String.valueOf(value2);
-            String mValue3 = String.valueOf(value3);
+            String mValue3 = String.valueOf(value3);//current mA
             String mValue = "[B0]:" + mValue0 + "...[B1]:" + mValue1 + "...[B2]:" + mValue2 + "...[B3]:" + mValue3;
             Log.d(TAG, "getParamUpdateValueGui:value: " + mValue);
 
@@ -2614,14 +2723,18 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             if (mProtocol == bleProtocol.FREQUENCY) {
                 modelBtnFreqArrayList.clear();
                 updateFbFreq(mSp);
+                beepSound();
             } else if (mProtocol == bleProtocol.INTENSITY) {
                 modelBtnIntArrayList.clear();
                 updateFbInt(mSp);
+                beepSound();
             } else if (mProtocol == bleProtocol.TIME) {
                 modelBtnTimeArrayList.clear();
                 updateFbTime(mSp);
+                beepSound();
             } else if (mProtocol == bleProtocol.OPERATION) {
                 updateFbCommands(mSp);
+                beepSound();
             } else if (mProtocol == bleProtocol.RBA) {
                 Log.d(TAG, "getParamUpdateValueGui3: RBA");
                 // modelBtnArrayListA.clear();
@@ -2629,20 +2742,20 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 resetCheckBockA();
                 //check mode
                 updateFbRBA(mode, mSp);
-
-
+                beepSound();
             } else if (mProtocol == bleProtocol.RBB) {
                 resetCheckBockB();
                 //modelBtnArrayListB.clear();
                 //modelIconArrayListB.clear();
                 updateFbRBb(mode, mSp);
-
+                beepSound();
             } else if (mProtocol == bleProtocol.COOLING) {
                 Log.d(TAG, "getParamUpdateValueGui3:cooling");
                 controlIconCoolingTransd(mSp);
             }
+            displayCurrent(mValue3);
             //beep
-            beepSound();
+            //beepSound();
         } catch (Exception e) {
             Log.d(TAG, "getParamUpdateValueGui: Exception" + e.getMessage());
         }
@@ -2879,6 +2992,26 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         }
     }
 
+    //display text power
+    private void displayCurrent(String value){
+        try {
+            if(value!=null){
+                if(tvCurrent!=null){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvCurrent.setText(value+"mA");
+                        }
+                    });
+                }
+            }
+        }catch (Exception e){
+            Log.d(TAG, "displayCurrent: ex:"+e.getMessage());
+        }
+
+
+    }
+
     //-----------Enable---------------------//
     private void enableGui(boolean input) {
         Log.d(TAG, "enableGui: " + input);
@@ -2944,8 +3077,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         } else if (description.equalsIgnoreCase(utilDialog.LOCATION_CONFIRM_SIDERAIL)) {//
             isFlagIsSr = true;
             updateSideRail(controlGUI.POS0);
-            displayOperation(displayOperations.DISPLAY_OPE_READY);//Ready
-            //changeStrokeBtnStart(controlGUI.POS1);
+            condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
+
+            //changed 10/19/22
+           // displayOperation(displayOperations.DISPLAY_OPE_READY);//Ready
             updateBtnReady(controlGUI.POS1);
         }
     }
@@ -3304,11 +3439,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     //missing parameter
                     int status = checkMissingParam(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, flagIsSR);
                     Log.d(TAG, "condStartTherapy: status:" + status);
-                    if(dialogMissTitle==null){
+                    if (dialogMissTitle == null) {
                         Log.d(TAG, "condStartTherapy: dialogMissTitle null");
                     }
-                    
-                    
+
+
                     k9Alert.alertDialogMissingPara(dialogMissTitle, status, dialogMissFreq, dialogMissInt, dialogMissTime, dialogMissTra, dialogMissTrb, nameBtnConfirm);
                     return;
                 }

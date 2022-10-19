@@ -157,10 +157,15 @@
     <string name="string_text_check_transdA">Check transducers A</string>
     <string name="string_text_check_transdB">Check transducers B</string>
     <string name="string_name_therapy_complete">Therapy complete.</string>
-    <string name="string_name_therapy">Percussion/Vibration Therapy</string>
+    <string name="string_name_therapy">Total body Percussion/Vibration therapy</string>
+    <string name="string_name_percussion_therapy">Percussion Therapy</string>
     <string name="string_name_btn_main" translatable="false">K-9</string>
     <string name="string_name_select_perc">Percussion</string>
     <string name="string_name_select_vib">Vibration</string>
+
+    <string name="string_name_select_total_perc">Total body Percussion</string>
+    <string name="string_name_select_total_vib">Total body Vibration</string>
+
     <string name="string_name_lock">Are you sure?</string>
 
     <!-- name button dialog siderail -->
@@ -234,7 +239,6 @@
         <item>français(fr)</item>
         <item>Italiano(it)</item>
         <item>Español(es)</item>
-
     </string-array>
     <string name="string_text_pv_tv_int">Intensity</string>
 

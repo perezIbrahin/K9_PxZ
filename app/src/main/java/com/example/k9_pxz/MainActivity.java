@@ -28,7 +28,9 @@ import Interface.RecyclerViewClickInterface;
 import Util.Languages;
 import Util.LocaleHelper;
 import Util.Rev;
+import Util.Status;
 import Util.Util_Dialog;
+import Util.Validation;
 //import Util.Status;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface, InterfaceSetupInfo {
@@ -76,12 +78,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Util_Dialog utilDialog = new Util_Dialog();
     //language
     private Resources resourcesLang;
-    private Languages languages=new Languages();
+    private Languages languages = new Languages();
     private String language = languages.LANG_EN;
     private int languagePos = 0;
     //Store preferences
     private String KEY_LANGUAGE = languages.LANG_EN;
     private String KEY_LANGUAGE_POS = "0";
+
+    //serial number of the product
+    private String Serial_Number_Product = "12PV123456";
+    private String KEY_SERIAL_NUMBER = Serial_Number_Product;
+
+    //get system isntalled acording serial number
+    private Validation validation = new Validation();
+    private int installedSystem = validation.IsUnknown;//can be percussion or percussion/vibration
     //load manual
     // creating a variable
     // for PDF view.
@@ -146,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvRev = findViewById(R.id.tvRev);
         mLanguage = (Spinner) findViewById(R.id.spinnerLang);
         tvTherapyName = findViewById(R.id.tvTherapyName);
-        tvStatusScreen= findViewById(R.id.tvScreenStatus);
+        tvStatusScreen = findViewById(R.id.tvScreenStatus);
     }
 
     private boolean initApp() {
@@ -154,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //init lock
         //btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_mobile_friendly_32), null, null);
         btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48));
-       // btnMainLock.setText("Unlocked");
+        // btnMainLock.setText("Unlocked");
         isLockScreen = false;
         return true;
     }
@@ -197,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // for testing
-    private void langChange(String languageToLoad){
+    private void langChange(String languageToLoad) {
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);
         Configuration config = new Configuration();
@@ -211,39 +221,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //load all the text according to the language
     private void loadContentByLanguage(String language) {
-        Log.d(TAG, "loadContentByLanguage: lang:"+language);
+        Log.d(TAG, "loadContentByLanguage: lang:" + language);
 
         Context context1 = LocaleHelper.setLocale(MainActivity.this, language);
         Resources resources1 = context1.getResources();
 
-        if(context1!=null){
+        if (context1 != null) {
 
             Log.d(TAG, "loadContentByLanguage: resource1 ok");
-        }else{
+        } else {
             Log.d(TAG, "loadContentByLanguage: resource null");
         }
-        
-        
-        if(resources1!=null){
+
+
+        if (resources1 != null) {
 
             try {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_main_manual));
-                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_main_lock));
-                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_main_unlock));
-                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_main_sleep));
-                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_name_therapy));
-                        Log.d(TAG, "loadContentByLanguage: "+resources1.getString(R.string.string_text_action_unlocked));
-
-
+                       /* Log.d(TAG, "loadContentByLanguage: " + resources1.getString(R.string.string_text_main_manual));
+                        Log.d(TAG, "loadContentByLanguage: " + resources1.getString(R.string.string_text_main_lock));
+                        Log.d(TAG, "loadContentByLanguage: " + resources1.getString(R.string.string_text_main_unlock));
+                        Log.d(TAG, "loadContentByLanguage: " + resources1.getString(R.string.string_text_main_sleep));
+                        Log.d(TAG, "loadContentByLanguage: " + resources1.getString(R.string.string_name_therapy));
+                        Log.d(TAG, "loadContentByLanguage: " + resources1.getString(R.string.string_text_action_unlocked));*/
+                        //
                         btnMainManual.setText(resources1.getString(R.string.string_text_main_manual));
                         btnMainLock.setText(resources1.getString(R.string.string_text_main_lock));
                         btnMainUnlock.setText(resources1.getString(R.string.string_text_main_unlock));
                         btnMainSleep.setText(resources1.getString(R.string.string_text_main_sleep));
-                        tvTherapyName.setText(resources1.getString(R.string.string_name_therapy));
+                        //
                         tvStatusScreen.setText(resources1.getString(R.string.string_text_action_unlocked));
+
+                        //check if percussion or Percussion/Vibration
+                        if (checkingInstalledSystem(Serial_Number_Product) == validation.IsPercussion) {
+                            //load percussion
+                            tvTherapyName.setText(resources1.getString(R.string.string_name_percussion_therapy));
+                        } else if (checkingInstalledSystem(Serial_Number_Product) == validation.IsPercussionVibration) {
+                            //load stuff for percussion/vibration
+                            tvTherapyName.setText(resources1.getString(R.string.string_name_therapy));
+                        }
                     }
                 });
 
@@ -252,11 +270,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
 
-        }else{
+        } else {
             Log.d(TAG, "loadContentByLanguage: null");
         }
-
-
 
 
     }
@@ -278,40 +294,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_EN);//english
                                     Log.d(TAG, "run: en");
                                     language = languages.LANG_EN;
-                                    languagePos=0;
+                                    languagePos = 0;
                                     //resources = context.getResources();
                                     loadContentByLanguage(language);
                                     break;
                                 case 1:
                                     context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_DE);//germany
                                     language = languages.LANG_DE;
-                                    languagePos=1;
+                                    languagePos = 1;
                                     //resources = context.getResources();
-                                    Log.d(TAG, "run: lang"+language);
+                                    Log.d(TAG, "run: lang" + language);
                                     loadContentByLanguage(language);
                                     break;
                                 case 2:
                                     context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_FR);//fr
                                     language = languages.LANG_FR;
-                                    languagePos=2;
+                                    languagePos = 2;
                                     //resources = context.getResources();
-                                    Log.d(TAG, "run: lang"+language);
+                                    Log.d(TAG, "run: lang" + language);
                                     loadContentByLanguage(language);
                                     break;
                                 case 3:
                                     context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_IT);//it
 
                                     language = languages.LANG_IT;
-                                    languagePos=3;
-                                    Log.d(TAG, "run: lang"+language);
+                                    languagePos = 3;
+                                    Log.d(TAG, "run: lang" + language);
                                     //resources = context.getResources();
                                     loadContentByLanguage(language);
                                     break;
                                 case 4:
                                     context = LocaleHelper.setLocale(MainActivity.this, languages.LANG_ES);//sp
                                     language = languages.LANG_ES;
-                                    languagePos=4;
-                                    Log.d(TAG, "run: lang"+language);
+                                    languagePos = 4;
+                                    Log.d(TAG, "run: lang" + language);
                                     //resources = context.getResources();
                                     loadContentByLanguage(language);
                                     break;
@@ -342,40 +358,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v == btnMainK9) {
             if (!isLockScreen) {
-                passBleAddToVib(myBleAdd);
+                //passBleAddToVib(myBleAdd);
+                launchActivityWithExtras(VibrationPercussionActivity.class, language, Serial_Number_Product, myBleAdd);
             } else {
                 toastMessage();
             }
         } else if (v == btnMainSett) {
             if (!isLockScreen) {
-                launchActivityWithExtras(SettActivity.class, language);
-                //launchActivity(SettActivity.class);
+                launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");
             } else {
                 toastMessage();
             }
         } else if (v == btnMainManual) {
-            launchActivityWithExtras(ManualActivity.class, language);
+            launchActivityWithExtras(ManualActivity.class, language, Serial_Number_Product, "0");
             //launchActivity(ManualActivity.class);
         } else if (v == btnMainSleep) {
-            launchActivityWithExtras(SleepActivity.class, language);
+            launchActivityWithExtras(SleepActivity.class, language, Serial_Number_Product, "0");
             //launchActivity(SleepActivity.class);
         } else if (v == btnMainLock) {
             //check status first. ned to be unlocked
-            if(!isLockScreen){
+            if (!isLockScreen) {
                 try {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // Stuff that updates the UI
-                            Resources resources=getResourcesLanguage(language);
+                            Resources resources = getResourcesLanguage(language);
                             //dialog to be display
-                            String text=resources.getString(R.string.string_name_lock);
+                            String text = resources.getString(R.string.string_name_lock);
                             //button name with language confirm
-                            String nameBtnConfirm=resources.getString(R.string.string_btn_SR_confirm);
+                            String nameBtnConfirm = resources.getString(R.string.string_btn_SR_confirm);
                             //button name with language cancel
-                            String nameBtnCancel=resources.getString(R.string.string_btn_SR_cancel);
+                            String nameBtnCancel = resources.getString(R.string.string_btn_SR_cancel);
                             //send data to dialog
-                            k9Alert.alertDialogLock(text,nameBtnConfirm,nameBtnCancel);
+                            k9Alert.alertDialogLock(text, nameBtnConfirm, nameBtnCancel);
                         }
                     });
 
@@ -385,23 +401,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
 
-        }else if(v == btnMainUnlock){
+        } else if (v == btnMainUnlock) {
             //check status first. ned to be locked
-            if(isLockScreen){
+            if (isLockScreen) {
                 try {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // Stuff that updates the UI
-                            Resources resources=getResourcesLanguage(language);
+                            Resources resources = getResourcesLanguage(language);
                             //dialog to be display
-                            String text=resources.getString(R.string.string_name_lock);
+                            String text = resources.getString(R.string.string_name_lock);
                             //button name with language confirm
-                            String nameBtnConfirm=resources.getString(R.string.string_btn_SR_confirm);
+                            String nameBtnConfirm = resources.getString(R.string.string_btn_SR_confirm);
                             //button name with language cancel
-                            String nameBtnCancel=resources.getString(R.string.string_btn_SR_cancel);
+                            String nameBtnCancel = resources.getString(R.string.string_btn_SR_cancel);
                             //send data to dialog
-                            k9Alert.alertDialogLock(text,nameBtnConfirm,nameBtnCancel);
+                            k9Alert.alertDialogLock(text, nameBtnConfirm, nameBtnCancel);
                         }
                     });
 
@@ -424,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 if (DATA_BLE_ADD != null) {
                     add = bundle.getString(DATA_BLE_ADD);
-
+                    //check if the address changed
                     if (add.equalsIgnoreCase(myBleAdd)) {
                         Log.d(TAG, "getExtrasFromAct: same address");
                     } else {
@@ -434,19 +450,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         saveData();
                     }
                 }
+                //get serial number
                 if (DATA_SYSTEM_SERIAL != null) {
-                    serial = bundle.getString(DATA_SYSTEM_SERIAL);
-                    Log.d(TAG, "getExtrasFromAct: " + add + ".serial:" + serial);
+                    Serial_Number_Product = bundle.getString(DATA_SYSTEM_SERIAL);
+                    Log.d(TAG, "getExtrasFromAct: " + bundle.getString(DATA_SYSTEM_SERIAL));
+                    // Log.d(TAG, "getExtrasFromAct: " + add + ".serial:" + serial);
+                    storePreferences();
+                    //
+
                 }
-
-
             } catch (Exception e) {
-                Log.d(TAG, "getExtrasFromAct: " + e.getMessage());
+                Log.d(TAG, "getExtrasFromAct: ex " + e.getMessage());
             }
 
 
         }
     }
+
+    //check installed system
+    private int checkingInstalledSystem(String value) {
+        if (value != null) {
+            return validation.validateIsPV(value);
+        }
+        return 0;
+    }
+
 
     //pass bluettoth address to vibration activity
     private void passBleAddToVib(String add) {
@@ -456,6 +484,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "passBleAddToVib " + add);
                 bundle.putString("vibAdd", add);//send bluetooth address
                 bundle.putString("language", language);//send bluetooth address
+                bundle.putString("serial_number", Serial_Number_Product);//send language
                 Intent intent = new Intent(MainActivity.this, VibrationPercussionActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -466,12 +495,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //launch activity with extra
-    private void launchActivityWithExtras(Class myclass, String language) {
+    private void launchActivityWithExtras(Class myclass, String language, String serialNumber, String bluetoothAdd) {
         try {
-            if (language!= null) {
+            if (language != null) {
                 Bundle bundle = new Bundle();
-                Log.d(TAG, "launchActWithExtras " +language);
-                bundle.putString("language", language);//send bluetooth address
+                //
+                bundle.putString("vibAdd", bluetoothAdd);//send bluetooth address
+                bundle.putString("language", language);//send language
+                bundle.putString("serial_number", serialNumber);//send language
+                //
                 Intent intent = new Intent(MainActivity.this, myclass);
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -488,6 +520,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences.Editor editor = sharedPreferences.edit();//enable to change the value
         editor.putString(BLE_ADD_K9, myBleAdd);//get the text from the editText
         editor.putString(SERIAL_K9, mySerialAdd);//get the text from the editText
+        Log.d(TAG, "saveData: serial number" + mySerialAdd);
         editor.apply();
         //Toast.makeText(this, "Data Saved", Toast.LENGTH_SHORT).show();
     }
@@ -497,10 +530,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS1, MODE_PRIVATE);//mode private means no other app can change it
         myBleAdd = sharedPreferences.getString(BLE_ADD, "");
         mySerialAdd = sharedPreferences.getString(SERIAL_K9, "");
+        Log.d(TAG, "loadData: serialNumber:" + mySerialAdd);
     }
 
     @Override
     public void onItemPostSelect(int position, String value) {
+        Log.d(TAG, "onItemPostSelect: pos:" + position + ".value:" + value);
+        //get the serial number of the product
+        Status status = new Status();
+        if (position == status.STATUS_SERIAL_LINK) {
+            Serial_Number_Product = value;
+        }
 
     }
 
@@ -574,7 +614,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //get resources for the language
-    private Resources  getResourcesLanguage(String language){
+    private Resources getResourcesLanguage(String language) {
         Context context;
         Resources resources;
         context = LocaleHelper.setLocale(MainActivity.this, language);
@@ -587,16 +627,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             if (!isLockScreen) {
                 Log.d(TAG, "setLockScreen: lock screen" + isLockScreen);
-               // btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_phonelink_lock_32), null, null);
-               // btnMainLock.setText(resources.getString(R.string.string_text_action_locked));
+                // btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_phonelink_lock_32), null, null);
+                // btnMainLock.setText(resources.getString(R.string.string_text_action_locked));
 
                 isLockScreen = true;
                 displayLock(isLockScreen);
                 return;
             } else if (isLockScreen) {
                 Log.d(TAG, "setLockScreen: unlock screen" + isLockScreen);
-               // btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_mobile_friendly_32), null, null);
-               // btnMainLock.setText(resources.getString(R.string.string_text_action_unlocked));
+                // btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_mobile_friendly_32), null, null);
+                // btnMainLock.setText(resources.getString(R.string.string_text_action_unlocked));
                 isLockScreen = false;
                 displayLock(isLockScreen);
                 return;
@@ -619,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //show lock icon on the start button
     private void displayLock(boolean input) {
-        Resources resources=getResourcesLanguage(language);
+        Resources resources = getResourcesLanguage(language);
 
         if (input) {
             btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_phonelink_lock_48));
@@ -631,7 +671,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    //store  preferences
+    //save   preferences
     private void storePreferences() {
         // Storing data into SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
@@ -643,9 +683,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         myEdit.putString(KEY_LANGUAGE, language);
         //Store position of the spinner
         myEdit.putInt(KEY_LANGUAGE_POS, languagePos);
-        Log.d(TAG, "storePreferences: language"+language);
-        Log.d(TAG, "storePreferences: language Position"+languagePos);
+        //store serial number of the product
+        myEdit.putString(KEY_SERIAL_NUMBER, Serial_Number_Product);
 
+        Log.d(TAG, "storePreferences: language" + language);
+        Log.d(TAG, "storePreferences: language Position" + languagePos);
+        Log.d(TAG, "storePreferences: serial number" + Serial_Number_Product);
 
         // Once the changes have been made,
         // we need to commit to apply those changes made,
@@ -653,7 +696,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         myEdit.commit();
     }
 
-    //store  preferences
+    //load  preferences
     private void getStorePreferences() {
         // Retrieving the value using its keys the file name
         // must be same in both saving and retrieving the data
@@ -661,11 +704,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // The value will be default as empty string because for
         // the very first time when the app is opened, there is nothing to show
+        //get language
         String s1 = sh.getString(KEY_LANGUAGE, "en");
+        //get language position on the spinner
         int a = sh.getInt(KEY_LANGUAGE_POS, 0);
+        //get serial number
+        String serialNumber = sh.getString(KEY_SERIAL_NUMBER, "12PV123456");
+
         //
-        Log.d(TAG, "getStorePreferences:language "+s1);
-        Log.d(TAG, "getStorePreferences:language Pos: "+a);
+        Log.d(TAG, "getStorePreferences:language " + s1);
+        Log.d(TAG, "getStorePreferences:language Pos: " + a);
         //int a = sh.getInt("age", 0);
 
         // We can then use the data
@@ -674,18 +722,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //update spinner language
             loadValueSpinnerLang(a);
         }
+        //
+        if (serialNumber != null) {
+            Serial_Number_Product = serialNumber;
+            Log.d(TAG, "getStorePreferences: Serial number:" + Serial_Number_Product);
+        }
+
     }
 
     //load preferences
     private void loadValueSpinnerLang(int input) {
-       //
-        Log.d(TAG, "loadValueSpinnerLang: "+input);
+        //
+        Log.d(TAG, "loadValueSpinnerLang: " + input);
         mLanguage.setSelection(input);
     }
 
     //display status screen
-    private void displayStatusScreen(String status){
-        if(status!=null){
+    private void displayStatusScreen(String status) {
+        if (status != null) {
             tvStatusScreen.setText(status);
         }
     }

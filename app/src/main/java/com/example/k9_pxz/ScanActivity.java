@@ -200,6 +200,7 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
     private void goHome(){
         Bundle bundle = new Bundle();
         Log.d(TAG, "onClick: get address " + BLE_ADD_GOT);
+        Log.d(TAG, "goHome: extras add:"+BLE_ADD_GOT+".serial number:"+SERIAL_NUMBER);
         bundle.putString(DATA_BLE_ADD, BLE_ADD_GOT);//
         bundle.putString(DATA_SYSTEM_SERIAL, SERIAL_NUMBER);//
         Intent intent = new Intent(ScanActivity.this, MainActivity.class);
@@ -357,7 +358,7 @@ public class ScanActivity extends AppCompatActivity implements RecyclerViewClick
                 try {
                     if (mBluetoothDevice.getName() != null) {
                         Log.d(TAG, "onScanResult:name: " + mBluetoothDevice.getName());
-                        if (mBluetoothDevice.getName().contains("K9_pvz")) {
+                        if (mBluetoothDevice.getName().contains("K9_p")) {
                             getBluetoothDevice(mBluetoothDevice.getName(), mBluetoothDevice.getAddress(), "remote");
                         }
 

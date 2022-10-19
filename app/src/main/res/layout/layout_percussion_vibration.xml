@@ -383,15 +383,15 @@
         android:id="@+id/btnModeStart"
         android:layout_width="@dimen/dim_btn_control_start_W"
         android:layout_height="@dimen/dim_btn_control_start_H"
-        android:background="@drawable/btn_start"
+        android:background="@drawable/btn_start_green"
         android:text="@string/btnStart"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorFla"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/LLFreq"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/LLRbA"
-        app:layout_constraintStart_toEndOf="@+id/LLFreq"
-        app:layout_constraintTop_toTopOf="@+id/LLFreq" />
+        app:layout_constraintStart_toEndOf="@+id/LLFreq" />
 
     <Button
         android:id="@+id/btnModeStop"
@@ -403,10 +403,10 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/colorFla"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/LLInt"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/LLInt"
-        app:layout_constraintStart_toEndOf="@+id/LLRbB"
-        app:layout_constraintTop_toTopOf="@+id/LLInt" />
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toEndOf="@+id/LLRbB" />
 
     <LinearLayout
         android:id="@+id/LLIconA"
@@ -552,6 +552,7 @@
         android:background="@drawable/btn_sp1"
         android:text="@string/string_name_select_perc"
         android:textSize="@dimen/dim_text_select_pv_main"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/btnModeStart"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/btnModeStart"
@@ -564,6 +565,7 @@
         android:background="@drawable/btn_sp1"
         android:text="@string/string_name_select_vib"
         android:textSize="@dimen/dim_text_select_pv_main"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/btnSelPerc"
         app:layout_constraintEnd_toEndOf="@+id/btnModeStop"
         app:layout_constraintStart_toStartOf="@+id/btnModeStop"
@@ -582,7 +584,7 @@
         app:layout_constraintTop_toBottomOf="@+id/btnReady" />
 
     <ImageView
-        android:id="@+id/imageView18"
+        android:id="@+id/ivIconPerc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/btnSelPerc"
@@ -592,7 +594,7 @@
         app:srcCompat="@drawable/ic_baseline_sensors_48" />
 
     <ImageView
-        android:id="@+id/imageView19"
+        android:id="@+id/ivIconVib"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@+id/btnSelVib"
@@ -600,5 +602,37 @@
         app:layout_constraintStart_toStartOf="@+id/btnSelVib"
         app:layout_constraintTop_toBottomOf="@+id/btnSelPerc"
         app:srcCompat="@drawable/ic_baseline_water_48" />
+
+    <TextView
+        android:id="@+id/tvCurrent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0mA"
+        app:layout_constraintBottom_toTopOf="@+id/tvVibRev"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnTotalPerc"
+        android:layout_width="@dimen/dim_select_pv_W"
+        android:layout_height="@dimen/dim_select_pv_H"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/btn_sp1"
+        android:text="@string/string_name_select_total_perc"
+        android:textSize="@dimen/dim_btn_total_body"
+        app:layout_constraintEnd_toEndOf="@+id/btnSelPerc"
+        app:layout_constraintHorizontal_bias="0.523"
+        app:layout_constraintStart_toStartOf="@+id/btnSelPerc"
+        app:layout_constraintTop_toBottomOf="@+id/ivIconPerc" />
+
+    <Button
+        android:id="@+id/btnTotalVib"
+        android:layout_width="@dimen/dim_select_pv_W"
+        android:layout_height="@dimen/dim_select_pv_H"
+        android:background="@drawable/btn_sp1"
+        android:text="@string/string_name_select_total_vib"
+        android:textSize="@dimen/dim_btn_total_body"
+        app:layout_constraintEnd_toEndOf="@+id/btnSelVib"
+        app:layout_constraintStart_toStartOf="@+id/btnSelVib"
+        app:layout_constraintTop_toTopOf="@+id/btnTotalPerc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

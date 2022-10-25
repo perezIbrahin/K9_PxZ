@@ -7,7 +7,8 @@ public class ControlGUI {
     public Integer POS3=3;
     public Integer POS4=4;
     public Integer POS5=5;
-
+    public Integer POS_ALL_PERC=6;
+    public Integer POS_ALL_VIB=7;
     //TRANSDUCERS
     public Integer TRANSD_NONE=0;
     public Integer TRANSD_SELECTED=1;

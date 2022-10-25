@@ -40,7 +40,8 @@ public class SetPointsBluetooth {
     public final String SP_BLE_CMD_START = "97";
     public final String SP_BLE_CMD_STOP = "101";
 
-
+    public final String SP_BLE_CMD_TOTAL_BODY_PERC = "94";
+    public final String SP_BLE_CMD_TOTAL_BODY_VIB = "95";
     //--------------------------------------------
     public final int INT_BLE_SP_CLEAN = -1;
     //Frequency
@@ -98,16 +99,24 @@ public class SetPointsBluetooth {
     public final int INT_BLE_SP_COOL_BOX4 = 74;
     public final int INT_BLE_SP_COOL_BOX5 = 75;
 
-    //commands string
+    //commands
     public final int INT_BLE_CMD_INIT = 60;
     public final int INT_BLE_CMD_START = 61;
     public final int INT_BLE_CMD_STOP = 62;
+    public final int INT_BLE_CMD_TOTAL_VIB = 63;
+
+    //64-SPARE
+    public final int INT_BLE_SP_COOL_ALL_STOP = 65;//LINK
+    public final int INT_BLE_SP_COOL_ALL_INIT = 66;
+    public final int INT_BLE_CMD_TOTAL_PERC = 67;
+    public final int INT_BLE_CMD_NONE = 69;
+
     public final int INT_BLE_CMD_SLEEP = 03;
     public final int INT_BLE_CMD_WAKE = 04;
-    public final int INT_BLE_SP_COOL_ALL_STOP = 65;
-    public final int INT_BLE_SP_COOL_ALL_INIT = 66;
+
+
     public final int INT_BLE_CMD_END = 68;
-    public final int INT_BLE_CMD_NONE = 69;
+
 
     //Frequency
     private int BLE_SP_FREQ1 = 0x10;

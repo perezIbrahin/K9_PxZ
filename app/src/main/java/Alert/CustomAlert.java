@@ -166,7 +166,6 @@ public class CustomAlert extends AppCompatActivity {
         }
         }*/
 
-
     public void showDialog() {
         LayoutInflater li = LayoutInflater.from(context);
         View promptsView = li.inflate(R.layout.searchprompt, null);
@@ -456,7 +455,6 @@ public class CustomAlert extends AppCompatActivity {
 
     }
 
-
     // Check Password
     private String Search_Tips(String text) {
         if (text != null) {
@@ -486,7 +484,6 @@ public class CustomAlert extends AppCompatActivity {
             showAlertVailadionDataFailed();
         }
     }
-
 
     //
     private void approvedGoLinkPage() {

@@ -46,7 +46,6 @@ public class K9Alert extends AppCompatActivity {
         contextLang = context;
     }
 
-
     public void alertDialogLivePage(String title) {
         try {
             LayoutInflater li = LayoutInflater.from(context);

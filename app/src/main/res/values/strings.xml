@@ -163,8 +163,8 @@
     <string name="string_name_select_perc">Percussion</string>
     <string name="string_name_select_vib">Vibration</string>
 
-    <string name="string_name_select_total_perc">Total body Percussion</string>
-    <string name="string_name_select_total_vib">Total body Vibration</string>
+    <string name="string_name_select_total_perc">Full chest Percussion</string>
+    <string name="string_name_select_total_vib">Full body Vibration</string>
 
     <string name="string_name_lock">Are you sure?</string>
 

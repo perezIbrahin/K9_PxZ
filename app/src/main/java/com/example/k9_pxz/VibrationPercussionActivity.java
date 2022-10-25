@@ -448,8 +448,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         btnSr4 = findViewById(R.id.sr4);
         btnReady = findViewById(R.id.btnReady);
         ivBle = findViewById(R.id.ivBle);
-        ivIconPerc=findViewById(R.id.ivIconPerc);
-        ivIconVib=findViewById(R.id.ivIconVib);
+        ivIconPerc = findViewById(R.id.ivIconPerc);
+        ivIconVib = findViewById(R.id.ivIconVib);
         tvOperation = findViewById(R.id.tvOpe);
         tvTimer = findViewById(R.id.tvtimer);
         tvCon = findViewById(R.id.tvCon);
@@ -461,7 +461,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         tvTextTime = findViewById(R.id.tvTextTime);
         //
         tvTitle = findViewById(R.id.tvTextPvTitile);
-        tvCurrent=findViewById(R.id.tvCurrent);
+        tvCurrent = findViewById(R.id.tvCurrent);
     }
 
     //init system
@@ -549,11 +549,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         dialogMissTrb = resources.getString(R.string.string_text_check_transdB);
 
         //check if percussion or Percussion/Vibration
-        typeOfTherapy =selectTypeOfTherapy(resources,Serial_Number_Product);
+        typeOfTherapy = selectTypeOfTherapy(resources, Serial_Number_Product);
     }
 
     //type of therapy
-    private int selectTypeOfTherapy(Resources resources,String value) {
+    private int selectTypeOfTherapy(Resources resources, String value) {
         if (checkingInstalledSystem(Serial_Number_Product) == validation.IsPercussion) {
             tvTitle.setText(resources.getString(R.string.string_name_percussion_therapy));
             btnSelectPer.setText(resources.getString(R.string.string_name_select_perc));
@@ -673,19 +673,21 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 }
 
             }
-        }else if (btnSelectTotalPer == v) {
+        } else if (btnSelectTotalPer == v) {
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
-                    mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
+                    totalPercussion();
+                    //mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
                 }
 
             }
-        }else if (btnSelectTotalVib == v) {
+        } else if (btnSelectTotalVib == v) {
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
-                    mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
+                    totalVibration();
+                    //mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
                 }
 
             }
@@ -718,7 +720,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
             updateMode(mode);
             return status.SELECT_MODE_VIBRATION;
-        }else if (mode == status.SELECT_MODE_TOTAL_VIBRATION) {
+        } else if (mode == status.SELECT_MODE_TOTAL_VIBRATION) {
             //reset flag selected transd
             flagIsTRA = false;
             flagIsTRB = false;
@@ -726,23 +728,21 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             resetCheckBockB();
             updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
             updateButtonsRbB(setPointsBluetooth.INT_BLE_SP_TRB_NONE);//selection transducer position A
-
             updateMode(mode);
+            //totalVibration();
             return status.SELECT_MODE_TOTAL_VIBRATION;
-        }else if (mode == status.SELECT_MODE_TOTAL_PERCUSSION) {
+        } else if (mode == status.SELECT_MODE_TOTAL_PERCUSSION) {
             //reset flag selected transd
             flagIsTRA = false;
             flagIsTRB = false;
             resetCheckBockA();
             resetCheckBockB();
-            updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
-            updateButtonsRbB(setPointsBluetooth.INT_BLE_SP_TRB_NONE);//selection transducer position A
-
+            updateButtonsRbAPercussion(setPointsBluetooth.INT_BLE_SP_TRA_NONE);
+            updateButtonsRbBPercussion(setPointsBluetooth.INT_BLE_SP_TRB_NONE);
             updateMode(mode);
+            //totalPercussion();
             return status.SELECT_MODE_TOTAL_PERCUSSION;
         }
-
-
 
 
         return 0;
@@ -1317,7 +1317,17 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS2);
+                } else if (value == setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC) {
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    //updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //update iconA
+                    controlIconTransdA(controlGUI.POS_ALL_PERC);
                 }
+
+
                 new_transdA = value;//save in memory
                 updateGUIRecyclerViewRbA();
                 return true;
@@ -1381,6 +1391,14 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS5);
+                } else if (value == setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB) {
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    //update iconA
+                    controlIconTransdA(controlGUI.POS_ALL_VIB);
                 }
                 new_transdA = value;//save in memory
                 updateGUIRecyclerViewRbA();
@@ -1421,6 +1439,14 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     //updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS2);
+                } else if (value == setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC) {
+                    updateRecyclerViewRbB(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    //updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //update iconA
+                    controlIconTransdB(controlGUI.POS_ALL_PERC);
                 }
                 new_transdB = value;//save in memory
                 updateGUIRecyclerViewRbB();
@@ -1485,6 +1511,14 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS5);
+                } else if (value == setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB) {
+                    updateRecyclerViewRbB(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    //update iconA
+                    controlIconTransdB(controlGUI.POS_ALL_VIB);
                 }
                 new_transdB = value;//save in memory
                 updateGUIRecyclerViewRbB();
@@ -1502,7 +1536,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         if (value > 0) {
             try {
                 if (value == setPointsBluetooth.INT_BLE_CMD_NONE) {
-                   // btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    // btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     //btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     //added 10/19/22
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48_wh));
@@ -1522,7 +1556,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     return setPointsBluetooth.INT_BLE_CMD_START;
                 } else if ((value == setPointsBluetooth.INT_BLE_CMD_STOP)) {
                     //btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-                   // btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
+                    // btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
 
                     //added 10/19/22
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48_wh));
@@ -1530,6 +1564,12 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
                     displayOperation(displayOperations.DISPLAY_OPE_STOPPED);//stopped
                     return setPointsBluetooth.INT_BLE_CMD_STOP;
+                } else if (value == setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC) {//added 10/19/22
+                    mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
+                    return setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC;
+                } else if (value == setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB) {//added 10/19/22
+                    mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
+                    return setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB;
                 }
                 // return true;
 
@@ -1547,12 +1587,28 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 if (value == status.SELECT_MODE_NONE) {
                     btnSelectPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     btnSelectVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectTotalPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectTotalVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 } else if ((value == status.SELECT_MODE_PERCUSSION)) {
                     btnSelectPer.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
                     btnSelectVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectTotalPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectTotalVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                 } else if ((value == status.SELECT_MODE_VIBRATION)) {
                     btnSelectPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     btnSelectVib.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
+                    btnSelectTotalPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectTotalVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                } else if ((value == status.SELECT_MODE_TOTAL_PERCUSSION)) {
+                    btnSelectPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectTotalPer.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
+                    btnSelectTotalVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                } else if ((value == status.SELECT_MODE_TOTAL_VIBRATION)) {
+                    btnSelectPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectVib.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectTotalPer.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                    btnSelectTotalVib.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
                 }
                 return value;
 
@@ -1719,6 +1775,17 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewIconA(3, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, null);
                     updateRecyclerViewIconA(4, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
                     break;
+                case 6://total perc
+                    updateRecyclerViewIconA(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconA(1, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    break;
+                case 7://total vib
+                    updateRecyclerViewIconA(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconA(1, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconA(2, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconA(3, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconA(4, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    break;
             }
             updateGUIRecyclerViewIconA();
         } catch (Exception e) {
@@ -1773,6 +1840,17 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     updateRecyclerViewIconB(1, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, null);
                     updateRecyclerViewIconB(2, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, null);
                     updateRecyclerViewIconB(3, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, null);
+                    updateRecyclerViewIconB(4, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    break;
+                case 6://total perc
+                    updateRecyclerViewIconB(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconB(1, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    break;
+                case 7://total vib
+                    updateRecyclerViewIconB(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconB(1, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconB(2, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    updateRecyclerViewIconB(3, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
                     updateRecyclerViewIconB(4, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
                     break;
             }
@@ -2993,20 +3071,20 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //display text power
-    private void displayCurrent(String value){
+    private void displayCurrent(String value) {
         try {
-            if(value!=null){
-                if(tvCurrent!=null){
+            if (value != null) {
+                if (tvCurrent != null) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            tvCurrent.setText(value+"mA");
+                            tvCurrent.setText(value + "mA");
                         }
                     });
                 }
             }
-        }catch (Exception e){
-            Log.d(TAG, "displayCurrent: ex:"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "displayCurrent: ex:" + e.getMessage());
         }
 
 
@@ -3080,7 +3158,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
 
             //changed 10/19/22
-           // displayOperation(displayOperations.DISPLAY_OPE_READY);//Ready
+            // displayOperation(displayOperations.DISPLAY_OPE_READY);//Ready
             updateBtnReady(controlGUI.POS1);
         }
     }
@@ -3105,10 +3183,26 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             //send data of Time
             sendSpTime(position, isTherapyOn);
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_A)) {
-            sendSpRBA(position, isTherapyOn);
+            if(!isTotalBody(mode)){
+                //do not accept commands manualy is total body
+                sendSpRBA(position, isTherapyOn);
+            }
+
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
-            sendSpRBB(position, isTherapyOn);
+            if(!isTotalBody(mode)){
+                //do not accept commands manualy is total body
+                sendSpRBB(position, isTherapyOn);
+            }
+
         }
+    }
+
+    //check is Full body or manual
+    private boolean isTotalBody(int mode) {
+        if ((mode == status.SELECT_MODE_TOTAL_VIBRATION) || (mode == status.SELECT_MODE_TOTAL_PERCUSSION)) {
+            return true;
+        }
+        return false;
     }
 
     //send data of frequency
@@ -3330,8 +3424,12 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     flagIsTRA = updateButtonsRbAPercussion(value);
                 } else if (mode == status.SELECT_MODE_VIBRATION) {
                     flagIsTRA = updateButtonsRbA(value);
+                } else if (mode == status.SELECT_MODE_TOTAL_PERCUSSION) {
+                    flagIsTRA = updateButtonsRbAPercussion(value);
+                } else if (mode == status.SELECT_MODE_TOTAL_VIBRATION) {
+                    flagIsTRA = updateButtonsRbA(value);
                 }
-                //flagIsTRA = updateButtonsRbA(value);
+
             }
         });
     }
@@ -3345,9 +3443,11 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     flagIsTRB = updateButtonsRbBPercussion(value);
                 } else if (mode == status.SELECT_MODE_VIBRATION) {
                     flagIsTRB = updateButtonsRbB(value);
+                } else if (mode == status.SELECT_MODE_TOTAL_PERCUSSION) {
+                    flagIsTRB = updateButtonsRbBPercussion(value);
+                } else if (mode == status.SELECT_MODE_TOTAL_VIBRATION) {
+                    flagIsTRB = updateButtonsRbB(value);
                 }
-                // Stuff that updates the UI
-                //flagIsTRB = updateButtonsRbB(value);
             }
         });
     }
@@ -3357,6 +3457,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "updateFbCommands: " + value);
                 // Stuff that updates the UI
                 int ret = updateCommand(value);
                 //get language resources
@@ -3376,6 +3477,27 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     } else {
                         forceStopTimerTherapy();
                     }
+                } else if (ret == setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC) {//Added 10/19/22
+                    Log.d(TAG, "updateFbCommands: setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC");
+
+                    resetCheckBockA();
+                    resetCheckBockB();
+                    //check mode
+                    Log.d(TAG, "updateFbCommands: total perc");
+                    mode = status.SELECT_MODE_TOTAL_PERCUSSION;
+                    updateFbRBA(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC);
+                    updateFbRBb(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC);
+
+                } else if (ret == setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB) {//Added 10/19/22
+                    Log.d(TAG, "updateFbCommands: total vib");
+
+                    resetCheckBockA();
+                    resetCheckBockB();
+                    //check mode
+                    mode = status.SELECT_MODE_TOTAL_VIBRATION;
+                    updateFbRBA(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB);
+                    updateFbRBb(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB);
+
 
                 }
             }
@@ -3491,11 +3613,21 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         cancelReady();
     }
 
+    //Total percussion
+    private void totalPercussion() {
+
+        sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC));
+    }
+
+    //Total percussion
+    private void totalVibration() {
+        sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB));
+    }
+
     //clean flag after stop
     private void cleanFlagAfterStop() {
         isFlagIsSr = false;
         isTherapyOn = false;
-
     }
 
     //system connected

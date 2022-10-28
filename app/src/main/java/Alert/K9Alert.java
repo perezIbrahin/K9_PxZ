@@ -463,7 +463,7 @@ public class K9Alert extends AppCompatActivity {
                             }
                             //send command
                             try {
-                                interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_SIDERAIL", util_dialog.LOCATION_CONFIRM_SIDERAIL);
+                                interfaceSetupInfo.onItemSetupInfo("util_dialog.THERAPY_DONE", util_dialog.THERAPY_DONE);
                             } catch (Exception e) {
                                 Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
                             }
@@ -638,5 +638,68 @@ public class K9Alert extends AppCompatActivity {
         }
     }
 
+    //alarm system emergency stop
+    public void alertDialogSystemEmergencyStop(String title, String textBtnConfirm) {
+        try {
+            Log.d(TAG, "alertDialogSystemEmergencyStop: ");
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_emergency_stop, null);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setView(promptsView);
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
 
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvEmergStopRev);
+            tvRev.setText(rev.APP_REV_PAGE_55);
+
+
+            //set emergency stop
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvEmergencyStop);
+
+            //set text
+            if (title != null) {
+                tvTextDialogSR.setText(title);
+            }
+
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnEmegStopConfirm);
+
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            //send command
+                            try {
+                                interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_EMERGENCY_STOP_CONFIRM", util_dialog.LOCATION_EMERGENCY_STOP_CONFIRM);
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                            //remove dialog
+                            try {
+                                alertDialog.dismiss();
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                }
+            }
+
+
+            // show it
+            Log.d(TAG, "alertDialogConnectionFail: show");
+            alertDialog.show();
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogConnectionFail: " + e.getMessage());
+        }
+    }
 }

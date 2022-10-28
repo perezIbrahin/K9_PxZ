@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -124,6 +125,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getExtrasFromAct();//get extras from other activity
         //Adding revision
         displaySoftRev(rev.APP_REV_PAGE_10);
+        //disable wifi
+        disableWIFI();
     }
 
     @Override
@@ -182,6 +185,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (mclass != null) {
             Intent i = new Intent(getApplicationContext(), mclass);
             startActivity(i);
+        }
+    }
+
+    //disable WIFi
+    private void disableWIFI(){
+        try {
+            WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            if(wifi!=null){
+                if(wifi.isWifiEnabled()){
+                    wifi.setWifiEnabled(false);
+                    Log.d(TAG, "disableWIFI: disable");
+                }
+            }
+        }catch (Exception e){
+            Log.d(TAG, "disableWIFI: ex:"+e.getMessage());
         }
     }
 

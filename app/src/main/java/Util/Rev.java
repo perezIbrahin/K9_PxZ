@@ -3,6 +3,8 @@ package Util;
 
 public class Rev {
 
+    private String Rev="3.0.18";
+
     //Hsitory
     //public static final String APP_REV= "1.1";//04/01/19 Initial release
     //public static final String APP_REV= "1.2";//10/04/20 Fist proof of concept
@@ -15,17 +17,18 @@ public class Rev {
     public String APP_REV = "3.0";//09/28/22 Update GUI. Minor changes.
 
     //
-    public String APP_REV_PAGE_10 = "P10/R3.0";//09/28/22 main page
-    public String APP_REV_PAGE_11 = "P11/R3.0";//09/28/22 percussion and vibration
-    public String APP_REV_PAGE_12 = "P12/R3.0";//Sleep
-    public String APP_REV_PAGE_13 = "P13/R3.0";//Manual
-    public String APP_REV_PAGE_14 = "P14/R3.0";//Settings
+    public String APP_REV_PAGE_10 = "P10/"+Rev;//09/28/22 main page
+    public String APP_REV_PAGE_11 = "P11/"+Rev;//09/28/22 percussion and vibration
+    public String APP_REV_PAGE_12 = "P12/"+Rev;//Sleep
+    public String APP_REV_PAGE_13 = "P13/"+Rev;//Manual
+    public String APP_REV_PAGE_14 = "P14/"+Rev;//Settings
 
     //dialog
-    public String APP_REV_PAGE_50 = "P50/R3.0";//Dialog side rail is up
-    public String APP_REV_PAGE_51 = "P51/R3.0";//Dialog check configuration
-    public String APP_REV_PAGE_52 = "P52/R3.0";//Dialog therapy complete
-    public String APP_REV_PAGE_53 = "P53/R3.0";//Dialog connection lost
-    public String APP_REV_PAGE_54 = "P54/R3.0";//Dialog lock confirmation
+    public String APP_REV_PAGE_50 = "P50/"+Rev;//Dialog side rail is up
+    public String APP_REV_PAGE_51 = "P51/"+Rev;//Dialog check configuration
+    public String APP_REV_PAGE_52 = "P52/"+Rev;//Dialog therapy complete
+    public String APP_REV_PAGE_53 = "P53/"+Rev;//Dialog connection lost
+    public String APP_REV_PAGE_54 = "P54/"+Rev;//Dialog lock confirmation
+    public String APP_REV_PAGE_55 = "P55/"+Rev;//Emergency stop
 
 }

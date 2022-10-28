@@ -227,6 +227,10 @@
     <string name="string_sett_system">System</string>
     <string name="string_sett_title">Settings</string>
 
+    <!-- alarms -->
+    <string name="string_alarm_emergency_stop">Error code:25 </string>
+    <string name="string_alarm_hardware_fail">Error code:27. Restart system! </string>
+
     <!-- connection page -->
     <string name="string_com_connected">Connected</string>
     <string name="string_com_discconnected">Disconnected</string>

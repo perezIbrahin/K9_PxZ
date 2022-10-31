@@ -321,14 +321,16 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private String serialNumber = "0";
 
     //alarm
-    private boolean isAlarm=true;
-    private long TIMER_WACHT_DOG=20000;
+    private boolean isAlarm = true;
+    private long TIMER_WACHT_DOG = 20000;
 
     //wachtDog
     private CountDownTimer watchDogTimer;
 
     //Display operations
     private DisplayOperations displayOperations = new DisplayOperations();
+
+    private boolean isEnableGui = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -518,17 +520,17 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //disable WIFi
-    private void disableWIFI(){
+    private void disableWIFI() {
         try {
             WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if(wifi!=null){
-                if(wifi.isWifiEnabled()){
+            if (wifi != null) {
+                if (wifi.isWifiEnabled()) {
                     wifi.setWifiEnabled(false);
                     Log.d(TAG, "disableWIFI: disable");
                 }
             }
-        }catch (Exception e){
-            Log.d(TAG, "disableWIFI: ex:"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "disableWIFI: ex:" + e.getMessage());
         }
     }
 
@@ -563,8 +565,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         btnMenu.setText(resources.getString(R.string.string_text_pv__btn_main));
         //dialog with language
         dialogSideRailLang = resources.getString(R.string.string_dial_side_rail);
-        dialogEmergStop=resources.getString(R.string.string_alarm_emergency_stop);
-        dialogHardwareFail=resources.getString(R.string.string_alarm_hardware_fail);
+        dialogEmergStop = resources.getString(R.string.string_alarm_emergency_stop);
+        dialogHardwareFail = resources.getString(R.string.string_alarm_hardware_fail);
         dialogTherapyCompleteLang = resources.getString(R.string.string_name_therapy_complete);
         dialogConfirmLang = resources.getString(R.string.string_btn_SR_confirm);
         dialogCancelLang = resources.getString(R.string.string_btn_SR_cancel);
@@ -675,9 +677,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     @Override
     public void onClick(View v) {
         if (btnStart == v) {
-            if(!isAlarm){
+            if (!isAlarm) {
                 condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
-            }else{
+            } else {
                 Log.d(TAG, "onClick: alarm enable");
             }
             //beep.beep_key();
@@ -2884,6 +2886,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             });
 
             if (!isFlagSetConnection) {
+                Log.d(TAG, "getParamUpdateValueGui3: set connection");
                 setConnetion();
                 beep.beep_key();
             }
@@ -2902,7 +2905,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         if (malarm.equalsIgnoreCase(alarm1.ALARM_ACK)) {
 
         } else if (malarm.equalsIgnoreCase(alarm1.ALARM_RESET)) {
-            isAlarm=false;
+            isAlarm = false;
         } else if (malarm.equalsIgnoreCase(alarm1.ALARM_SHORT_CIRCUIT)) {
 
         } else if (malarm.equalsIgnoreCase(alarm1.ALARM_SYSTEM_RESTART)) {
@@ -2910,14 +2913,18 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 //stop system by alarm
                 stopByEmergency();
                 notificationSystemRestart();
-                isAlarm=true;
+                isAlarm = true;
             }
 
-        }
-        else if (malarm.equalsIgnoreCase(alarm1.ALARM_SYSTEM_STANDBY)) {
-            isAlarm=false;
-        }
-        else if (malarm.equalsIgnoreCase(alarm1.ALARM_SYSTEM_WORKING)) {
+        } else if (malarm.equalsIgnoreCase(alarm1.ALARM_SYSTEM_STANDBY)) {
+            if (isTherapyOn) {
+                Log.d(TAG, "checkStatusAlarms: top by emergency");
+                stopTimerEnableStart();
+                //stopTherapy();
+            }
+
+            isAlarm = false;
+        } else if (malarm.equalsIgnoreCase(alarm1.ALARM_SYSTEM_WORKING)) {
             if (!isTherapyOn) {
                 //SOMETHING HAPPENS WITH THE STOP
                 stopTherapy();
@@ -3183,43 +3190,18 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         Log.d(TAG, "enableGui: " + input);
 
         if (input) {
-            //load view
-            updateButtonsFrequencyF(setPointsBluetooth.INT_BLE_SP_FREQ_NONE);//frequency
-            updateButtonsIntensity(setPointsBluetooth.INT_BLE_SP_INT_NONE);//intensity
-            updateButtonsTime(setPointsBluetooth.INT_BLE_SP_TIME_NONE);//time
-            //just for testing
-            //updateButtonsRbA(setPointsBluetooth.INT_BLE_SP_TRA_NONE);//selection transducer position A
-            //updateButtonsRbB(setPointsBluetooth.INT_BLE_SP_TRB_NONE);//selection transducer position A
+            if (!isEnableGui) {
+                //load view
+                updateButtonsFrequencyF(setPointsBluetooth.INT_BLE_SP_FREQ_NONE);//frequency
+                updateButtonsIntensity(setPointsBluetooth.INT_BLE_SP_INT_NONE);//intensity
+                updateButtonsTime(setPointsBluetooth.INT_BLE_SP_TIME_NONE);//time
+                updateCommand(setPointsBluetooth.INT_BLE_CMD_NONE);
+                isEnableGui = true;
+            }
 
-            updateCommand(setPointsBluetooth.INT_BLE_CMD_NONE);
-            //
-            //  updateSideRail(controlGUI.POS0);
-
-            /*gui.enableBtnInit(btnInt1, true);
-            gui.enableBtnInit(btnInt2, true);
-            gui.enableBtnInit(btnInt3, true);
-            gui.enableBtnInit(btnInt4, true);
-            gui.enableBtnInit(btnInt5, true);*/
-            /*btnInt1.setEnabled(true);
-            btnInt2.setEnabled(true);
-            btnInt3.setEnabled(true);
-            btnInt4.setEnabled(true);
-            btnInt5.setEnabled(true);*/
         } else {
             updateButtonsFrequencyF(setPointsBluetooth.INT_BLE_SP_CLEAN);
-            /*gui.enableBtnInit(btnInt1, false);
-            gui.enableBtnInit(btnInt2, false);
-            gui.enableBtnInit(btnInt3, false);
-            gui.enableBtnInit(btnInt4, false);
-            gui.enableBtnInit(btnInt5, false);*/
-           /* btnInt1.setEnabled(false);
-            btnInt2.setEnabled(false);
-            btnInt3.setEnabled(false);
-            btnInt4.setEnabled(false);
-            btnInt5.setEnabled(false);*/
-           /* btnArtHeadDn.setEnabled(false);
-            btnArtHeadUp.setEnabled(false);
-            tvResArtHead.setText("Disable");*/
+            isEnableGui = false;
         }
     }
 
@@ -3248,10 +3230,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             //changed 10/19/22
             // displayOperation(displayOperations.DISPLAY_OPE_READY);//Ready
             updateBtnReady(controlGUI.POS1);
-        }else if(description.equalsIgnoreCase(utilDialog.LOCATION_EMERGENCY_STOP_CONFIRM)){
+        } else if (description.equalsIgnoreCase(utilDialog.LOCATION_EMERGENCY_STOP_CONFIRM)) {
             Log.d(TAG, "onItemSetupInfo: emergency stop");
             goHome();
-        }else if(description.equalsIgnoreCase(utilDialog.THERAPY_DONE)){
+        } else if (description.equalsIgnoreCase(utilDialog.THERAPY_DONE)) {
             Log.d(TAG, "onItemSetupInfo: THERAPY_DONE");
 
         }
@@ -3598,6 +3580,17 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         });
     }
 
+    //stop timer
+    private void stopTimerEnableStart() {
+        //displayStartCommand(resources.getString(R.string.string_text_btn_start));
+        //forceStopTimerTherapy();
+        //isTherapyOn=false;
+        //cancelReady();
+
+       //updateFbCommands(setPointsBluetooth.INT_BLE_CMD_STOP);
+
+    }
+
     //display start command
     private void displayStartCommand(String input) {
         if (input != null) {
@@ -3715,10 +3708,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             public void run() {
                 // Stuff that updates the UI
                 stopTherapy();
-                isAlarm=true;
+                isAlarm = true;
             }
         });
-
 
 
     }
@@ -4184,52 +4176,51 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //notifications
-    private void notificationSystemRestart(){
+    private void notificationSystemRestart() {
         Log.d(TAG, "notificationSystemRestart: ");
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 // Stuff that updates the UI
-                k9Alert.alertDialogSystemEmergencyStop( dialogEmergStop, dialogConfirmLang);
-                isAlarm=true;
+                k9Alert.alertDialogSystemEmergencyStop(dialogEmergStop, dialogConfirmLang);
+                isAlarm = true;
             }
         });
     }
 
     //notifications
-    private void notificationHardwareFail(){
+    private void notificationHardwareFail() {
         Log.d(TAG, "notificationSystemRestart: ");
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 // Stuff that updates the UI
-                k9Alert.alertDialogSystemEmergencyStop( dialogHardwareFail, dialogConfirmLang);
-                isAlarm=true;
+                k9Alert.alertDialogSystemEmergencyStop(dialogHardwareFail, dialogConfirmLang);
+                isAlarm = true;
             }
         });
     }
 
 
-
     //set alarm
-    private void setAlarmEmerg(boolean input){
+    private void setAlarmEmerg(boolean input) {
 
     }
 
     //wacht dog timer
-    private void watchDogTimerCom(){
+    private void watchDogTimerCom() {
         Log.d(TAG, "watchDogTimerCom: ");
-        if(watchDogTimer!=null){
+        if (watchDogTimer != null) {
             watchDogTimer.cancel();
-            watchDogTimer=null;
+            watchDogTimer = null;
         }
         //
-        watchDogTimer=new CountDownTimer(TIMER_WACHT_DOG,1000) {
+        watchDogTimer = new CountDownTimer(TIMER_WACHT_DOG, 1000) {
             @Override
             public void onTick(long l) {
-                Log.d(TAG, "watchDogTimer counter: "+l/1000);
+                Log.d(TAG, "watchDogTimer counter: " + l / 1000);
             }
 
             @Override
@@ -4240,9 +4231,9 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     }
 
     //watchdog
-    private void wachtDogTimerElapsed(){
+    private void wachtDogTimerElapsed() {
         Log.d(TAG, "wachtDogTimerElapsed: ");
-        isTherapyOn=false;
+        isTherapyOn = false;
         cleanDisplayTimer();
         stopByEmergency();
         notificationHardwareFail();

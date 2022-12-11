@@ -216,6 +216,10 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     //revision
     private Rev rev = new Rev();
 
+    //
+    private int counterFail = 0;
+    private int MAX_CON = 3;
+
     //Bluetooth actions
     public final static String ACTION_GATT_CONNECTED =
             "android.bluetooth.device.action.ACL_CONNECTED";// "com.example.bluetooth.le.ACTION_GATT_CONNECTED"
@@ -3236,6 +3240,8 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         } else if (description.equalsIgnoreCase(utilDialog.THERAPY_DONE)) {
             Log.d(TAG, "onItemSetupInfo: THERAPY_DONE");
 
+        }else if(description.equalsIgnoreCase(utilDialog.LOCATION_ACK_CON_FAIL)){
+            //counterFail=0;
         }
     }
 
@@ -3587,7 +3593,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         //isTherapyOn=false;
         //cancelReady();
 
-       //updateFbCommands(setPointsBluetooth.INT_BLE_CMD_STOP);
+        //updateFbCommands(setPointsBluetooth.INT_BLE_CMD_STOP);
 
     }
 
@@ -3749,6 +3755,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     //system lost connection
     private void systemLostConnection(boolean input) {
         if (input) {
+
             try {
                 Log.d(TAG, "systemLostConnection: alert");
                 runOnUiThread(new Runnable() {
@@ -3762,6 +3769,28 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             } catch (Exception e) {
                 Log.d(TAG, "systemLostConnection: ex" + e.getMessage());
             }
+
+
+
+            /*counterFail++;
+            Log.d(TAG, "systemLostConnection: counter:"+ counterFail);
+            if (counterFail > MAX_CON) {
+                try {
+                    Log.d(TAG, "systemLostConnection: alert");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Stuff that updates the UI
+                            k9Alert.alertDialogConnectionFail(utilDialog.LOCATION_CONFIRM_CONN_FAILED);
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "systemLostConnection: ex" + e.getMessage());
+                }
+            }*/
+
+
         }
     }
 

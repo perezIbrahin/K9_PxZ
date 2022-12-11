@@ -7,7 +7,7 @@ public class Util_Dialog {
     public String LOCATION_CONFIRM_CONN_FAILED="CONNECTION FAILED!";
     public String LOCATION_CONFIRM_LOCK="LOCK!";
     public String LOCATION_EMERGENCY_STOP_CONFIRM="EMERGENCY_STOP_CONFIRM";
-
+    public String LOCATION_ACK_CON_FAIL="LOCATION_ACK_CON_FAIL";
     public String THERAPY_DONE="THERAPY DONE!";
 
 }

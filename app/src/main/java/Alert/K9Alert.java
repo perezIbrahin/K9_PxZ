@@ -359,7 +359,7 @@ public class K9Alert extends AppCompatActivity {
 
                             //send command
                             try {
-                                //interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_SIDERAIL", util_dialog.LOCATION_CONFIRM_SIDERAIL);
+                                //interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_ACK_CON_FAIL", util_dialog.LOCATION_ACK_CON_FAIL);
                             } catch (Exception e) {
                                 Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
                             }

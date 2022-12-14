@@ -2,13 +2,10 @@ package com.example.k9_pxz;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -17,29 +14,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,6 +43,7 @@ import Adapter.RecyclerViewAdaptRbA;
 import Adapter.RecyclerViewAdaptRbB;
 import Adapter.RecyclerViewAdapticonA;
 import Adapter.RecyclerViewAdapticonB;
+import Alert.Alarm;
 import Alert.K9Alert;
 import Bluetooth.BleCharacteristics;
 import Bluetooth.Ble_Protocol;
@@ -382,6 +371,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //init system
     private boolean initApp() {
         k9Alert = new K9Alert(this, this);
+        isAlarm = false;//just for test
+
         //myBleAdd = getExtrasFromAct(myBleAdd);
         //updateBtnReady(controlGUI.POS0);
 
@@ -437,7 +428,28 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
      */
     @Override
     public void onItemSetupInfo(String name, String description) {
+        Util.Message message = new Util.Message();
+        Log.d(TAG, "onItemSetupInfo: " + description);
+        if (description.equalsIgnoreCase(utilDialog.LOCATION_EXIT_THERAPY)) {
+        } else if (description.equalsIgnoreCase(utilDialog.LOCATION_CONFIRM_CONN_FAILED)) {
+            goHome();
+        } else if (description.equalsIgnoreCase(utilDialog.LOCATION_CONFIRM_SIDERAIL)) {//
+            isFlagIsSr = true;
+            updateSideRail(controlGUI.POS0);
+            condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
 
+            //changed 10/19/22
+            // displayOperation(displayOperations.DISPLAY_OPE_READY);//Ready
+            updateBtnReady(controlGUI.POS1);
+        } else if (description.equalsIgnoreCase(utilDialog.LOCATION_EMERGENCY_STOP_CONFIRM)) {
+            Log.d(TAG, "onItemSetupInfo: emergency stop");
+            goHome();
+        } else if (description.equalsIgnoreCase(utilDialog.THERAPY_DONE)) {
+            Log.d(TAG, "onItemSetupInfo: THERAPY_DONE");
+
+        } else if (description.equalsIgnoreCase(utilDialog.LOCATION_ACK_CON_FAIL)) {
+            //counterFail=0;
+        }
     }
 
     @Override
@@ -464,7 +476,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 //do not accept commands manualy is total body
                 sendSpRBA(position, isTherapyOn);
             }
-
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
             if (!isTotalBody(mode)) {
                 //do not accept commands manualy is total body
@@ -1309,35 +1320,23 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //added 10/19/22
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48_wh));
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
-
-
                     return setPoints.INT_BLE_CMD_NONE;
                 } else if ((value == setPoints.INT_BLE_CMD_START)) {
                     //btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48));
                     //btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-
                     //added 10/19/22
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48_wh));
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
-
                     displayOperation(displayOperations.DISPLAY_OPE_RUNNING);//running
                     return setPoints.INT_BLE_CMD_START;
                 } else if ((value == setPoints.INT_BLE_CMD_STOP)) {
                     //btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                     // btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
-
                     //added 10/19/22
                     btnStart.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_play_arrow_48_wh));
                     btnStop.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_stop2_48));
-
                     displayOperation(displayOperations.DISPLAY_OPE_STOPPED);//stopped
                     return setPoints.INT_BLE_CMD_STOP;
-                } else if (value == setPoints.INT_BLE_CMD_TOTAL_PERC) {//added 10/19/22
-                    mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
-                    return setPoints.INT_BLE_CMD_TOTAL_PERC;
-                } else if (value == setPoints.INT_BLE_CMD_TOTAL_VIB) {//added 10/19/22
-                    mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
-                    return setPoints.INT_BLE_CMD_TOTAL_VIB;
                 }
                 // return true;
 
@@ -1346,6 +1345,24 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             }
         }
         return setPoints.INT_BLE_CMD_NONE;
+    }
+
+    //get return from bluetooth and update GUI  modes
+    private int updateModes(int value) {
+        if (value > 0) {
+            try {
+                if (value == setPoints.INT_BLE_SP_MODE3) {//added 10/19/22
+                    mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
+                    return setPoints.INT_BLE_SP_MODE3;
+                } else if (value == setPoints.INT_BLE_SP_MODE4) {//added 10/19/22
+                    mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
+                    return setPoints.INT_BLE_SP_MODE4;
+                }
+
+            } catch (Exception e) {
+            }
+        }
+        return setPoints.INT_BLE_SP_MODE9;
     }
 
     //get return from bluetooth and update GUI  commands
@@ -1886,6 +1903,24 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
     }
 
+    //display start command
+    private void displayStartCommand(String input) {
+        if (input != null) {
+            try {
+                if (btnStart != null) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            btnStart.setText(input);
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "displayStartCommand: ex:" + e.getMessage());
+            }
+        }
+    }
+
     //quality of the signal
     private void displayRssiValue(int value) {
         String unit = "dBm";
@@ -1969,7 +2004,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             }
         });
     }
-/*
+
     //update feedback commands
     private void updateFbCommands(int value) {
         runOnUiThread(new Runnable() {
@@ -1981,13 +2016,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 //get language resources
                 Resources resources = getResourcesLanguage(language);
                 //
-                if (ret == setPointsBluetooth.INT_BLE_CMD_NONE) {
-                } else if (ret == setPointsBluetooth.INT_BLE_CMD_START) {
+                if (ret == setPoints.INT_BLE_CMD_NONE) {
+                } else if (ret == setPoints.INT_BLE_CMD_START) {
                     updateBtnReady(controlGUI.POS0);
                     launchRunTherapy(valueTimerTherapy, countInterval);
                     //update display with language
                     displayStartCommand(resources.getString(R.string.string_text_btn_running));
-                } else if (ret == setPointsBluetooth.INT_BLE_CMD_STOP) {
+                } else if (ret == setPoints.INT_BLE_CMD_STOP) {
                     displayStartCommand(resources.getString(R.string.string_text_btn_start));
                     //displayStartCommand("Start");
                     if (isFlagTimerElapsed) {
@@ -1995,7 +2030,19 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     } else {
                         forceStopTimerTherapy();
                     }
-                } else if (ret == setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC) {//Added 10/19/22
+                }
+            }
+        });
+    }
+
+    //update feedback modes
+    private void updateFbModes(int value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int ret = updateModes(value);
+                Log.d(TAG, "updateFbModes: ");
+                if (ret == setPoints.INT_BLE_SP_MODE3) {//Added 10/19/22
                     Log.d(TAG, "updateFbCommands: setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC");
 
                     resetCheckBockA();
@@ -2003,24 +2050,22 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //check mode
                     Log.d(TAG, "updateFbCommands: total perc");
                     mode = status.SELECT_MODE_TOTAL_PERCUSSION;
-                    updateFbRBA(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC);
-                    updateFbRBb(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC);
+                    updateFbRBA(mode, setPoints.INT_BLE_CMD_TOTAL_PERC);
+                    updateFbRBb(mode, setPoints.INT_BLE_CMD_TOTAL_PERC);
 
-                } else if (ret == setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB) {//Added 10/19/22
+                } else if (ret == setPoints.INT_BLE_SP_MODE4) {//Added 10/19/22
                     Log.d(TAG, "updateFbCommands: total vib");
 
                     resetCheckBockA();
                     resetCheckBockB();
                     //check mode
                     mode = status.SELECT_MODE_TOTAL_VIBRATION;
-                    updateFbRBA(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB);
-                    updateFbRBb(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB);
-
-
+                    updateFbRBA(mode, setPoints.INT_BLE_CMD_TOTAL_VIB);
+                    updateFbRBb(mode, setPoints.INT_BLE_CMD_TOTAL_VIB);
                 }
             }
         });
-    }*/
+    }
 
     /**********************************************
      * Sound alerts
@@ -2160,7 +2205,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //conditions necesary to start therapy
-    private void condStartTherapy(boolean flagIsFreq, boolean flagIsInt, boolean flagIsTim, boolean flagIsTRA, boolean flagIsTRB, boolean flagIsSR) {
+    private void condStartTherapy(boolean flagIsFreq, boolean flagIsInt, boolean flagIsTim,
+                                  boolean flagIsTRA, boolean flagIsTRB, boolean flagIsSR) {
         if (true) {
             try {
                 // Stuff that updates the UI
@@ -2198,7 +2244,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //check which parameter is missing
-    private int checkMissingParam(boolean frq, boolean intens, boolean time, boolean rba, boolean rbb, boolean siderail) {
+    private int checkMissingParam(boolean frq, boolean intens, boolean time, boolean rba,
+                                  boolean rbb, boolean siderail) {
         /*insert a bit in position according to the inputs*/
         Bitwise bitwise = new Bitwise();
         Log.d(TAG, "checkMissingParam: time" + time);
@@ -2242,18 +2289,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 isAlarm = true;
             }
         });
-
-
-    }
-
-    //Total percussion
-    private void totalPercussion() {
-        sendCmdNetwork(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPoints.INT_BLE_CMD_TOTAL_PERC));
-    }
-
-    //Total percussion
-    private void totalVibration() {
-        sendCmdNetwork(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPoints.INT_BLE_CMD_TOTAL_VIB));
     }
 
     //clean flag after stop
@@ -2399,19 +2434,17 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
-                    totalPercussion();
+                    sendSpTotalPercussion();
                     //mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
                 }
-
             }
         } else if (btnSelectTotalVib == v) {
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
-                    totalVibration();
+                    sendSpTotalVibration();
                     //mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
                 }
-
             }
         }
 
@@ -2551,7 +2584,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private void sendSpCommand(int pos, boolean enable) {
         switch (pos) {
             case 0:
-                //sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPointsBluetooth.INT_BLE_CMD_START));
+
                 break;
             case 1:
                 if (!enable) {
@@ -2561,7 +2594,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             case 2:
                 if (enable) {
                     sendTCP(spEth.k9_op_3);//stop
-                    //sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPointsBluetooth.INT_BLE_CMD_STOP));
                 }
                 break;
         }
@@ -2574,6 +2606,17 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             Log.d(TAG, "sendSpCooling: value:" + pos);
 
         }
+    }
+
+    //send mode Total percussion
+    private void sendSpTotalPercussion() {
+        sendTCP(spEth.k9_md_3);//mode full percussion
+
+    }
+
+    //send mode Total percussion
+    private void sendSpTotalVibration() {
+        sendTCP(spEth.k9_md_4);//mode total vibration
     }
 
 
@@ -3001,7 +3044,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //get status from ethernet
-    private void statusEthernet(String message) {
+    private void feedbackFromEthernet(String message) {
         MessageEth messageEth = new MessageEth();
         //Log.d(TAG, "statusEthernet:" + message);
 
@@ -3050,32 +3093,42 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateFbFreq(myNum);
                     beepSound();
                     return;
-                }else if (substrPayload.contains(messageEth.PAYLOAD_ETH_INT)) {//int
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_INT)) {//int
                     modelBtnIntArrayList.clear();
                     updateFbInt(myNum);
                     beepSound();
                     return;
-                }else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TIM)) {//tim
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TIM)) {//tim
                     modelBtnTimeArrayList.clear();
                     updateFbTime(myNum);
                     beepSound();
                     return;
-                }else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TA)) {//Transd-A
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TA)) {//Transd-A
                     resetCheckBockA();
                     updateFbRBA(mode, myNum);
                     beepSound();
                     return;
-                }else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TB)) {//Transd-A
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TB)) {//Transd-A
                     resetCheckBockB();
-                    Log.d(TAG, "statusEthernet: mode:"+mode);
+                    Log.d(TAG, "statusEthernet: mode:" + mode);
                     updateFbRBb(mode, myNum);
+                    beepSound();
+                    return;
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_MD)) {//mode
+                    updateFbModes(myNum);
+                    beepSound();
+                    return;
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_OP)) {//operations
+                    updateFbCommands(myNum);
+                    beepSound();
+                    return;
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_AL)) {//operations
+                    //updateFbCommands(myNum);
                     beepSound();
                     return;
                 }
 
-
-
-
+                isAlarm = false;
             } catch (Exception e) {
                 Log.d(TAG, "statusEthernet: ex:" + e.getMessage());
             }
@@ -3092,7 +3145,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 //Do something
                 Log.d(TAG, "update: MESSAGE_RECEIVED new");
                 Log.d(TAG, "update: payload:" + event.getPayload());
-                statusEthernet(event.getPayload().toString());
+                feedbackFromEthernet(event.getPayload().toString());
 
                 break;
             case CONNECTION_ESTABLISHED:
@@ -3118,14 +3171,45 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 Log.d(TAG, "update: FLUSH");
                 break;
         }
+    }
+
+    /**********************************************
+     * Alarms
+     */
+
+    //check status alarm
+    private void checkStatusAlarms(String malarm) {
+        Alarm alarm1 = new Alarm();
+        Log.d(TAG, "checkStatusAlarms: " + malarm);
+        if (malarm.equalsIgnoreCase(alarm1.ALARM_ACK)) {
+
+        } else if (malarm.equalsIgnoreCase(alarm1.ALARM_RESET)) {
+            isAlarm = false;
+        } else if (malarm.equalsIgnoreCase(alarm1.ALARM_SHORT_CIRCUIT)) {
+
+        } else if (malarm.equalsIgnoreCase(alarm1.ALARM_SYSTEM_RESTART)) {
+            if (isTherapyOn) {
+                //stop system by alarm
+                stopByEmergency();
+                notificationSystemRestart();
+                isAlarm = true;
+            }
+        } else if (malarm.equalsIgnoreCase(alarm1.ALARM_SYSTEM_STANDBY)) {
+            if (isTherapyOn) {
+                Log.d(TAG, "checkStatusAlarms: top by emergency");
+                //stopTimerEnableStart();
+                //stopTherapy();
+            }
+            isAlarm = false;
+        } else if (malarm.equalsIgnoreCase(alarm1.ALARM_SYSTEM_WORKING)) {
+            if (!isTherapyOn) {
+                //SOMETHING HAPPENS WITH THE STOP
+                stopTherapy();
+            }
+        }
 
 
     }
-
-
-    /**********************************************
-     *
-     */
 
     /**********************************************
      *

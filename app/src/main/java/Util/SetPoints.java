@@ -92,12 +92,14 @@ public class SetPoints {
     public final int INT_BLE_SP_TRB4 = 53;
     public final int INT_BLE_SP_TRB5 = 54;
     public final int INT_BLE_SP_TRB_NONE = 59;
-    //cooling boxes
-    public final int INT_BLE_SP_COOL_BOX1 = 70;
-    public final int INT_BLE_SP_COOL_BOX2 = 72;
-    public final int INT_BLE_SP_COOL_BOX3 = 73;
-    public final int INT_BLE_SP_COOL_BOX4 = 74;
-    public final int INT_BLE_SP_COOL_BOX5 = 75;
+    //modes
+    public final int INT_BLE_SP_MODE1 = 70;//percussion
+    public final int INT_BLE_SP_MODE2 = 71;//vibration
+    public final int INT_BLE_SP_MODE3 = 72;//full percussion
+    public final int INT_BLE_SP_MODE4 = 73;//total body
+    public final int INT_BLE_SP_MODE5 = 74;
+    public final int INT_BLE_SP_MODE9 = 79;//CLEAN
+
 
     //commands
     public final int INT_BLE_CMD_INIT = 60;

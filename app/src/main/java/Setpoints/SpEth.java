@@ -11,10 +11,10 @@ public class SpEth {
     public String k9_op_9="k9_op_9";//clean
 
     //mode
-    public String k9_md_1="k9_op_1";//percussion
-    public String k9_md_2="k9_op_2";//vibration
-    public String k9_md_3="k9_op_3";//full percussion
-    public String k9_md_4="k9_op_4";//total body
+    public String k9_md_1="k9_md_1";//percussion
+    public String k9_md_2="k9_md_2";//vibration
+    public String k9_md_3="k9_md_3";//full percussion
+    public String k9_md_4="k9_md_4";//total body
 
     //frequency
     public String k9_fr_1="k9_fr_1";

@@ -1,6 +1,6 @@
 package Util;
 
-public class SetPointsBluetooth {
+public class SetPoints {
     public  int SP_BLE_MODE_NONE = 0;
     public  int SP_BLE_MODE_PERC = 04;
     public  int SP_BLE_MODE_VIB = 05;

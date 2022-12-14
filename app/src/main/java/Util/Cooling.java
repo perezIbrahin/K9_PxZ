@@ -4,7 +4,7 @@ import android.util.Log;
 
 public class Cooling {
     private static final String TAG = "Cooling";
-    private SetPointsBluetooth setPointsBluetooth = new SetPointsBluetooth();
+    private SetPoints setPointsBluetooth = new SetPoints();
     private ControlGUI controlGUI = new ControlGUI();
 
     private int Factor = 10;

@@ -44,7 +44,7 @@
             android:name=".LocationActivity"
             android:exported="false" />
         <activity
-            android:name=".VibrationPercussionActivity"
+            android:name=".K9PvzEth"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity

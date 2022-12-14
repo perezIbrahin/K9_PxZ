@@ -88,7 +88,7 @@ import Util.Feedback;
 import Util.Flags;
 import Util.GenerateSound;
 import Util.SendReceive;
-import Util.SetPointsBluetooth;
+import Util.SetPoints;
 import Util.Setpoint;
 import Util.SleepMode;
 import Util.Status;
@@ -289,7 +289,7 @@ public class VibActivity extends AppCompatActivity implements View.OnClickListen
     private ToastMessage toastMessage = new ToastMessage();
     private TagRefrence mTagReference = new TagRefrence();
     private SleepMode sleepMode = new SleepMode();
-    private SetPointsBluetooth setPointsBluetooth = new SetPointsBluetooth();
+    private SetPoints setPointsBluetooth = new SetPoints();
     private GenerateSound generateSound = new GenerateSound();
     private Handler progressBarbHandler = new Handler();
     private SendReceive sendReceive = new SendReceive();//list of value

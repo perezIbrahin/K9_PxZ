@@ -376,8 +376,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v == btnMainK9) {
             if (!isLockScreen) {
-                //passBleAddToVib(myBleAdd);
-                launchActivityWithExtras(VibrationPercussionActivity.class, language, Serial_Number_Product, myBleAdd);
+                //work with bluetooth
+                //launchActivityWithExtras(VibrationPercussionActivity.class, language, Serial_Number_Product, myBleAdd);
+                //ethernet
+                launchActivityWithExtras(K9PvzEth.class, language, Serial_Number_Product, myBleAdd);
             } else {
                 toastMessage();
             }

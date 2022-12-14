@@ -1,7 +1,6 @@
 package com.example.k9_pxz;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -10,11 +9,8 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -22,41 +18,30 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
-import Alert.AlertCustomDialog;
 import Bluetooth.BluetoothManag;
-import Interface.RecyclerViewClickInterface;
 import Util.BluetoothStatus;
 import Util.Feedback;
 import Util.Flags;
 import Util.GenerateSound;
-import Util.SetPointsBluetooth;
-import Util.Status;
 import Util.UpdateIconCom;
 
 public class K9Activity extends AppCompatActivity {
@@ -155,7 +140,7 @@ public class K9Activity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                bleScan();
+                //bleScan();
                 //countDownTimer.start();
 
             }

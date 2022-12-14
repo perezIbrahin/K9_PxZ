@@ -29,6 +29,10 @@ public class Status {
     public int SELECT_MODE_TOTAL_VIBRATION=4;
     //pass data between activity
 
+    //ethernet
+    public String ETH_SOCKET_NOT_WORKING="ETH_SOCKET_NOT_WORKING";
+    public String ETH_SOCKET_CAN_CONNECT="ETH_SOCKET_CAN_CONNECT";
+
 
 
 

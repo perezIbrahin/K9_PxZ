@@ -89,7 +89,7 @@ import Util.Key_Util;
 import Util.LocaleHelper;
 import Util.RecyclerLocations;
 import Util.Rev;
-import Util.SetPointsBluetooth;
+import Util.SetPoints;
 import Util.Status;
 import Util.TagRefrence;
 import Util.TextSize;
@@ -169,7 +169,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
     private TextSize textSize = new TextSize();
     private ControlGUI controlGUI = new ControlGUI();
     private Beep beep = new Beep();
-    private SetPointsBluetooth setPointsBluetooth = new SetPointsBluetooth();
+    private SetPoints setPointsBluetooth = new SetPoints();
     private Default_values default_values = new Default_values();
     private Key_Util keyUtil = new Key_Util();
     private ActionGatt actionGatt = new ActionGatt();
@@ -883,7 +883,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
      * */
     //get feedback from bluetooth
     private boolean getFeedbackFromBle(int input) {
-        SetPointsBluetooth setPointsBluetooth = new SetPointsBluetooth();
+        SetPoints setPointsBluetooth = new SetPoints();
         if (input > 0) {
             try {
                 if ((input >= setPointsBluetooth.INT_BLE_SP_FREQ1) && (input <= setPointsBluetooth.INT_BLE_SP_FREQ5)) {
@@ -2294,7 +2294,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                 enableGui(true);
             }
         });
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -3456,7 +3455,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
                     break;
             }*/
         }
-
     }
 
     //-----------Feedback-------------//

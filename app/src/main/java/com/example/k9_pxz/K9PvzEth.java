@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 
 import Adapter.RecyclerViewAdaptBtnF;
 import Adapter.RecyclerViewAdaptBtnI;
@@ -57,6 +59,9 @@ import Alert.K9Alert;
 import Bluetooth.BleCharacteristics;
 import Bluetooth.Ble_Protocol;
 import Configuration.Config;
+import Eth.MessageEth;
+import Eth.TcpClient;
+import Eth.TcpEvent;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
 import Model.ModelBtn;
@@ -81,7 +86,7 @@ import Util.Util_Dialog;
 import Util.Util_timer;
 import Util.Validation;
 
-public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, RecyclerViewClickInterface, View.OnClickListener {
+public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, RecyclerViewClickInterface, View.OnClickListener, Observer {
     private static final String TAG = "K9PvzEth";
     /*GUI*/
     //modes
@@ -161,6 +166,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private Rev rev = new Rev();  //revision
     //
     SpEth spEth = new SpEth();//ethernet setpoint
+    //TCP ip
+    private TcpClient client;
+
 
     //countdown timers
     CountDownTimer timerCheckNetwork = null;
@@ -179,7 +187,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     public static String resp = "No Response Yet\nTry Sending Some Data.";
     //network
     public static Boolean Abort = false;
-    public static LongOperation lo = null;//need to be enabled
+    // public static LongOperation lo = null;//need to be enabled
     public static Socket socket = null;
     //update display
     private final static int UPDATE_DEVICE = 0;
@@ -264,8 +272,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //Display operations
     private DisplayOperations displayOperations = new DisplayOperations();
-
     private boolean isEnableGui = false;
+    //ethernet TCp
+    private boolean isConnectedTCP = false;
 
     /*Ethernet*/
     private PrintWriter output;
@@ -274,7 +283,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private int SERVER_PORT = 1200;
     Thread Thread1 = null;
     Socket socket1;
-    private String socketStatus=null;
+    private String socketStatus = null;
     /**/
 
 
@@ -376,6 +385,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         //myBleAdd = getExtrasFromAct(myBleAdd);
         //updateBtnReady(controlGUI.POS0);
 
+        //Invisible button ready. Used in older revision
+        updateBtnReady(controlGUI.POS0);
+
         return true;
     }
 
@@ -408,9 +420,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
         //test communication
         sendMessageEth(spEth.k9_op_1);*/
-
-        createSocket();
-
+        initTCP_IP();
     }
 
     //init array spinner language
@@ -437,7 +447,30 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     @Override
     public void onItemPostSelect(int position, String value) {
+        Log.d(TAG, "onItemPostSelect: pos" + position + "val:" + value);
+        if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_FREQ)) {
+            //send data of freq
+            sendSpFreq(position, isTherapyOn);
+        } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_INT)) {
+            Log.d(TAG, "onItemPostSelect: int");
+            //send data of Int
+            sendSpInt(position, isTherapyOn);
+        } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_TIM)) {
+            Log.d(TAG, "onItemPostSelect: time");
+            //send data of Time
+            sendSpTime(position, isTherapyOn);
+        } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_A)) {
+            if (!isTotalBody(mode)) {
+                //do not accept commands manualy is total body
+                sendSpRBA(position, isTherapyOn);
+            }
 
+        } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
+            if (!isTotalBody(mode)) {
+                //do not accept commands manualy is total body
+                sendSpRBB(position, isTherapyOn);
+            }
+        }
     }
 
     /**********************************************
@@ -1861,6 +1894,135 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     /**********************************************
+     * Feedback from Host
+     */
+    //update displayFreq
+    private void updateFbFreq(int value) {
+        Log.d(TAG, "updateFbFreq: " + value + "size:" + modelBtnFreqArrayList.size());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Stuff that updates the UI
+                flagIsFreq = updateButtonsFrequencyF(value);
+            }
+        });
+    }
+
+    //update displayInt
+    private void updateFbInt(int value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Stuff that updates the UI
+                flagIsInt = updateButtonsIntensity(value);
+            }
+        });
+    }
+
+    //update displayInt
+    private void updateFbTime(int value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Stuff that updates the UI
+                flagIsTim = updateButtonsTime(value);
+                memoryLastTimer = value;
+                loadDisplayTimerCountFirstTime(memoryLastTimer);
+            }
+        });
+    }
+
+    //update displayRBA
+    private void updateFbRBA(int mode, int value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Stuff that updates the UI
+                if (mode == status.SELECT_MODE_PERCUSSION) {
+                    flagIsTRA = updateButtonsRbAPercussion(value);
+                } else if (mode == status.SELECT_MODE_VIBRATION) {
+                    flagIsTRA = updateButtonsRbA(value);
+                } else if (mode == status.SELECT_MODE_TOTAL_PERCUSSION) {
+                    flagIsTRA = updateButtonsRbAPercussion(value);
+                } else if (mode == status.SELECT_MODE_TOTAL_VIBRATION) {
+                    flagIsTRA = updateButtonsRbA(value);
+                }
+
+            }
+        });
+    }
+
+    //update displayRBB
+    private void updateFbRBb(int mode, int value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mode == status.SELECT_MODE_PERCUSSION) {
+                    flagIsTRB = updateButtonsRbBPercussion(value);
+                } else if (mode == status.SELECT_MODE_VIBRATION) {
+                    flagIsTRB = updateButtonsRbB(value);
+                } else if (mode == status.SELECT_MODE_TOTAL_PERCUSSION) {
+                    flagIsTRB = updateButtonsRbBPercussion(value);
+                } else if (mode == status.SELECT_MODE_TOTAL_VIBRATION) {
+                    flagIsTRB = updateButtonsRbB(value);
+                }
+            }
+        });
+    }
+/*
+    //update feedback commands
+    private void updateFbCommands(int value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "updateFbCommands: " + value);
+                // Stuff that updates the UI
+                int ret = updateCommand(value);
+                //get language resources
+                Resources resources = getResourcesLanguage(language);
+                //
+                if (ret == setPointsBluetooth.INT_BLE_CMD_NONE) {
+                } else if (ret == setPointsBluetooth.INT_BLE_CMD_START) {
+                    updateBtnReady(controlGUI.POS0);
+                    launchRunTherapy(valueTimerTherapy, countInterval);
+                    //update display with language
+                    displayStartCommand(resources.getString(R.string.string_text_btn_running));
+                } else if (ret == setPointsBluetooth.INT_BLE_CMD_STOP) {
+                    displayStartCommand(resources.getString(R.string.string_text_btn_start));
+                    //displayStartCommand("Start");
+                    if (isFlagTimerElapsed) {
+                        notificationTimerElapsed();
+                    } else {
+                        forceStopTimerTherapy();
+                    }
+                } else if (ret == setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC) {//Added 10/19/22
+                    Log.d(TAG, "updateFbCommands: setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC");
+
+                    resetCheckBockA();
+                    resetCheckBockB();
+                    //check mode
+                    Log.d(TAG, "updateFbCommands: total perc");
+                    mode = status.SELECT_MODE_TOTAL_PERCUSSION;
+                    updateFbRBA(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC);
+                    updateFbRBb(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC);
+
+                } else if (ret == setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB) {//Added 10/19/22
+                    Log.d(TAG, "updateFbCommands: total vib");
+
+                    resetCheckBockA();
+                    resetCheckBockB();
+                    //check mode
+                    mode = status.SELECT_MODE_TOTAL_VIBRATION;
+                    updateFbRBA(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB);
+                    updateFbRBb(mode, setPointsBluetooth.INT_BLE_CMD_TOTAL_VIB);
+
+
+                }
+            }
+        });
+    }*/
+
+    /**********************************************
      * Sound alerts
      */
     //beep
@@ -1947,6 +2109,15 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //lock mode
     private void lockMode(boolean input) {
         isLockMode = input;
+    }
+
+
+    //check is Full body or manual
+    private boolean isTotalBody(int mode) {
+        if ((mode == status.SELECT_MODE_TOTAL_VIBRATION) || (mode == status.SELECT_MODE_TOTAL_PERCUSSION)) {
+            return true;
+        }
+        return false;
     }
 
     /**********************************************
@@ -2164,51 +2335,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         return true;
     }
 
-    //send data of command
-    private void sendSpCommand(int pos, boolean enable) {
-        switch (pos) {
-            case 0:
-                //sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPointsBluetooth.INT_BLE_CMD_START));
-                break;
-            case 1:
-                if (!enable) {
-                    sendCmdNetwork(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPoints.INT_BLE_CMD_START));
-                }
-                break;
-            case 2:
-                if (enable) {
-                    sendCmdNetwork(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPoints.INT_BLE_CMD_STOP));
-                }
-                break;
-        }
-    }
-
-    //send data of RBA
-    private void sendSpCooling(int pos, boolean enable) {
-        if (!enable) {
-            sendCmdNetwork(concatDataWriteBle.concatDataToWrite(bleProtocol.COOLING, pos));
-            Log.d(TAG, "sendSpCooling: value:" + pos);
-            /*
-            switch (pos) {
-                case 0:
-                    sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.COOLING, setPointsBluetooth.INT_BLE_SP_COOL_BOX1));
-                    break;
-                case 1:
-                    sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.COOLING, setPointsBluetooth.INT_BLE_SP_COOL_BOX2));
-                    break;
-                case 2:
-                    sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.COOLING, setPointsBluetooth.INT_BLE_SP_COOL_BOX3));
-                    break;
-                case 3:
-                    sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.COOLING, setPointsBluetooth.INT_BLE_SP_COOL_BOX4));
-                    break;
-                case 4:
-                    sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.COOLING, setPointsBluetooth.INT_BLE_SP_COOL_BOX5));
-                    break;
-            }*/
-        }
-    }
-
     //cancel ready
     private void cancelReady() {
         lockMode(false);
@@ -2289,6 +2415,165 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             }
         }
 
+    }
+
+
+    /**********************************************
+     * Events from adapters-Get all setpoints
+     *
+     */
+    //send data of frequency
+    private void sendSpFreq(int pos, boolean enable) {
+        if (!enable) {
+            switch (pos) {
+                case 0:
+                    sendTCP(spEth.k9_fr_1);
+                    break;
+                case 1:
+                    sendTCP(spEth.k9_fr_2);
+                    break;
+                case 2:
+                    sendTCP(spEth.k9_fr_3);
+                    break;
+                case 3:
+                    sendTCP(spEth.k9_fr_4);
+                    break;
+                case 4:
+                    sendTCP(spEth.k9_fr_5);//clean all freq
+                    break;
+                case 5:
+                    sendTCP(spEth.k9_fr_6);//max frecuency
+                    break;
+            }
+        }
+
+    }
+
+    //send data of Int
+    private void sendSpInt(int pos, boolean enable) {
+        if (!enable) {
+            switch (pos) {
+                case 0:
+                    sendTCP(spEth.k9_in_1);
+                    break;
+                case 1:
+                    sendTCP(spEth.k9_in_2);
+                    break;
+                case 2:
+                    sendTCP(spEth.k9_in_3);
+                    break;
+                case 3:
+                    sendTCP(spEth.k9_in_4);
+                    break;
+                case 4:
+                    sendTCP(spEth.k9_in_5);
+                    break;
+                case 5:
+                    //max
+                    sendTCP(spEth.k9_in_7);
+                    break;
+            }
+        }
+    }
+
+    //send data of Time
+    private void sendSpTime(int pos, boolean enable) {
+        if (!enable) {
+            switch (pos) {
+                case 0:
+                    sendTCP(spEth.k9_tm_1);
+                    break;
+                case 1:
+                    sendTCP(spEth.k9_tm_2);
+                    break;
+                case 2:
+                    sendTCP(spEth.k9_tm_3);
+                    break;
+                case 3:
+                    sendTCP(spEth.k9_tm_4);
+                    break;
+                case 4:
+                    sendTCP(spEth.k9_tm_5);
+                    break;
+            }
+        }
+    }
+
+    //send data of RBA
+    private void sendSpRBA(int pos, boolean enable) {
+        if (!enable) {
+            switch (pos) {
+                case 0:
+                    sendTCP(spEth.k9_ta_1);
+                    break;
+                case 1:
+                    sendTCP(spEth.k9_ta_2);
+                    break;
+                case 2:
+                    sendTCP(spEth.k9_ta_3);
+                    break;
+                case 3:
+                    sendTCP(spEth.k9_ta_4);
+                    break;
+                case 4:
+                    sendTCP(spEth.k9_ta_5);
+                    break;
+            }
+        }
+
+    }
+
+    //send data of RBB
+    private void sendSpRBB(int pos, boolean enable) {
+        if (!enable) {
+
+            switch (pos) {
+                case 0:
+                    sendTCP(spEth.k9_tb_1);
+                    break;
+                case 1:
+                    sendTCP(spEth.k9_tb_2);
+                    break;
+                case 2:
+                    sendTCP(spEth.k9_tb_3);
+                    break;
+                case 3:
+                    sendTCP(spEth.k9_tb_4);
+                    break;
+                case 4:
+                    sendTCP(spEth.k9_tb_5);
+                    break;
+            }
+        }
+    }
+
+    //send data of command
+    private void sendSpCommand(int pos, boolean enable) {
+        switch (pos) {
+            case 0:
+                //sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPointsBluetooth.INT_BLE_CMD_START));
+                break;
+            case 1:
+                if (!enable) {
+                    sendTCP(spEth.k9_op_2);//start
+                }
+                break;
+            case 2:
+                if (enable) {
+                    sendTCP(spEth.k9_op_3);//stop
+                    //sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.OPERATION, setPointsBluetooth.INT_BLE_CMD_STOP));
+                }
+                break;
+        }
+    }
+
+    //send cooing
+    private void sendSpCooling(int pos, boolean enable) {
+        if (!enable) {
+            //sendCmdBle(concatDataWriteBle.concatDataToWrite(bleProtocol.COOLING, pos));
+            Log.d(TAG, "sendSpCooling: value:" + pos);
+
+        }
     }
 
 
@@ -2649,6 +2934,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     /**********************************************
      * Ethernet
      */
+
     //Select characteristics to send command to the host
     private boolean sendCmdNetwork(int command) {
         //AsyncTaskExample asyncTask = new AsyncTaskExample();
@@ -2674,290 +2960,166 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         return ret;
     }
 
-    private void sendCmdEth(String message) {
-        //String message = etMessage.getText().toString().trim();
-        if (!message.isEmpty()) {
-            new Thread(new Thread3(message)).start();
-        }
+    //init socket TCp
+    private void initTCP_IP() {
+        client = new TcpClient("192.168.6.203", 1200);
+        client.addObserver(this);
+        //establish connection
+        connectionTCP();
+
     }
 
-    //create socket connection
-    private boolean createSocket() {
-        Thread1 = new Thread(new Thread1());
-        Thread1.start();
-        return true;
-    }
-
-    //thread connection
-    class Thread1 implements Runnable {
-        public void run() {
-
-            //create socket
-           /* try {
-                socket1 = null;
-                SocketAddress address = new InetSocketAddress(config.getServer_address(), config.getServer_port());
-                socket1 = new Socket();
-                socket1.connect(address, config.getSocketTimeout());
-            } catch (IOException e) {
-                Log.d("time", "no worky X");
-                e.printStackTrace();
-                socketStatus=status.ETH_SOCKET_NOT_WORKING;
-            }
-
-            //set socket timeout
+    //send message using tcp ip
+    private void sendTCP(String message) {
+        if (message != null) {
             try {
-                socket1.setSoTimeout(config.getSocketTimeout());
-            } catch (SocketException e) {
-                Log.d("timeout", "server took too long to respond");
-                e.printStackTrace();
-                Log.d(TAG, "run: ");
-                //return "Can't Connect";
-                socketStatus=status.ETH_SOCKET_CAN_CONNECT;
-            }*/
-
-            try {
-                socket1 = new Socket(SERVER_IP, SERVER_PORT);//working
-                output = new PrintWriter(socket1.getOutputStream());
-                input = new BufferedReader(new InputStreamReader(socket1.getInputStream()));
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "run: Connected");
-                        //tvMessages.setText("Connected");
-                    }
-                });
-                new Thread(new Thread2()).start();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                client.sendMessage(message);
+            } catch (Exception e) {
+                Log.d(TAG, "sendTCP: ex:" + e.getMessage());
             }
         }
     }
 
-    //input-message from server
-    class Thread2 implements Runnable {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    final String message = input.readLine();
-                    if (message != null) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d(TAG, "run: server:" + message + "");
-                                // tvMessages.append("server: " + message + "");
-                            }
-                        });
-                    } else {
-                        Thread1 = new Thread(new Thread1());
-                        Thread1.start();
+    //establish connection tcp
+    private void connectionTCP() {
+        try {
+            isConnectedTCP = true;
+            client.connect();
+        } catch (Exception e) {
+            Log.d(TAG, "connectionTCP: ex:" + e.getMessage());
+        }
+    }
+
+    //disconnect connection tcp
+    private void disconnectTCP() {
+        try {
+            isConnectedTCP = false;
+            client.disconnect();
+        } catch (Exception e) {
+            Log.d(TAG, "connectionTCP: ex:" + e.getMessage());
+        }
+    }
+
+    //get status from ethernet
+    private void statusEthernet(String message) {
+        MessageEth messageEth = new MessageEth();
+        //Log.d(TAG, "statusEthernet:" + message);
+
+        if (message != null) {
+            if (message.length() < 6) {
+                return;
+            }
+            //filter the message with the len
+            int startIndex = 0;
+            int endIndex = 10;
+            //substring for the message received. Know from where
+            String substrPayload = message.substring(startIndex, endIndex);
+            Log.d(TAG, "statusEthernet:extracted payload ref: " + substrPayload);
+
+            //substring to get number
+            int startIndexPos = 10;
+            int endIndexPos = 12;
+            String substrPos = message.substring(startIndexPos, endIndexPos);
+            Log.d(TAG, "statusEthernet:extracted payload pos:" + substrPos);
+            //check if substring is number
+            if (!substrPos.matches("\\d+(?:\\.\\d+)?")) {
+                return;
+            }
+
+            int myNum = Integer.parseInt(substrPos);
+            Log.d(TAG, "statusEthernet: number:" + myNum);
+
+            try {
+                if (substrPayload.contains(messageEth.PAYLOAD_ETH_CON)) {
+                    //finish load dialog
+                    Log.d(TAG, "statusEthernet: PAYLOAD_CONNECTED_ETH");
+
+                    //update icon
+                    if (!isFlagSetConnection) {
+                        Log.d(TAG, "statusEthernet: set connection");
+                        //enable element on the gui
+                        setConnetion();
+                        //beep top acknowledge is connected
+                        beep.beep_key();
+                        //Dismisses the load dialog
+                        systemConnected();
                         return;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_FRQ)) {//freq
+                    modelBtnFreqArrayList.clear();
+                    updateFbFreq(myNum);
+                    beepSound();
+                    return;
+                }else if (substrPayload.contains(messageEth.PAYLOAD_ETH_INT)) {//int
+                    modelBtnIntArrayList.clear();
+                    updateFbInt(myNum);
+                    beepSound();
+                    return;
+                }else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TIM)) {//tim
+                    modelBtnTimeArrayList.clear();
+                    updateFbTime(myNum);
+                    beepSound();
+                    return;
+                }else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TA)) {//Transd-A
+                    resetCheckBockA();
+                    updateFbRBA(mode, myNum);
+                    beepSound();
+                    return;
+                }else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TB)) {//Transd-A
+                    resetCheckBockB();
+                    Log.d(TAG, "statusEthernet: mode:"+mode);
+                    updateFbRBb(mode, myNum);
+                    beepSound();
+                    return;
                 }
+
+
+
+
+            } catch (Exception e) {
+                Log.d(TAG, "statusEthernet: ex:" + e.getMessage());
             }
         }
     }
 
-    //write to the server
-    class Thread3 implements Runnable {
-        private String message;
+    /*update from tcp ip-Data from the communication*/
+    @Override
+    public void update(Observable o, Object arg) {
+        TcpEvent event = (TcpEvent) arg;
 
-        Thread3(String message) {
-            this.message = message;
-        }
+        switch (event.getTcpEventType()) {
+            case MESSAGE_RECEIVED:
+                //Do something
+                Log.d(TAG, "update: MESSAGE_RECEIVED new");
+                Log.d(TAG, "update: payload:" + event.getPayload());
+                statusEthernet(event.getPayload().toString());
 
-        @Override
-        public void run() {
-            output.write(message);
-            output.flush();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d(TAG, "run:client: " + message + "  ");
-
-                    //Log.d(TAG, "run: ""/ client: " + message + "  ");
-                    //tvMessages.append("/ client: " + message + "  ");
-                    //etMessage.setText("");
-                }
-            });
-        }
-    }
-
-    private class LongOperation extends AsyncTask<String, Void, String> {
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        protected String doInBackground(String... params) {
-            socket = null;
-            SocketAddress address = new InetSocketAddress(config.getServer_address(), config.getServer_port());
-            socket = new Socket();
-
-
-            try {
-                socket.connect(address, config.getSocketTimeout());
-            } catch (IOException e) {
-                Log.d("time", "no worky X");
-                e.printStackTrace();
-            }
-            try {
-                socket.setSoTimeout(config.getSocketTimeout());
-            } catch (SocketException e) {
-                Log.d("timeout", "server took too long to respond");
-                e.printStackTrace();
-                return "Can't Connect";
-            }
-            OutputStream out = null;
-            try {
-                out = socket.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            PrintWriter output = new PrintWriter(out);
-
-
-            output.print(msg);
-            output.flush();
-
-            //read
-            String str = "waiting";
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                Log.d("test", "trying to read from server");
-
-                String line;
-                str = "";
-                while ((line = br.readLine()) != null) {
-                    Log.d("read line", line);
-                    str = str + line;
-                    str = str + "\r\n";
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (str != null) {
-                Log.d("test", "trying to print what was just read");
-                System.out.println(str);
-            }
-
-
-            //read
-            output.close();
-
-            //read
-            try {
-                br.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //read
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Log.d("tag", "done server");
-            return str;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            // might want to change "executed" for the returned string passed
-            // into onPostExecute() but that is upto you
-            Abort = false;
-            Log.d("Set Abort", Abort.toString());
-            Log.d("tag", "post ex");
-            resp = result;
-            //TextView textView = (TextView) findViewById(R.id.textView2);
-            //textView.setText(resp);
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            /*TextView server_text = (TextView) findViewById(R.id.serverText);
-            TextView port_text = (TextView) findViewById(R.id.portText);
-            server_address = server_text.getText().toString();
-            server_port = Integer.parseInt(port_text.getText().toString());*/
-            SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-            editor.putString("server", config.getServer_address());
-            editor.putInt("port", config.getServer_port());
-            editor.commit();
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
+                break;
+            case CONNECTION_ESTABLISHED:
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Log.d(TAG, "update:CONNECTION_ESTABLISHED new");
+                        //Update ui
+                        client.sendMessage("Ready");
+                    }
+                });
+                break;
+            case MESSAGE_SENT:
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Log.d(TAG, "update: MESSAGE_SENT");
+                    }
+                });
+                break;
+            case DISCONNECTED:
+                Log.d(TAG, "update: DISCONNECTED");
+                break;
+            case MESSAGE_FLUSH:
+                Log.d(TAG, "update: FLUSH");
+                break;
         }
 
 
-        protected void onCancelled() {
-            Log.d("cancel", "ca");
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Abort = false;
-        }
-
-
-    }
-
-    //ethernet open socket
-    public void openSocket() {
-        try {
-            //lo = new LongOperation();
-            // lo.execute();
-
-        } catch (Exception e) {
-            Log.d(TAG, "openSocket: ex:" + e.getMessage());
-        }
-    }
-
-    //ethernet close socket
-    public void closeSocket() {
-        try {
-            // lo.cancel(false);
-        } catch (Exception e) {
-            Log.d(TAG, "openSocket: ex:" + e.getMessage());
-        }
-    }
-
-    /**
-     * Called when the user taps the Send button
-     */
-    public void sendMessageEth(String message) {
-
-        /*EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        TextView textView = (TextView) findViewById(R.id.textView2);
-        textView.setText("Loading...");*/
-
-        msg = message;
-        Log.d("msg", msg);
-        // intent.putExtra(EXTRA_MESSAGE, message);
-        Log.d("Check Abort", Abort.toString());
-        if (Abort == true) {
-            lo.cancel(false);
-            Log.d("Aborting", Abort.toString());
-        } else {
-            lo = new LongOperation();
-            lo.execute();
-        }
-        Abort = true;
-
-        //startActivity(intent);
     }
 
 

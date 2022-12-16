@@ -4236,7 +4236,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     }
 
-    //wacht dog timer
+    //watchdog timer
     private void watchDogTimerCom() {
         Log.d(TAG, "watchDogTimerCom: ");
         if (watchDogTimer != null) {
@@ -4264,6 +4264,5 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         cleanDisplayTimer();
         stopByEmergency();
         notificationHardwareFail();
-
     }
 }

@@ -16,6 +16,9 @@ public class SpEth {
     public String k9_md_3="k9_md_3";//full percussion
     public String k9_md_4="k9_md_4";//total body
 
+    //status
+    public String k9_st_1="k9_st_1";//status from host
+
     //frequency
     public String k9_fr_1="k9_fr_1";
     public String k9_fr_2="k9_fr_2";

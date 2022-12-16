@@ -11,7 +11,7 @@ public class MessageEth {
     public  String PAYLOAD_ETH_TA="k9_rsp_ta_";//transd -A
     public  String PAYLOAD_ETH_TB="k9_rsp_tb_";//transd -B
     public  String PAYLOAD_ETH_MD="k9_rsp_md_";//mode
-    public  String PAYLOAD_ETH_AL="k9_rsp_st_";//status
+    public  String PAYLOAD_ETH_ST="k9_rsp_st_";//status
 
 
 }

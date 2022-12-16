@@ -255,9 +255,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //alarm
     private boolean isAlarm = true;
     private long TIMER_WACHT_DOG = 20000;
-
-    //wachtDog
+    private long TIMER_LOOP_STATUS = 10000;
+    //watchDog
     private CountDownTimer watchDogTimer;
+    private CountDownTimer loopGetStatusTimer;
 
     //Display operations
     private DisplayOperations displayOperations = new DisplayOperations();
@@ -273,6 +274,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     Thread Thread1 = null;
     Socket socket1;
     private String socketStatus = null;
+    //
+    private int countWatchDog=0;
+    private int MAXWatchDog=3;
     /**/
 
 
@@ -306,6 +310,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         displaySoftRev(rev.APP_REV_PAGE_11);
         //disable wifi
         disableWIFI();
+        //request every 3 sec status of the host
+        requestStatusFromHostTimer();
     }
 
     @Override
@@ -326,6 +332,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     @Override
     protected void onStop() {
         super.onStop();
+        //cancel timer to request status from host
+        cancelRequestStatus();
     }
 
     @Override
@@ -2943,7 +2951,70 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     /**********************************************
      * watch dog
      */
-    //wacht dog timer
+
+    private void reloadRequestStatus(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                requestStatusFromHostTimer();
+                Log.d(TAG, "reloadRequestStatus: ");
+                //rest counter watchdog
+                countWatchDog=MAXWatchDog;
+            }
+        });
+
+    }
+    
+    //cancel request status
+    private void cancelRequestStatus(){
+        if (loopGetStatusTimer != null) {
+            loopGetStatusTimer.cancel();
+            loopGetStatusTimer = null;
+        }
+        //clean timer watchdog
+        if (watchDogTimer != null) {
+            watchDogTimer.cancel();
+            watchDogTimer = null;
+        }
+    }
+
+    //*request status from host
+    private void requestStatusFromHostTimer(){
+        if (loopGetStatusTimer != null) {
+            loopGetStatusTimer.cancel();
+            loopGetStatusTimer = null;
+        }
+
+        //clean timer watchdog
+        if (watchDogTimer != null) {
+            watchDogTimer.cancel();
+            watchDogTimer = null;
+        }
+
+
+        loopGetStatusTimer=new CountDownTimer(TIMER_LOOP_STATUS,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.d(TAG, "onTick: request status:"+millisUntilFinished/1000);
+            }
+
+            @Override
+            public void onFinish() {
+                setWatchDogCounter();
+            }
+        }.start();
+    }
+
+    //
+    private void setWatchDogCounter(){
+        //timer delay
+        watchDogTimerCom();
+        //request status
+        sendTCP(spEth.k9_st_1);
+    }
+    
+    
+    //watchdog timer
     private void watchDogTimerCom() {
         Log.d(TAG, "watchDogTimerCom: ");
         if (watchDogTimer != null) {
@@ -2966,11 +3037,26 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //watchdog
     private void watchDogTimerElapsed() {
-        Log.d(TAG, "wachtDogTimerElapsed: ");
-        isTherapyOn = false;
-        cleanDisplayTimer();
-        stopByEmergency();
-        notificationHardwareFail();
+        Log.d(TAG, "watchDogTimerElapsed: ");
+
+        //private int countWatchDog=0;
+        //private int MAXWatchDog=3;
+        if (countWatchDog==0){
+            //alarm watch dog
+            isTherapyOn = false;
+            cleanDisplayTimer();
+            stopByEmergency();
+            notificationHardwareFail();
+        }else{
+            countWatchDog--;
+            setWatchDogCounter();
+        }
+
+
+
+
+
+
 
     }
 
@@ -3122,9 +3208,15 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateFbCommands(myNum);
                     beepSound();
                     return;
-                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_AL)) {//operations
-                    //updateFbCommands(myNum);
-                    beepSound();
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_ST)) {//status from host
+                    //substring to get number
+                    int startIndexStatPos = 10;
+                    //int endIndexStatPos = 12;
+                    
+                    String substrStatPos = message.substring(startIndexStatPos,message.length()-1);
+                    Log.d(TAG, "statusEthernet:extracted payload pos:" + substrStatPos);
+                    //
+                    reloadRequestStatus();                    
                     return;
                 }
 
@@ -3177,6 +3269,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
      * Alarms
      */
 
+   
+
+
     //check status alarm
     private void checkStatusAlarms(String malarm) {
         Alarm alarm1 = new Alarm();
@@ -3214,6 +3309,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     /**********************************************
      *
      */
+
 
     /**********************************************
      *

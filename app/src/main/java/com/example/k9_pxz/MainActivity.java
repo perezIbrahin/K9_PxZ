@@ -2,12 +2,14 @@ package com.example.k9_pxz;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -99,6 +101,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //PDFView pdfView;
     // url of our PDF file.
 
+    //hide permanent bar
+    final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+    private int currentApiVersion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //load layout
         loadLayout(R.layout.layout_main_page);
         //remove menu bar
-        removeMenuBar();
+        hideStatusBar();
         //remove action bar from top
         removeActionBar();
         //init
@@ -127,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         displaySoftRev(rev.APP_REV_PAGE_10);
         //disable wifi
         disableWIFI();
+
     }
 
     @Override
@@ -189,17 +201,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //disable WIFi
-    private void disableWIFI(){
+    private void disableWIFI() {
         try {
             WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if(wifi!=null){
-                if(wifi.isWifiEnabled()){
+            if (wifi != null) {
+                if (wifi.isWifiEnabled()) {
                     wifi.setWifiEnabled(false);
                     Log.d(TAG, "disableWIFI: disable");
                 }
             }
-        }catch (Exception e){
-            Log.d(TAG, "disableWIFI: ex:"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "disableWIFI: ex:" + e.getMessage());
         }
     }
 
@@ -235,7 +247,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.setContentView(R.layout.layout_main_page);
 
     }
-
 
     //load all the text according to the language
     private void loadContentByLanguage(String language) {
@@ -608,11 +619,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    //remove menu bar
-    private void removeMenuBar() {
+
+    //Hidden status bar
+    private void hideStatusBar() {
         try {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            View decorView = getWindow().getDecorView();
+            decorView.setOnSystemUiVisibilityChangeListener
+                    (new View.OnSystemUiVisibilityChangeListener() {
+                        @Override
+                        public void onSystemUiVisibilityChange(int visibility) {
+                            Log.d(TAG, "onSystemUiVisibilityChange: "+visibility);
+                            // Note that system bars will only be "visible" if none of the
+                            // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+                            if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                                // TODO: The system bars are visible. Make any desired
+                                // adjustments to your UI, such as showing the action bar or
+                                // other navigational controls.
+                            } else {
+                                // TODO: The system bars are NOT visible. Make any desired
+                                // adjustments to your UI, such as hiding the action bar or
+                                // other navigational controls.
+                            }
+                        }
+                    });
+
+
+
+           /* View decorView = getWindow().getDecorView();
+            // Hide the status bar.
+            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+            // Remember that you should never show the action bar if the
+            // status bar is hidden, so hide that too if necessary.
+            ActionBar actionBar = getActionBar();
+            actionBar.hide();*/
+
+            /*getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE);*/
 
 
         } catch (Exception e) {
@@ -761,6 +804,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void displayStatusScreen(String status) {
         if (status != null) {
             tvStatusScreen.setText(status);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Log.d(TAG, "onWindowFocusChanged: ");
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT && hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
 }

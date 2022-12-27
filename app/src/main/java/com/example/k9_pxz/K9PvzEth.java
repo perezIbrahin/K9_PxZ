@@ -6,11 +6,14 @@ import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -22,6 +25,9 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -75,7 +81,7 @@ import Util.Util_Dialog;
 import Util.Util_timer;
 import Util.Validation;
 
-public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, RecyclerViewClickInterface, View.OnClickListener, Observer {
+public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, RecyclerViewClickInterface, View.OnClickListener, Observer, View.OnLongClickListener, View.OnTouchListener {
     private static final String TAG = "K9PvzEth";
     /*GUI*/
     //modes
@@ -83,6 +89,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private Button btnSelectVib;
     private Button btnSelectTotalPer;
     private Button btnSelectTotalVib;
+    private Button btnLockOp;
     //
     private Button btnStart;
     private Button btnStop;
@@ -240,6 +247,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private String dialogMissTime = "0";
     private String dialogMissTra = "0";
     private String dialogMissTrb = "0";
+    private String dialogUnderCurrent = "0";
+    private String dialogOverCurrent = "0";
 
     //serial number
     private String Serial_Number_Product = "12PV123456";
@@ -275,25 +284,37 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     Socket socket1;
     private String socketStatus = null;
     //
-    private int countWatchDog=0;
-    private int MAXWatchDog=3;
+    private int countWatchDog = 0;
+    private int MAXWatchDog = 3;
     /**/
-
-
+    private long down, up;//get how long key was pressed
+    private boolean isLockScreen = false;
+    private Handler handler;
     //preferences
     public static final String MY_PREFS_NAME = "MyPrefsFile";
+
+    //hide navigation bar
+    private int currentApiVersion;
+    final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+            View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         //screen full size
-        screenFullSize();
+        //screenFullSize();
         //load layout
         loadLayout(R.layout.layout_percussion_vibration);
+
         //remove menu bar
-        removeMenuBar();
+        hideNavigationBar();
+
         //remove action bar from top
-        removeActionBar();
+        // removeActionBar();
+        // notified of system UI visibility changes
+        //systemUiChanges();
         //init all components
         initGUI();
         //init bluetooth and broadcast
@@ -350,7 +371,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         btnSelectVib = findViewById(R.id.btnSelVib);
         btnSelectTotalPer = findViewById(R.id.btnTotalPerc);
         btnSelectTotalVib = findViewById(R.id.btnTotalVib);
-
+        btnLockOp = findViewById(R.id.btnLockOp);
         btnMenu = findViewById(R.id.btnMenu);
         btnStart = findViewById(R.id.btnModeStart);
         btnStop = findViewById(R.id.btnModeStop);
@@ -454,9 +475,12 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             goHome();
         } else if (description.equalsIgnoreCase(utilDialog.THERAPY_DONE)) {
             Log.d(TAG, "onItemSetupInfo: THERAPY_DONE");
-
         } else if (description.equalsIgnoreCase(utilDialog.LOCATION_ACK_CON_FAIL)) {
             //counterFail=0;
+        } else if (description.equalsIgnoreCase(utilDialog.UNDER_CURRENT_CONFIRM)) {
+            Log.d(TAG, "onItemSetupInfo: confirm UNDER_CURRENT_CONFIRM");
+        } else if (description.equalsIgnoreCase(utilDialog.OVER_CURRENT_CONFIRM)) {
+            Log.d(TAG, "onItemSetupInfo: OVER_CURRENT_CONFIRM");
         }
     }
 
@@ -468,26 +492,29 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     @Override
     public void onItemPostSelect(int position, String value) {
         Log.d(TAG, "onItemPostSelect: pos" + position + "val:" + value);
+        //conditions to disable the use of setpoints
+        boolean conditions = isTherapyOn || isLockScreen;
+
         if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_FREQ)) {
             //send data of freq
-            sendSpFreq(position, isTherapyOn);
+            sendSpFreq(position, conditions);//isTherapyOn
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_INT)) {
             Log.d(TAG, "onItemPostSelect: int");
             //send data of Int
-            sendSpInt(position, isTherapyOn);
+            sendSpInt(position, conditions);
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_TIM)) {
             Log.d(TAG, "onItemPostSelect: time");
             //send data of Time
-            sendSpTime(position, isTherapyOn);
+            sendSpTime(position, conditions);
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_A)) {
             if (!isTotalBody(mode)) {
                 //do not accept commands manualy is total body
-                sendSpRBA(position, isTherapyOn);
+                sendSpRBA(position, conditions);
             }
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
             if (!isTotalBody(mode)) {
                 //do not accept commands manualy is total body
-                sendSpRBB(position, isTherapyOn);
+                sendSpRBB(position, conditions);
             }
         }
     }
@@ -571,15 +598,85 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
     }
 
+    //hide system bar
+    private void hideSystemBar() {
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        // Configure the behavior of the hidden system bars.
+
+        windowInsetsController.hide(WindowInsetsCompat.Type.statusBars());
+
+
+    }
+
     //remove menu bar
-    private void removeMenuBar() {
+    private void hideNavigationBar() {
         try {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            currentApiVersion = android.os.Build.VERSION.SDK_INT;
+            if (currentApiVersion >= Build.VERSION_CODES.KITKAT) {
+                getWindow().getDecorView().setSystemUiVisibility(flags);
+                final View decorView = getWindow().getDecorView();
+                decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                            decorView.setSystemUiVisibility(flags);
+                        } 
+                    }
+                });
+            }
+
+
+
+           /* View decorView = getWindow().getDecorView();
+            // Hide both the navigation bar and the status bar.
+            // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+            // a general rule, you should design your app to hide the status bar whenever you
+            // hide the navigation bar.
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(uiOptions);*/
 
 
         } catch (Exception e) {
             Log.d(TAG, "removeMenuBar: ex:" + e.getMessage());
+        }
+    }
+
+    //events on UI
+    /*private void systemUiChanges() {
+        View decorView = getWindow().getDecorView();
+        decorView.setOnSystemUiVisibilityChangeListener
+                (new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        // Note that system bars will only be "visible" if none of the
+                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+                        Log.d(TAG, "onSystemUiVisibilityChange: " + visibility);
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                            // TODO: The system bars are visible. Make any desired
+                            // adjustments to your UI, such as showing the action bar or
+                            // other navigational controls.
+                            //hideNavigationBar();
+                        } else {
+                            // TODO: The system bars are NOT visible. Make any desired
+                            // adjustments to your UI, such as hiding the action bar or
+                            // other navigational controls.
+                        }
+                    }
+                });
+    }*/
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Log.d(TAG, "onWindowFocusChanged: ");
+        if (currentApiVersion >= Build.VERSION_CODES.KITKAT && hasFocus) {
+            Log.d(TAG, "onWindowFocusChanged: yes");
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
 
@@ -706,8 +803,12 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         btnMenu.setText(resources.getString(R.string.string_text_pv__btn_main));
         //dialog with language
         dialogSideRailLang = resources.getString(R.string.string_dial_side_rail);
+        //error code
         dialogEmergStop = resources.getString(R.string.string_alarm_emergency_stop);
         dialogHardwareFail = resources.getString(R.string.string_alarm_hardware_fail);
+        dialogUnderCurrent = resources.getString(R.string.string_alarm_under_current);
+        dialogOverCurrent = resources.getString(R.string.string_alarm_over_current);
+        //
         dialogTherapyCompleteLang = resources.getString(R.string.string_name_therapy_complete);
         dialogConfirmLang = resources.getString(R.string.string_btn_SR_confirm);
         dialogCancelLang = resources.getString(R.string.string_btn_SR_cancel);
@@ -1412,6 +1513,20 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         return setPoints.INT_BLE_CMD_NONE;
     }
 
+    //update lock screen
+    private int updateLockScreen(int value) {
+        try {
+            if (value == status.SELECT_SCREEN_UNLOCK) {
+                btnLockOp.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+            } else if (value == status.SELECT_SCREEN_LOCK) {
+                btnLockOp.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "updateLockScreen: ex:" + e.getMessage());
+        }
+        return value;
+    }
+
     //indication therapy is ready
     private void updateBtnReady(int value) {
         try {
@@ -1936,6 +2051,20 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         //tvRssi.setText(String.valueOf(value) + unit);
     }
 
+    //display feedback
+    private void displayFeedBackStatus(int value) {
+        try {
+            if (value > 0) {
+                String str = (String) String.valueOf(value);
+                if (str != null) {
+                    tvCurrent.setText(str);
+                }
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "displayFeedBackStatus: ex:" + e.getMessage());
+        }
+    }
+
     /**********************************************
      * Feedback from Host
      */
@@ -2075,6 +2204,52 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         });
     }
 
+    //update feedback status
+    private void updateFbStatus(int value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "updateFbStatus: " + value);
+                //display info on screen
+                displayFeedBackStatus(value);
+
+                if (value == setPoints.INT_BLE_STATUS_READY) {
+
+                } else if (value == setPoints.INT_BLE_STATUS_WORKING) {
+
+                } else if (value == setPoints.INT_BLE_STATUS_ALARM1) {
+                    notificationAlarmDummy();
+                } else if (value == setPoints.INT_BLE_STATUS_ALARM2) {//over current
+                    notificationOverCurrent();
+                } else if (value == setPoints.INT_BLE_STATUS_ALARM3) {//under current
+                    notificationUnderCurrent();
+                }
+
+
+                /*// Stuff that updates the UI
+                int ret = updateCommand(value);
+                //get language resources
+                Resources resources = getResourcesLanguage(language);
+                //
+                if (ret == setPoints.INT_BLE_CMD_NONE) {
+                } else if (ret == setPoints.INT_BLE_CMD_START) {
+                    updateBtnReady(controlGUI.POS0);
+                    launchRunTherapy(valueTimerTherapy, countInterval);
+                    //update display with language
+                    displayStartCommand(resources.getString(R.string.string_text_btn_running));
+                } else if (ret == setPoints.INT_BLE_CMD_STOP) {
+                    displayStartCommand(resources.getString(R.string.string_text_btn_start));
+                    //displayStartCommand("Start");
+                    if (isFlagTimerElapsed) {
+                        notificationTimerElapsed();
+                    } else {
+                        forceStopTimerTherapy();
+                    }
+                }*/
+            }
+        });
+    }
+
     /**********************************************
      * Sound alerts
      */
@@ -2163,7 +2338,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private void lockMode(boolean input) {
         isLockMode = input;
     }
-
 
     //check is Full body or manual
     private boolean isTotalBody(int mode) {
@@ -2385,6 +2559,28 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         updateBtnReady(controlGUI.POS0);//invisible ready
     }
 
+    //operation lock screen
+    private boolean lockScreen(boolean input) {
+        Log.d(TAG, "lockScreen: " + input);
+        //if therapy on not do nothing
+        if (isTherapyOn) {
+            return false;
+        }
+
+        if (!isLockScreen) {
+            isLockScreen = true;
+            updateLockScreen(status.SELECT_SCREEN_LOCK);
+            lockMode(isLockScreen);
+            beepSound();
+            return isLockScreen;
+        }
+        isLockScreen = false;
+        updateLockScreen(status.SELECT_SCREEN_UNLOCK);
+        lockMode(isLockScreen);
+        beepSound();
+        return isLockScreen;
+    }
+
     /**********************************************
      * Events buttons
      */
@@ -2394,6 +2590,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         btnSelectVib.setOnClickListener(this);
         btnSelectTotalPer.setOnClickListener(this);
         btnSelectTotalVib.setOnClickListener(this);
+        // btnLockOp.setOnClickListener(this);
         btnStart.setOnClickListener(this);
         btnStop.setOnClickListener(this);
         btnSr1.setOnClickListener(this);
@@ -2402,18 +2599,24 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         btnSr4.setOnClickListener(this);
         btnMenu.setOnClickListener(this);
         ivBle.setOnClickListener(this);
+        //button lock will activate if after 3 seconds pressed
+        btnLockOp.setOnClickListener(this);
+        //btnLockOp.setOnLongClickListener(this);
+        btnLockOp.setOnTouchListener(this);
+
     }
 
     @Override
     public void onClick(View v) {
         if (btnStart == v) {
             if (!isAlarm) {
-                condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
+                if (!isLockScreen) {
+                    condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
+                }
             } else {
                 Log.d(TAG, "onClick: alarm enable");
             }
             //beep.beep_key();
-
         } else if (btnStop == v) {
             stopTherapy();
         } else if (btnMenu == v) {
@@ -2458,6 +2661,58 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     }
 
+    //long touch events
+    @Override
+    public boolean onLongClick(View v) {
+
+        return false;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                handler = new Handler();
+                handler.postDelayed(runDelayButton, 3000);
+                Log.d(TAG, "onTouch: down");
+                break;
+            case MotionEvent.ACTION_UP:
+                handler.removeCallbacks(runDelayButton);
+                Log.d(TAG, "onTouch: remove");
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG, "onKeyDown: key:" + keyCode + " event:" + event);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.d(TAG, "onKeyDown: KEYCODE_BACK");
+            //super.onKeyDown(keyCode, event);
+            return true;
+        }
+        if (keyCode == KeyEvent.KEYCODE_HOME) {
+            Log.d(TAG, "onKeyDown: KEYCODE_HOME");
+            return true;
+        }
+        return false;
+    }
+
+    //delay of 3 sec to lock or unlock screen
+    Runnable runDelayButton = new Runnable() {
+        @Override
+        public void run() {
+            //Toast.makeText(MainActivity.this, "delayed msg", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "run: runDelayButton");
+            lockScreen(true);
+        }
+    };
 
     /**********************************************
      * Events from adapters-Get all setpoints
@@ -2872,7 +3127,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //notifications
     private void notificationHardwareFail() {
         Log.d(TAG, "notificationSystemRestart: ");
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -2882,6 +3136,22 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             }
         });
     }
+
+    //notification under current
+    private void notificationUnderCurrent() {
+        k9Alert.alertDialogUnderCurrent(dialogUnderCurrent, dialogConfirmLang);
+    }
+
+    //notification overCurrent
+    private void notificationOverCurrent() {
+        k9Alert.alertDialogOverCurrent(dialogOverCurrent, dialogConfirmLang);
+    }
+
+    //notification alarmDummy
+    private void notificationAlarmDummy() {
+
+    }
+
 
     /**********************************************
      * Alert dialog
@@ -2952,21 +3222,21 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
      * watch dog
      */
 
-    private void reloadRequestStatus(){
+    private void reloadRequestStatus() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 requestStatusFromHostTimer();
                 Log.d(TAG, "reloadRequestStatus: ");
                 //rest counter watchdog
-                countWatchDog=MAXWatchDog;
+                countWatchDog = MAXWatchDog;
             }
         });
 
     }
-    
+
     //cancel request status
-    private void cancelRequestStatus(){
+    private void cancelRequestStatus() {
         if (loopGetStatusTimer != null) {
             loopGetStatusTimer.cancel();
             loopGetStatusTimer = null;
@@ -2979,7 +3249,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //*request status from host
-    private void requestStatusFromHostTimer(){
+    private void requestStatusFromHostTimer() {
         if (loopGetStatusTimer != null) {
             loopGetStatusTimer.cancel();
             loopGetStatusTimer = null;
@@ -2992,10 +3262,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
 
 
-        loopGetStatusTimer=new CountDownTimer(TIMER_LOOP_STATUS,1000) {
+        loopGetStatusTimer = new CountDownTimer(TIMER_LOOP_STATUS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.d(TAG, "onTick: request status:"+millisUntilFinished/1000);
+                Log.d(TAG, "onTick: request status:" + millisUntilFinished / 1000);
             }
 
             @Override
@@ -3006,14 +3276,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //
-    private void setWatchDogCounter(){
+    private void setWatchDogCounter() {
         //timer delay
         watchDogTimerCom();
         //request status
         sendTCP(spEth.k9_st_1);
     }
-    
-    
+
     //watchdog timer
     private void watchDogTimerCom() {
         Log.d(TAG, "watchDogTimerCom: ");
@@ -3041,23 +3310,16 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
         //private int countWatchDog=0;
         //private int MAXWatchDog=3;
-        if (countWatchDog==0){
+        if (countWatchDog == 0) {
             //alarm watch dog
             isTherapyOn = false;
             cleanDisplayTimer();
             stopByEmergency();
             notificationHardwareFail();
-        }else{
+        } else {
             countWatchDog--;
             setWatchDogCounter();
         }
-
-
-
-
-
-
-
     }
 
     /**********************************************
@@ -3210,13 +3472,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     return;
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_ST)) {//status from host
                     //substring to get number
-                    int startIndexStatPos = 10;
-                    //int endIndexStatPos = 12;
-                    
-                    String substrStatPos = message.substring(startIndexStatPos,message.length()-1);
-                    Log.d(TAG, "statusEthernet:extracted payload pos:" + substrStatPos);
+                    //int startIndexStatPos = 10;
+
+                    // String substrStatPos = message.substring(startIndexStatPos, message.length() - 1);
+                    // Log.d(TAG, "statusEthernet:extracted payload pos:" + substrStatPos);
+
+                    updateFbStatus(myNum);
                     //
-                    reloadRequestStatus();                    
+                    reloadRequestStatus();
                     return;
                 }
 
@@ -3226,6 +3489,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             }
         }
     }
+
+    //alarms
+
 
     /*update from tcp ip-Data from the communication*/
     @Override
@@ -3269,8 +3535,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
      * Alarms
      */
 
-   
-
 
     //check status alarm
     private void checkStatusAlarms(String malarm) {
@@ -3305,6 +3569,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
 
     }
+
 
     /**********************************************
      *

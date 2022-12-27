@@ -202,6 +202,7 @@
     <string name="string_text_btn_running">Running</string>
     <string name="string_text_btn_stopped">Stopped</string>
     <string name="string_text_btn_ready">Ready</string>
+    <string name="string_text_btn_lock">Lock screen</string>
     <!-- lock actions  -->
     <string name="string_text_action_locked">Locked</string>
     <string name="string_text_action_unlocked">Unlocked</string>
@@ -230,6 +231,9 @@
     <!-- alarms -->
     <string name="string_alarm_emergency_stop">Error code:25 </string>
     <string name="string_alarm_hardware_fail">Error code:27. Restart system! </string>
+
+    <string name="string_alarm_under_current">Error code:95(UC). Check all connections! </string>
+    <string name="string_alarm_over_current">Error code:94(OC). Stop system!!! </string>
 
     <!-- connection page -->
     <string name="string_com_connected">Connected</string>

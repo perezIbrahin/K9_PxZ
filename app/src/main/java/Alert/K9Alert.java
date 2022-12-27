@@ -702,4 +702,134 @@ public class K9Alert extends AppCompatActivity {
             Log.d(TAG, "alertDialogConnectionFail: " + e.getMessage());
         }
     }
+
+    //alarm under current
+    public void alertDialogUnderCurrent(String title, String textBtnConfirm) {
+        try {
+            Log.d(TAG, "alertDialogUnderCurrent: ");
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_alarm_unde_current, null);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setView(promptsView);
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvUcRev);
+            tvRev.setText(rev.APP_REV_PAGE_56);
+
+
+            //set emergency stop
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvUnderCurrent);
+
+            //set text
+            if (title != null) {
+                tvTextDialogSR.setText(title);
+            }
+
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnUcConfirm);
+
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            //send command
+                            try {
+                                interfaceSetupInfo.onItemSetupInfo("util_dialog.UNDER_CURRENT_CONFIRM", util_dialog.UNDER_CURRENT_CONFIRM);
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogUNDER_CURRENT_CONFIRM: ex:" + e.getMessage());
+                            }
+                            //remove dialog
+                            try {
+                                alertDialog.dismiss();
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogUNDER_CURRENT_CONFIRM: ex:" + e.getMessage());
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                }
+            }
+
+
+            // show it
+            Log.d(TAG, "alertDialogUNDER_CURRENT_CONFIRMFail: show");
+            alertDialog.show();
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogConnectionFail: " + e.getMessage());
+        }
+    }
+
+    //alarm over current
+    public void alertDialogOverCurrent(String title, String textBtnConfirm) {
+        try {
+            Log.d(TAG, "alertDialogUnderCurrent: ");
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_alarm_over_current, null);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setView(promptsView);
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvOcRev);
+            tvRev.setText(rev.APP_REV_PAGE_57);
+
+
+            //set emergency stop
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvOverCurrent);
+
+            //set text
+            if (title != null) {
+                tvTextDialogSR.setText(title);
+            }
+
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnOcConfirm);
+
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            //send command
+                            try {
+                                interfaceSetupInfo.onItemSetupInfo("util_dialog.OVER_CURRENT_CONFIRM", util_dialog.OVER_CURRENT_CONFIRM);
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                            //remove dialog
+                            try {
+                                alertDialog.dismiss();
+                            } catch (Exception e) {
+                                Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogTherapyDone: ex:" + e.getMessage());
+                }
+            }
+
+
+            // show it
+            Log.d(TAG, "alertDialogConnectionFail: show");
+            alertDialog.show();
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogConnectionFail: " + e.getMessage());
+        }
+    }
 }

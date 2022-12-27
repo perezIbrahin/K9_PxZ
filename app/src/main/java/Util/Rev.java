@@ -3,7 +3,7 @@ package Util;
 
 public class Rev {
 
-    private String Rev="3.1.1";
+    private String Rev="3.1.2";
 
     //Hsitory
     //public static final String APP_REV= "1.1";//04/01/19 Initial release
@@ -30,5 +30,7 @@ public class Rev {
     public String APP_REV_PAGE_53 = "P53/"+Rev;//Dialog connection lost
     public String APP_REV_PAGE_54 = "P54/"+Rev;//Dialog lock confirmation
     public String APP_REV_PAGE_55 = "P55/"+Rev;//Emergency stop
+    public String APP_REV_PAGE_56 = "P56/"+Rev;//Under current
+    public String APP_REV_PAGE_57 = "P57/"+Rev;//Over current
 
 }

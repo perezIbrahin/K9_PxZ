@@ -10,4 +10,7 @@ public class Util_Dialog {
     public String LOCATION_ACK_CON_FAIL="LOCATION_ACK_CON_FAIL";
     public String THERAPY_DONE="THERAPY DONE!";
 
+    public String UNDER_CURRENT_CONFIRM="UNDER_CURRENT_CONFIRM";
+    public String OVER_CURRENT_CONFIRM="OVER_CURRENT_CONFIRM";
+
 }

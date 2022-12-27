@@ -27,6 +27,11 @@ public class Status {
     public int SELECT_MODE_VIBRATION=2;
     public int SELECT_MODE_TOTAL_PERCUSSION=3;
     public int SELECT_MODE_TOTAL_VIBRATION=4;
+
+    //lock screen mode
+    public int SELECT_SCREEN_UNLOCK=0;
+    public int SELECT_SCREEN_LOCK=1;
+
     //pass data between activity
 
     //ethernet

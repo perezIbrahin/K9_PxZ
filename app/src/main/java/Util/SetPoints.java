@@ -44,9 +44,8 @@ public class SetPoints {
     public final String SP_BLE_CMD_TOTAL_BODY_VIB = "95";
     //--------------------------------------------
     public final int INT_BLE_SP_CLEAN = -1;
+
     //Frequency
-
-
     public final int INT_BLE_SP_FREQ1 = 10;
     public final int INT_BLE_SP_FREQ2 = 11;
     public final int INT_BLE_SP_FREQ3 = 12;
@@ -54,7 +53,6 @@ public class SetPoints {
     public final int INT_BLE_SP_FREQ5 = 14;
     public final int INT_BLE_SP_FREQ_MAX = 15;
     public final int INT_BLE_SP_FREQ_NONE = 19;
-
     //Intensity
     public final int INT_BLE_SP_INT1 = 20;
     public final int INT_BLE_SP_INT2 = 21;
@@ -70,14 +68,6 @@ public class SetPoints {
     public final int INT_BLE_SP_TIME4 = 33;
     public final int INT_BLE_SP_TIME5 = 34;
     public final int INT_BLE_SP_TIME_NONE = 39;
-/*
-    public final int INT_BLE_SP_TIME1 = 0X30;
-    public final int INT_BLE_SP_TIME2 = 0X31;
-    public final int INT_BLE_SP_TIME3 = 0X32;
-    public final int INT_BLE_SP_TIME4 = 0X33;
-    public final int INT_BLE_SP_TIME5 = 0X34;
-    public final int INT_BLE_SP_TIME_NONE = 0x39;*/
-
     //Transducers Left
     public final int INT_BLE_SP_TRA1 = 40;
     public final int INT_BLE_SP_TRA2 = 41;
@@ -99,26 +89,27 @@ public class SetPoints {
     public final int INT_BLE_SP_MODE4 = 73;//total body
     public final int INT_BLE_SP_MODE5 = 74;
     public final int INT_BLE_SP_MODE9 = 79;//CLEAN
-
-
     //commands
     public final int INT_BLE_CMD_INIT = 60;
     public final int INT_BLE_CMD_START = 61;
     public final int INT_BLE_CMD_STOP = 62;
     public final int INT_BLE_CMD_TOTAL_VIB = 63;
-
     //64-SPARE
     public final int INT_BLE_SP_COOL_ALL_STOP = 65;//LINK
     public final int INT_BLE_SP_COOL_ALL_INIT = 66;
     public final int INT_BLE_CMD_TOTAL_PERC = 67;
     public final int INT_BLE_CMD_NONE = 69;
-
+    //
     public final int INT_BLE_CMD_SLEEP = 03;
     public final int INT_BLE_CMD_WAKE = 04;
-
-
+    //
     public final int INT_BLE_CMD_END = 68;
-
+    //status
+    public final int INT_BLE_STATUS_READY = 91;
+    public final int INT_BLE_STATUS_WORKING = 92;
+    public final int INT_BLE_STATUS_ALARM1 = 93;//?
+    public final int INT_BLE_STATUS_ALARM2 = 94;//OVER CURRENT
+    public final int INT_BLE_STATUS_ALARM3 = 95;//UNDER CURRENT
 
     //Frequency
     private int BLE_SP_FREQ1 = 0x10;

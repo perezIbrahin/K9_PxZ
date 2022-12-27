@@ -45,4 +45,10 @@
     <string name="string_text_btn_sleep">despertar</string>
     <string name="string_text_main_unlock">desbloquear</string>
     <string name="string_name_percussion_therapy">Terapia de percusión/vibración</string>
+    <string name="string_alarm_under_current">"Código de error: 95 (UC). ¡Comprueba todas las conexiones! "</string>
+    <string name="string_alarm_over_current">"Código de error: 94 (OC). Sistema de parada!!! "</string>
+    <string name="string_alarm_hardware_fail">"Código de error: 27. ¡Reinicie el sistema! "</string>
+    <string name="string_alarm_emergency_stop">Código de error: 27</string>
+    <string name="string_name_select_total_vib">Vibración de cuerpo completo</string>
+    <string name="string_name_select_total_perc">Percusión de pecho completo</string>
 </resources>

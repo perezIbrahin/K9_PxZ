@@ -45,4 +45,10 @@
     <string name="string_text_btn_sleep">sveglia</string>
     <string name="string_text_main_unlock">sbloccare</string>
     <string name="string_name_percussion_therapy">"Percussioni Terapia "</string>
+    <string name="string_alarm_under_current">"Fehlercode:95(UC). Überprüfen Sie alle Verbindungen! "</string>
+    <string name="string_alarm_over_current">"Fehlercode:94(OC). System stoppen!!! "</string>
+    <string name="string_alarm_hardware_fail">"Fehlercode:27. System neu starten! "</string>
+    <string name="string_alarm_emergency_stop">Fehlercode:25</string>
+    <string name="string_name_select_total_vib">Ganzkörper-Vibration</string>
+    <string name="string_name_select_total_perc">Volle Brust Perkussion</string>
 </resources>

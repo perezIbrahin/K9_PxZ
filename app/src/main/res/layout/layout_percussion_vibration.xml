@@ -530,11 +530,11 @@
         android:id="@+id/btnReady"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="4dp"
         android:background="@drawable/ic_baseline_pan_tool_alt_24"
-        app:layout_constraintEnd_toEndOf="@+id/btnModeStart"
-        app:layout_constraintStart_toStartOf="@+id/btnModeStart"
-        app:layout_constraintTop_toBottomOf="@+id/btnModeStart" />
+        app:layout_constraintBottom_toTopOf="@+id/tvReady"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tvVibRev"
@@ -579,9 +579,9 @@
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/btnReady"
-        app:layout_constraintStart_toStartOf="@+id/btnReady"
-        app:layout_constraintTop_toBottomOf="@+id/btnReady" />
+        app:layout_constraintStart_toStartOf="@+id/btnReady" />
 
     <ImageView
         android:id="@+id/ivIconPerc"
@@ -607,7 +607,7 @@
         android:id="@+id/tvCurrent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0mA"
+        android:text="EC"
         app:layout_constraintBottom_toTopOf="@+id/tvVibRev"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -634,5 +634,17 @@
         app:layout_constraintEnd_toEndOf="@+id/btnSelVib"
         app:layout_constraintStart_toStartOf="@+id/btnSelVib"
         app:layout_constraintTop_toTopOf="@+id/btnTotalPerc" />
+
+    <Button
+        android:id="@+id/btnLockOp"
+        android:layout_width="@dimen/dim_select_pv_W"
+        android:layout_height="@dimen/dim_select_pv_H"
+        android:background="@drawable/btn_sp1"
+        android:text="@string/string_text_btn_lock"
+        android:textSize="@dimen/dim_btn_total_body"
+        app:layout_constraintBottom_toBottomOf="@+id/tvtimer"
+        app:layout_constraintEnd_toEndOf="@+id/btnModeStart"
+        app:layout_constraintStart_toStartOf="@+id/btnModeStart"
+        app:layout_constraintTop_toBottomOf="@+id/btnModeStart" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

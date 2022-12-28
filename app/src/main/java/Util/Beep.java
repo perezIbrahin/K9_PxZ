@@ -14,8 +14,8 @@ public class Beep {
     }
 
     public void beep1(){
-        toneGenerator=new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-        toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
+        toneGenerator=new ToneGenerator(AudioManager.STREAM_ALARM, 800);
+        toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 3000);
     }
 
     public void beep_disable(){

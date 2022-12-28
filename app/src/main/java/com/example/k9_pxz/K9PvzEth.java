@@ -300,6 +300,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
             View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
+    //
+    private boolean isFlagAlarmUc=false;//alarm under current
+    private boolean isFlagAlarmOc=false;//alarm under current
+
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -479,8 +483,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             //counterFail=0;
         } else if (description.equalsIgnoreCase(utilDialog.UNDER_CURRENT_CONFIRM)) {
             Log.d(TAG, "onItemSetupInfo: confirm UNDER_CURRENT_CONFIRM");
+            isFlagAlarmUc=false;
         } else if (description.equalsIgnoreCase(utilDialog.OVER_CURRENT_CONFIRM)) {
             Log.d(TAG, "onItemSetupInfo: OVER_CURRENT_CONFIRM");
+            isFlagAlarmOc=false;
         }
     }
 
@@ -2263,6 +2269,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         beep.beep_key();
     }
 
+    //beep alarm
+    private void beepAlarm(){
+        beep.beep1();
+    }
+
     /**********************************************
      * Operations:mode/transducers
      */
@@ -2692,16 +2703,16 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.d(TAG, "onKeyDown: key:" + keyCode + " event:" + event);
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+       /* if (keyCode == KeyEvent.KEYCODE_BACK) {
             Log.d(TAG, "onKeyDown: KEYCODE_BACK");
             //super.onKeyDown(keyCode, event);
             return true;
-        }
+        }*/
         if (keyCode == KeyEvent.KEYCODE_HOME) {
             Log.d(TAG, "onKeyDown: KEYCODE_HOME");
             return true;
         }
-        return false;
+        return super.onKeyDown(keyCode, event);
     }
 
     //delay of 3 sec to lock or unlock screen
@@ -3139,12 +3150,22 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //notification under current
     private void notificationUnderCurrent() {
-        k9Alert.alertDialogUnderCurrent(dialogUnderCurrent, dialogConfirmLang);
+        if(!isFlagAlarmUc){
+            k9Alert.alertDialogUnderCurrent(dialogUnderCurrent, dialogConfirmLang);
+            isFlagAlarmUc=true;
+            beepAlarm();
+        }
+
     }
 
     //notification overCurrent
     private void notificationOverCurrent() {
-        k9Alert.alertDialogOverCurrent(dialogOverCurrent, dialogConfirmLang);
+        if(!isFlagAlarmOc){
+            k9Alert.alertDialogOverCurrent(dialogOverCurrent, dialogConfirmLang);
+            isFlagAlarmOc=true;
+            beepAlarm();
+        }
+
     }
 
     //notification alarmDummy

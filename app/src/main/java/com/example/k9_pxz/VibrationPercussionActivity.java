@@ -326,6 +326,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     //alarm
     private boolean isAlarm = true;
+    private boolean isAlarmUc=false;//flag alarm under current
     private long TIMER_WACHT_DOG = 20000;
 
     //wachtDog

@@ -1,58 +1,51 @@
 package com.example.k9_pxz;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
+import android.webkit.DownloadListener;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
-import Alert.AlertCustomDialog;
-import Alert.CustomAlert;
-import Alert.K9Alert;
-import Interface.InterfaceSetupInfo;
-import Interface.RecyclerViewClickInterface;
+import android.webkit.WebViewClient;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import Util.LocaleHelper;
 import Util.Navigation;
 import Util.Rev;
 import Util.Safety;
 
-public class SettActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface, InterfaceSetupInfo {
-    private static final String TAG = "SettActivity";
+public class UpdateActivity extends AppCompatActivity {
+    private static final String TAG = "UpdateActivity";
     Safety safety = new Safety();
     Navigation navigation = new Navigation();
-    //GUI
-
-    private Button btnHome;
-    private Button btnSetLink;
-    private Button btnBurn;
-    private Button btnAbout;
-    private Button btnSystem;
-    private TextView tvSetRev;
-    private TextView tvSetTitle;
-    //
-
-
-    AlertCustomDialog alertCustomDialog;
-    CustomAlert customAlert;
     private Rev rev = new Rev();
-
-    //Language
     private String language = "en";
+
+    private TextView tvSetRev;
+    private WebView wv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         //screen full size
         screenFullSize();
         //load layout
-        loadLayout(R.layout.activity_sett);
+        loadLayout(R.layout.activity_update);
         //remove menu bar
         removeMenuBar();
         //remove action bar from top
@@ -67,17 +60,15 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
         events();
         //Adding revision
         displaySoftRev(rev.APP_REV_PAGE_14);
+
+        initWebView();
     }
 
     private void initGui() {
-        btnHome = findViewById(R.id.btnHome);
-        btnSetLink = findViewById(R.id.btnLink);
-        btnBurn = findViewById(R.id.btnBurn);
-        btnAbout = findViewById(R.id.btnAbout);
-        btnSystem = findViewById(R.id.btnSystem);
-        //
         tvSetRev = findViewById(R.id.tvSetRev);
-        tvSetTitle = findViewById(R.id.tvSettTitile);
+
+        // initialising the web view
+         wv = (WebView) findViewById(R.id.webview);
     }
 
     //init other stuff
@@ -90,24 +81,48 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
         loadContentByLanguage(getResourcesLanguage(language));
     }
 
+    //init web view
+    private void initWebView(){
+        // add your link here
+        wv.loadUrl("https://drive.google.com/drive/u/2/my-drive");
+        wv.setWebViewClient(new Client());
+        WebSettings ws = wv.getSettings();
+
+        // Enabling javascript
+        ws.setJavaScriptEnabled(true);
+        wv.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        wv.clearCache(true);
+        wv.clearHistory();
+
+        // download manager is a service that can be used to handle downloads
+       /* wv.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String s1, String s2, String s3, long l) {
+                DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+                req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                dm.enqueue(req);
+                Toast.makeText(UpdateActivity.this, "Downloading....", Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
+        wv.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                wv.loadUrl("https://drive.google.com/drive/u/2/my-drive");
+            }
+        },500);
+    }
+
     //load all the text according to the language
     private void loadContentByLanguage(Resources resources) {
-        btnHome.setText(resources.getString(R.string.string_text_pv__btn_main));
+        /*btnHome.setText(resources.getString(R.string.string_text_pv__btn_main));
         btnSetLink.setText(resources.getString(R.string.string_sett_link));
         btnBurn.setText(resources.getString(R.string.string_sett_burning));
         btnAbout.setText(resources.getString(R.string.string_sett_About));
         btnSystem.setText(resources.getString(R.string.string_sett_system));
-        tvSetTitle.setText(resources.getString(R.string.string_sett_title));
-        /*tvTextFrq.setText(resources.getString(R.string.string_text_pv_tv_freq));
-        tvTextInt.setText(resources.getString(R.string.string_text_pv_tv_int));
-        tvTextTime.setText(resources.getString(R.string.string_text_pv_tv_tim));
-        tvTitle.setText(resources.getString(R.string.string_name_therapy));
-        btnMenu.setText(resources.getString(R.string.string_text_pv__btn_main));
-        //dialog with language
-        dialogSideRailLang = resources.getString(R.string.string_dial_side_rail);
-        dialogTherapyCompleteLang=resources.getString(R.string.string_name_therapy_complete);
-        dialogConfirmLang = resources.getString(R.string.string_btn_SR_confirm);
-        dialogCancelLang = resources.getString(R.string.string_btn_SR_cancel);*/
+        tvSetTitle.setText(resources.getString(R.string.string_sett_title));*/
+
 
     }
 
@@ -115,55 +130,17 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
     private Resources getResourcesLanguage(String language) {
         Context context;
         Resources resources;
-        context = LocaleHelper.setLocale(SettActivity.this, language);
+        context = LocaleHelper.setLocale(UpdateActivity.this, language);
         resources = context.getResources();
         return resources;
     }
 
     private void events() {
-        btnHome.setOnClickListener(this);
+        /*btnHome.setOnClickListener(this);
         btnSetLink.setOnClickListener(this);
         btnBurn.setOnClickListener(this);
         btnAbout.setOnClickListener(this);
-        btnSystem.setOnClickListener(this);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        if (v == btnSetLink) {
-            //alertCustomDialog=new AlertCustomDialog(this, this);
-            customAlert = new CustomAlert(this, this);
-            customAlert.showDialog();
-            customAlert.showDialogLink(safety.PASS_QC);
-            //launchActivity(ScanActivity.class);
-        } else if (v == btnHome) {
-            launchActivity(MainActivity.class);
-        } else if (v == btnBurn) {
-            launchActivity(BurningActivityRutine.class);
-        } else if (v == btnAbout) {
-            // launchActivity(BurningActivityRutine.class);
-            K9Alert k9Alert=new K9Alert(this,this);
-            //k9Alert.alertDialogAbout("","", "");
-
-        } else if (v == btnSystem) {
-            launchActivity(UpdateActivity.class);
-        }
-    }
-
-    private void launchActivity(Class mclass) {
-        if (mclass != null) {
-            Intent i = new Intent(getApplicationContext(), mclass);
-            startActivity(i);
-        }
-    }
-
-    @Override
-    public void onItemPostSelect(int position, String value) {
-        Log.d(TAG, "onItemPostSelect Activity Setting: " + position + "value:" + value);
-        if (value.equalsIgnoreCase(navigation.NAV_LINK)) {
-            launchActivity(ScanActivity.class);
-        }
+        btnSystem.setOnClickListener(this);*/
     }
 
     //load layout
@@ -179,7 +156,7 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
     //display software revision
     private void displaySoftRev(String revision) {
         if (revision != null) {
-            tvSetRev.setText(revision);
+           // tvSetRev.setText(revision);
         }
     }
 
@@ -240,13 +217,53 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
         return "en";
     }
 
-    @Override
-    public void onItemSetupInfo(String name, String description) {
+    private class Client extends WebViewClient {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+        }
 
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+            // if stop loading
+            try {
+                webView.stopLoading();
+            } catch (Exception e) {
+            }
+
+            if (webView.canGoBack()) {
+                webView.goBack();
+            }
+            // if loaded blank then show error
+            // to check internet connection using
+            // alert dialog
+            webView.loadUrl("about:blank");
+            AlertDialog alertDialog = new AlertDialog.Builder(UpdateActivity.this).create();
+            alertDialog.setTitle("Error");
+            alertDialog.setMessage("Check your internet connection and Try again.");
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Try Again", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                    startActivity(getIntent());
+                }
+            });
+
+            alertDialog.show();
+
+
+            super.onReceivedError(webView, errorCode, description, failingUrl);
+        }
     }
 
-    @Override
-    public void onItemSetupAlarm(String name, String description, String location) {
-
-    }
 }

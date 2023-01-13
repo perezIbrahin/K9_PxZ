@@ -2,6 +2,8 @@ package com.example.k9_pxz;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
@@ -347,6 +349,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         requestStatusFromHostTimer();
         //display current date
         displayDate();
+        //orientation of the screen landscape
+        setOrientationLandscape();
     }
 
     @Override
@@ -406,7 +410,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         tvTextFrq = findViewById(R.id.tvTextFreq);
         tvTextInt = findViewById(R.id.tvtextInt);
         tvTextTime = findViewById(R.id.tvTextTime);
-        tvDate=findViewById(R.id.tvDate);
+        tvDate = findViewById(R.id.tvDate);
         //
         tvTitle = findViewById(R.id.tvTextPvTitile);
         tvCurrent = findViewById(R.id.tvCurrent);
@@ -422,7 +426,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
         //Invisible button ready. Used in older revision
         updateBtnReady(controlGUI.POS0);
-
 
 
         return true;
@@ -1536,9 +1539,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private int updateLockScreen(int value) {
         try {
             if (value == status.SELECT_SCREEN_UNLOCK) {
-                btnLockOp.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                btnLockOp.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_baseline_lock_open_32), null);
             } else if (value == status.SELECT_SCREEN_LOCK) {
-                btnLockOp.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, null, null);
+                btnLockOp.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, getDrawable(R.drawable.ic_baseline_lock_32), null);
             }
         } catch (Exception e) {
             Log.d(TAG, "updateLockScreen: ex:" + e.getMessage());
@@ -2076,7 +2079,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             if (value > 0) {
                 String str = (String) String.valueOf(value);
                 if (str != null) {
-                    tvCurrent.setText("stat:"+str);
+                    tvCurrent.setText("stat:" + str);
                 }
             }
         } catch (Exception e) {
@@ -2085,19 +2088,20 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //dispay date
-    private void displayDate(){
-       try {
-           if(tvDate!=null){
-               DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
-               String date = df.format(Calendar.getInstance().getTime());
-               if(date!=null){
-                   tvDate.setText(date);
-               }
-           }
-       }catch (Exception e){
-           Log.d(TAG, "displayDate: ex:"+e.getMessage());
-       }
+    private void displayDate() {
+        try {
+            if (tvDate != null) {
+                DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
+                String date = df.format(Calendar.getInstance().getTime());
+                if (date != null) {
+                    tvDate.setText(date);
+                }
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "displayDate: ex:" + e.getMessage());
+        }
     }
+
     /**********************************************
      * Feedback from Host
      */
@@ -2495,7 +2499,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private void stopTherapy() {
         sendSpCommand(controlGUI.CMD_OFF, isTherapyOn);
         //cleanFlagAfterStop();
-        cancelReady();
+
+        //do not clean flag if screen is locked
+        if (!isLockScreen || isTherapyOn) {
+            cancelReady();
+        }
     }
 
     //stop system by alarm
@@ -2601,9 +2609,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private boolean lockScreen(boolean input) {
         Log.d(TAG, "lockScreen: " + input);
         //if therapy on not do nothing
-        if (isTherapyOn) {
+       /* if (isTherapyOn) {
             return false;
-        }
+        }*/
 
         if (!isLockScreen) {
             isLockScreen = true;
@@ -2658,7 +2666,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         } else if (btnStop == v) {
             stopTherapy();
         } else if (btnMenu == v) {
-            if(!isLockScreen){
+            if (!isLockScreen) {
                 goHome();
             }
         } else if (ivBle == v) {
@@ -2670,35 +2678,42 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
-                    mode = selectMode(status.SELECT_MODE_PERCUSSION);
-                    Log.d(TAG, "onClick: mode percussion");
-                    sendSpPercussion();
+                    if (!isLockScreen) {
+                        mode = selectMode(status.SELECT_MODE_PERCUSSION);
+                        Log.d(TAG, "onClick: mode percussion");
+                        sendSpPercussion();
+                    }
                 }
             }
         } else if (btnSelectVib == v) {
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
-                    mode = selectMode(status.SELECT_MODE_VIBRATION);
-                    Log.d(TAG, "onClick: mode vibration");
-                    sendSpVibration();
+                    if (!isLockScreen) {
+                        mode = selectMode(status.SELECT_MODE_VIBRATION);
+                        Log.d(TAG, "onClick: mode vibration");
+                        sendSpVibration();
+                    }
                 }
-
             }
         } else if (btnSelectTotalPer == v) {
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
-                    sendSpTotalPercussion();
-                    //mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
+                    if (!isLockScreen) {
+                        sendSpTotalPercussion();
+                        //mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
+                    }
                 }
             }
         } else if (btnSelectTotalVib == v) {
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
-                    sendSpTotalVibration();
-                    //mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
+                    if (!isLockScreen) {
+                        sendSpTotalVibration();
+                        //mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
+                    }
                 }
             }
         }
@@ -2782,7 +2797,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     sendTCP(spEth.k9_fr_5);//clean all freq
                     break;
                 case 5:
-                    sendTCP(spEth.k9_fr_6);//max frecuency
+                    //sendTCP(spEth.k9_fr_6);//max frecuency
                     break;
             }
         }
@@ -2810,7 +2825,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     break;
                 case 5:
                     //max
-                    sendTCP(spEth.k9_in_7);
+                    //sendTCP(spEth.k9_in_7);
+
                     break;
             }
         }
@@ -3216,14 +3232,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 isFlagAlarmOc = true;
                 beepAlarm();
             }
-        }else{
+        } else {
             counterOc++;
         }
     }
 
     //clean all counter andflas
-    private void cleanFlagsOcUc(){
-        counterOc=0;
+    private void cleanFlagsOcUc() {
+        counterOc = 0;
         counterUc = 0;
     }
 
@@ -3646,15 +3662,23 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 stopTherapy();
             }
         }
-
-
     }
 
 
     /**********************************************
-     *
+     *screen orientation
      */
-
+    //set orientation
+    private void setOrientationLandscape() {
+        try {
+            int orientation = this.getResources().getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "setOrientationLandscape: ex:" + e.getMessage());
+        }
+    }
 
     /**********************************************
      *

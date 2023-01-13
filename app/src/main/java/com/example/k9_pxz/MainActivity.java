@@ -6,12 +6,15 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -31,6 +34,7 @@ import java.util.Locale;
 import Alert.K9Alert;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
+import Util.Beep;
 import Util.Languages;
 import Util.LocaleHelper;
 import Util.Rev;
@@ -39,7 +43,7 @@ import Util.Util_Dialog;
 import Util.Validation;
 //import Util.Status;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface, InterfaceSetupInfo {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecyclerViewClickInterface, InterfaceSetupInfo, View.OnTouchListener {
     /*
      * Project : Percussion Vibration
      * Desc: Main Page
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnMainK9;
     private Button btnMainSett;
     private Button btnMainLock;
-    private Button btnMainUnlock;
+    //private Button btnMainUnlock;
     private Button btnMainSleep;
     private Button btnMainManual;
     private TextView tvRev;
@@ -70,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String SERIAL_K9 = "serial";
     //variables to save text
     public static final String BLE_ADD = "text";
+    //beep
+    private Beep beep = new Beep();
 
     //private String
     private String myBleAdd = "0";
@@ -115,6 +121,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int currentApiVersion;
 
 
+    private boolean isLockScreenMain = false;
+    private Handler handlerMain;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         disableWIFI();
         //date
         displayDate();
+        //orientation of the screen landscape
+        setOrientationLandscape();
 
     }
 
@@ -171,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMainK9 = findViewById(R.id.btnMainK9);
         btnMainSett = findViewById(R.id.btnMainSet);
         btnMainLock = findViewById(R.id.btnMainLock);
-        btnMainUnlock = findViewById(R.id.btnMainUnLock);
+        //btnMainUnlock = findViewById(R.id.btnMainUnLock);
         btnMainSleep = findViewById(R.id.btnMainSllep);
         btnMainManual = findViewById(R.id.btnManual);
         tvRev = findViewById(R.id.tvRev);
@@ -194,10 +205,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void eventsBtn() {
         btnMainK9.setOnClickListener(this);
         btnMainSett.setOnClickListener(this);
-        btnMainLock.setOnClickListener(this);
-        btnMainUnlock.setOnClickListener(this);
+        //btnMainLock.setOnClickListener(this);
+        //btnMainUnlock.setOnClickListener(this);
         btnMainSleep.setOnClickListener(this);
         btnMainManual.setOnClickListener(this);
+
+        btnMainLock.setOnTouchListener(this);
     }
 
     private void launchActivity(Class mclass) {
@@ -285,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //
                         btnMainManual.setText(resources1.getString(R.string.string_text_main_manual));
                         btnMainLock.setText(resources1.getString(R.string.string_text_main_lock));
-                        btnMainUnlock.setText(resources1.getString(R.string.string_text_main_unlock));
+                        //btnMainUnlock.setText(resources1.getString(R.string.string_text_main_unlock));
                         btnMainSleep.setText(resources1.getString(R.string.string_text_main_sleep));
                         //
                         tvStatusScreen.setText(resources1.getString(R.string.string_text_action_unlocked));
@@ -393,7 +406,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == btnMainK9) {
-            if (!isLockScreen) {
+            if (!isLockScreenMain) {
                 //work with bluetooth
                 //launchActivityWithExtras(VibrationPercussionActivity.class, language, Serial_Number_Product, myBleAdd);
                 //ethernet
@@ -402,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 toastMessage();
             }
         } else if (v == btnMainSett) {
-            if (!isLockScreen) {
+            if (!isLockScreenMain) {
                 launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");
             } else {
                 toastMessage();
@@ -415,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //launchActivity(SleepActivity.class);
         } else if (v == btnMainLock) {
             //check status first. ned to be unlocked
-            if (!isLockScreen) {
+            if (!isLockScreenMain) {
                 try {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -439,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
 
-        } else if (v == btnMainUnlock) {
+        } /*else if (v == btnMainUnlock) {
             //check status first. ned to be locked
             if (isLockScreen) {
                 try {
@@ -464,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
 
-        }
+        }*/
     }
 
     //get extras from activity
@@ -626,6 +639,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //set orientation
+    private void setOrientationLandscape(){
+        try {
+            int orientation = this.getResources().getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
+        }catch (Exception e){
+            Log.d(TAG, "setOrientationLandscape: ex:"+e.getMessage());
+        }
+    }
 
     //Hidden status bar
     private void hideStatusBar() {
@@ -733,10 +757,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Resources resources = getResourcesLanguage(language);
 
         if (input) {
-            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_phonelink_lock_48));
+            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_phonelink_lock_48_wh));
             displayStatusScreen(resources.getString(R.string.string_text_action_locked));
         } else {
-            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48));
+            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48_wh));
 
             displayStatusScreen(resources.getString(R.string.string_text_action_unlocked));
         }
@@ -851,5 +875,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }catch (Exception e){
             Log.d(TAG, "displayDate: ex:"+e.getMessage());
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent  motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                handlerMain = new Handler();
+                handlerMain.postDelayed(runDelayButtonMain, 3000);
+                Log.d(TAG, "onTouch: down");
+                break;
+            case MotionEvent.ACTION_UP:
+                handlerMain.removeCallbacks(runDelayButtonMain);
+                Log.d(TAG, "onTouch: remove");
+                break;
+        }
+        return true;
+    }
+
+    //delay of 3 sec to lock or unlock screen
+    Runnable runDelayButtonMain = new Runnable() {
+        @Override
+        public void run() {
+            //Toast.makeText(MainActivity.this, "delayed msg", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "run: runDelayButtonMain");
+            lockScreenMain(true);
+        }
+    };
+
+    //operation lock screen
+    private boolean lockScreenMain(boolean input) {
+        Log.d(TAG, "lockScreen: " + input);
+        //if therapy on not do nothing
+       /* if (isTherapyOn) {
+            return false;
+        }*/
+
+        if (!isLockScreenMain) {
+            isLockScreenMain = true;
+            //updateLockScreen(status.SELECT_SCREEN_LOCK);
+            //lockMode(isLockScreen);
+            beepSound();
+            displayLock(isLockScreenMain);
+            return isLockScreenMain;
+        }
+        isLockScreenMain = false;
+       // updateLockScreen(status.SELECT_SCREEN_UNLOCK);
+        //lockMode(isLockScreen);
+        beepSound();
+        displayLock(isLockScreenMain);
+        return isLockScreenMain;
+    }
+
+    /**********************************************
+     * Sound alerts
+     */
+    //beep
+    private void beepSound() {
+        Log.d(TAG, "beepSound: ");
+        /*if (!isFlagSetConnection) {
+            setConnetion();
+        }*/
+
+        beep.beep_key();
     }
 }

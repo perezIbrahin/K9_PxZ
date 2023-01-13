@@ -53,7 +53,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/dim_text_bar_main"
                 app:layout_constraintBottom_toBottomOf="@+id/btnMainLock"
-                app:layout_constraintStart_toEndOf="@+id/btnMainUnLock"
+                app:layout_constraintStart_toEndOf="@+id/btnMainLock"
                 app:layout_constraintTop_toTopOf="@+id/btnMainLock" />
 
             <Button
@@ -77,7 +77,6 @@
                 android:id="@+id/btnMainLock"
                 android:layout_width="@dimen/dim_btn_bar_W"
                 android:layout_height="@dimen/dim_btn_bar_H"
-                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_roundr_corner"
                 android:drawableTop="@drawable/ic_baseline_lock_32"
@@ -86,37 +85,10 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/dim_text_bar_main"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/divider10"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btnMainUnLock"
-                android:layout_width="@dimen/dim_btn_bar_W"
-                android:layout_height="@dimen/dim_btn_bar_H"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/btn_roundr_corner"
-                android:drawableTop="@drawable/ic_baseline_lock_open_32"
-                android:padding="5dp"
-                android:text="@string/string_text_main_unlock"
-                android:textColor="@color/black"
-                android:textSize="@dimen/dim_text_bar_main"
-                app:layout_constraintBottom_toBottomOf="@+id/btnMainLock"
-                app:layout_constraintStart_toEndOf="@+id/divider10"
-                app:layout_constraintTop_toTopOf="@+id/btnMainLock"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <View
-                android:id="@+id/divider10"
-                android:layout_width="1dp"
-                android:layout_height="108dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp"
-                android:background="?android:attr/listDivider"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/btnMainSet"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

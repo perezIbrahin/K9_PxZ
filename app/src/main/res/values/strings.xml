@@ -202,7 +202,7 @@
     <string name="string_text_btn_running">Running</string>
     <string name="string_text_btn_stopped">Stopped</string>
     <string name="string_text_btn_ready">Ready</string>
-    <string name="string_text_btn_lock">Lock screen</string>
+    <string name="string_text_btn_lock">Lock</string>
     <!-- lock actions  -->
     <string name="string_text_action_locked">Locked</string>
     <string name="string_text_action_unlocked">Unlocked</string>

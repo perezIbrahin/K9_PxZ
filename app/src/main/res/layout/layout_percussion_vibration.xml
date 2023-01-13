@@ -575,6 +575,7 @@
         android:id="@+id/tvReady"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="92dp"
         android:text="@string/string_text_pres_start"
         android:textAlignment="center"
         android:textSize="24sp"
@@ -646,5 +647,15 @@
         app:layout_constraintEnd_toEndOf="@+id/btnModeStart"
         app:layout_constraintStart_toStartOf="@+id/btnModeStart"
         app:layout_constraintTop_toBottomOf="@+id/btnModeStart" />
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="mm/dd/yy HH:mm:ss"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

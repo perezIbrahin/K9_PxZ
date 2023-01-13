@@ -31,11 +31,15 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
+
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -113,6 +117,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private TextView tvTextInt;
     private TextView tvTextTime;
     private TextView tvCurrent;
+    private TextView tvDate;
     //Adapter Frequency
     private RecyclerView recyclerViewF;
     private RecyclerView recyclerViewI;
@@ -301,8 +306,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
     //
-    private boolean isFlagAlarmUc=false;//alarm under current
-    private boolean isFlagAlarmOc=false;//alarm under current
+    private boolean isFlagAlarmUc = false;//alarm under current
+    private boolean isFlagAlarmOc = false;//alarm under current
+    //
+    private int counterUc = 0;//avoid bad flags
+    private int counterOc = 0;
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -337,6 +345,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         disableWIFI();
         //request every 3 sec status of the host
         requestStatusFromHostTimer();
+        //display current date
+        displayDate();
     }
 
     @Override
@@ -396,6 +406,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         tvTextFrq = findViewById(R.id.tvTextFreq);
         tvTextInt = findViewById(R.id.tvtextInt);
         tvTextTime = findViewById(R.id.tvTextTime);
+        tvDate=findViewById(R.id.tvDate);
         //
         tvTitle = findViewById(R.id.tvTextPvTitile);
         tvCurrent = findViewById(R.id.tvCurrent);
@@ -411,6 +422,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
         //Invisible button ready. Used in older revision
         updateBtnReady(controlGUI.POS0);
+
+
 
         return true;
     }
@@ -483,10 +496,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             //counterFail=0;
         } else if (description.equalsIgnoreCase(utilDialog.UNDER_CURRENT_CONFIRM)) {
             Log.d(TAG, "onItemSetupInfo: confirm UNDER_CURRENT_CONFIRM");
-            isFlagAlarmUc=false;
+            isFlagAlarmUc = false;
         } else if (description.equalsIgnoreCase(utilDialog.OVER_CURRENT_CONFIRM)) {
             Log.d(TAG, "onItemSetupInfo: OVER_CURRENT_CONFIRM");
-            isFlagAlarmOc=false;
+            isFlagAlarmOc = false;
         }
     }
 
@@ -627,7 +640,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     public void onSystemUiVisibilityChange(int visibility) {
                         if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
                             decorView.setSystemUiVisibility(flags);
-                        } 
+                        }
                     }
                 });
             }
@@ -2063,7 +2076,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             if (value > 0) {
                 String str = (String) String.valueOf(value);
                 if (str != null) {
-                    tvCurrent.setText(str);
+                    tvCurrent.setText("stat:"+str);
                 }
             }
         } catch (Exception e) {
@@ -2071,6 +2084,20 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
     }
 
+    //dispay date
+    private void displayDate(){
+       try {
+           if(tvDate!=null){
+               DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
+               String date = df.format(Calendar.getInstance().getTime());
+               if(date!=null){
+                   tvDate.setText(date);
+               }
+           }
+       }catch (Exception e){
+           Log.d(TAG, "displayDate: ex:"+e.getMessage());
+       }
+    }
     /**********************************************
      * Feedback from Host
      */
@@ -2220,7 +2247,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 displayFeedBackStatus(value);
 
                 if (value == setPoints.INT_BLE_STATUS_READY) {
-
+                    cleanFlagsOcUc();
                 } else if (value == setPoints.INT_BLE_STATUS_WORKING) {
 
                 } else if (value == setPoints.INT_BLE_STATUS_ALARM1) {
@@ -2230,7 +2257,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 } else if (value == setPoints.INT_BLE_STATUS_ALARM3) {//under current
                     notificationUnderCurrent();
                 }
-
+                displayDate();
 
                 /*// Stuff that updates the UI
                 int ret = updateCommand(value);
@@ -2270,7 +2297,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //beep alarm
-    private void beepAlarm(){
+    private void beepAlarm() {
         beep.beep1();
     }
 
@@ -2631,7 +2658,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         } else if (btnStop == v) {
             stopTherapy();
         } else if (btnMenu == v) {
-            goHome();
+            if(!isLockScreen){
+                goHome();
+            }
         } else if (ivBle == v) {
             Log.d(TAG, "onClick: ble manual connection");
             if (!isFlagSetConnection) {
@@ -2642,6 +2671,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     mode = selectMode(status.SELECT_MODE_PERCUSSION);
+                    Log.d(TAG, "onClick: mode percussion");
+                    sendSpPercussion();
                 }
             }
         } else if (btnSelectVib == v) {
@@ -2649,6 +2680,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     mode = selectMode(status.SELECT_MODE_VIBRATION);
+                    Log.d(TAG, "onClick: mode vibration");
+                    sendSpVibration();
                 }
 
             }
@@ -2882,10 +2915,20 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
     }
 
+    //send mode percussion
+    private void sendSpPercussion() {
+        sendTCP(spEth.k9_md_1);//mode percussion
+    }
+
+    //send mode vibration
+    private void sendSpVibration() {
+        sendTCP(spEth.k9_md_2);//mode vibration
+    }
+
+
     //send mode Total percussion
     private void sendSpTotalPercussion() {
         sendTCP(spEth.k9_md_3);//mode full percussion
-
     }
 
     //send mode Total percussion
@@ -3150,22 +3193,38 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //notification under current
     private void notificationUnderCurrent() {
-        if(!isFlagAlarmUc){
-            k9Alert.alertDialogUnderCurrent(dialogUnderCurrent, dialogConfirmLang);
-            isFlagAlarmUc=true;
-            beepAlarm();
+        if (counterUc > 3) {
+            if (!isFlagAlarmUc) {
+                k9Alert.alertDialogUnderCurrent(dialogUnderCurrent, dialogConfirmLang);
+                isFlagAlarmUc = true;
+                beepAlarm();
+                counterUc = 0;
+            }
+        } else {
+            counterUc++;
         }
+
 
     }
 
     //notification overCurrent
     private void notificationOverCurrent() {
-        if(!isFlagAlarmOc){
-            k9Alert.alertDialogOverCurrent(dialogOverCurrent, dialogConfirmLang);
-            isFlagAlarmOc=true;
-            beepAlarm();
-        }
 
+        if (counterOc > 3) {
+            if (!isFlagAlarmOc) {
+                k9Alert.alertDialogOverCurrent(dialogOverCurrent, dialogConfirmLang);
+                isFlagAlarmOc = true;
+                beepAlarm();
+            }
+        }else{
+            counterOc++;
+        }
+    }
+
+    //clean all counter andflas
+    private void cleanFlagsOcUc(){
+        counterOc=0;
+        counterUc = 0;
     }
 
     //notification alarmDummy

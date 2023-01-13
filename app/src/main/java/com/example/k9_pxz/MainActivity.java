@@ -23,6 +23,9 @@ import android.widget.Toast;
 //import android.widget.Toast;
 
 //import Alert.AlertCustomDialog;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 
 import Alert.K9Alert;
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnMainSleep;
     private Button btnMainManual;
     private TextView tvRev;
+    private TextView tvDatem;
     private Spinner mLanguage;
     private TextView tvTherapyName;
     private TextView tvStatusScreen;
@@ -138,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         displaySoftRev(rev.APP_REV_PAGE_10);
         //disable wifi
         disableWIFI();
+        //date
+        displayDate();
 
     }
 
@@ -172,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLanguage = (Spinner) findViewById(R.id.spinnerLang);
         tvTherapyName = findViewById(R.id.tvTherapyName);
         tvStatusScreen = findViewById(R.id.tvScreenStatus);
+        tvDatem=findViewById(R.id.tvDatem);
     }
 
     private boolean initApp() {
@@ -828,6 +835,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
+    //dispay date
+    private void displayDate(){
+        try {
+            if(tvDatem!=null){
+                DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
+                String date = df.format(Calendar.getInstance().getTime());
+                if(date!=null){
+                    tvDatem.setText(date);
+                }
+            }
+        }catch (Exception e){
+            Log.d(TAG, "displayDate: ex:"+e.getMessage());
         }
     }
 }

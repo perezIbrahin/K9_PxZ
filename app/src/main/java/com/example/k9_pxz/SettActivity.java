@@ -147,7 +147,8 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
             //k9Alert.alertDialogAbout("","", "");
 
         } else if (v == btnSystem) {
-            launchActivity(UpdateActivity.class);
+            //launchActivity(UpdateActivity.class);
+            appClose();
         }
     }
 
@@ -248,5 +249,10 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemSetupAlarm(String name, String description, String location) {
 
+    }
+
+    private void appClose(){
+        finish();
+        System.exit(0);
     }
 }

@@ -195,10 +195,10 @@
         android:id="@+id/spinnerLang"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="28dp"
         android:spinnerMode="dialog"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tvDatem"
         app:layout_constraintStart_toEndOf="@+id/imageButton" />
 
     <ImageButton
@@ -224,5 +224,16 @@
         app:layout_constraintEnd_toEndOf="@+id/btnMainK9"
         app:layout_constraintStart_toStartOf="@+id/btnMainK9"
         app:layout_constraintTop_toBottomOf="@+id/btnMainK9" />
+
+    <TextView
+        android:id="@+id/tvDatem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="mm/dd/yy HH:mm:ss"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,7 +23,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 往SDCard写入数据权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
     <application
         android:name=".Home"
         android:allowBackup="true"
@@ -34,6 +33,9 @@
         android:screenOrientation="landscape"
         android:supportsRtl="true"
         android:theme="@style/Theme.K9_PxZ">
+        <activity
+            android:name=".HardwareActivity"
+            android:exported="false" />
         <activity
             android:name=".UpdateActivity"
             android:exported="false"
@@ -86,10 +88,10 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
-
             </intent-filter>
         </activity>
 

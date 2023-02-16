@@ -53,12 +53,12 @@ public class SetPoints {
     public final int INT_BLE_SP_FREQ5 = 14;
     public final int INT_BLE_SP_FREQ_MAX = 15;
     public final int INT_BLE_SP_FREQ_NONE = 19;
-    //Intensity
-    public final int INT_BLE_SP_INT1 = 20;
-    public final int INT_BLE_SP_INT2 = 21;
-    public final int INT_BLE_SP_INT3 = 22;
-    public final int INT_BLE_SP_INT4 = 23;
-    public final int INT_BLE_SP_INT5 = 24;
+    //Intensity in voltage
+    public final int INT_BLE_SP_INT1 = 20;//20
+    public final int INT_BLE_SP_INT2 = 21;//21
+    public final int INT_BLE_SP_INT3 = 22;//22
+    public final int INT_BLE_SP_INT4 = 23;//23
+    public final int INT_BLE_SP_INT5 = 24;//24
     public final int INT_BLE_SP_INT_MAX = 25;
     public final int INT_BLE_SP_INT_NONE = 29;
     //Time
@@ -74,6 +74,7 @@ public class SetPoints {
     public final int INT_BLE_SP_TRA3 = 42;
     public final int INT_BLE_SP_TRA4 = 43;
     public final int INT_BLE_SP_TRA5 = 44;
+    public final int INT_BLE_SP_TRA6 = 45;
     public final int INT_BLE_SP_TRA_NONE = 49;
     //Transducers Right
     public final int INT_BLE_SP_TRB1 = 50;
@@ -81,6 +82,7 @@ public class SetPoints {
     public final int INT_BLE_SP_TRB3 = 52;
     public final int INT_BLE_SP_TRB4 = 53;
     public final int INT_BLE_SP_TRB5 = 54;
+    public final int INT_BLE_SP_TRB6 = 55;
     public final int INT_BLE_SP_TRB_NONE = 59;
     //modes
     public final int INT_BLE_SP_MODE1 = 70;//percussion
@@ -110,6 +112,12 @@ public class SetPoints {
     public final int INT_BLE_STATUS_ALARM1 = 93;//?
     public final int INT_BLE_STATUS_ALARM2 = 94;//OVER CURRENT
     public final int INT_BLE_STATUS_ALARM3 = 95;//UNDER CURRENT
+    //get current working module
+    public final int INT_BLE_STATUS_MOD1 = 5;
+    public final int INT_BLE_STATUS_MOD2 = 6;
+    public final int INT_BLE_STATUS_MOD3 = 7;
+    public final int INT_BLE_STATUS_MOD4 = 8;
+    public final int INT_BLE_STATUS_MOD5 = 9;
 
     //Frequency
     private int BLE_SP_FREQ1 = 0x10;

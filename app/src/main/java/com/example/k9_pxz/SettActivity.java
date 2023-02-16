@@ -33,6 +33,7 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnBurn;
     private Button btnAbout;
     private Button btnSystem;
+    private Button btnHardware;
     private TextView tvSetRev;
     private TextView tvSetTitle;
     //
@@ -75,6 +76,7 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
         btnBurn = findViewById(R.id.btnBurn);
         btnAbout = findViewById(R.id.btnAbout);
         btnSystem = findViewById(R.id.btnSystem);
+        btnHardware=findViewById(R.id.btnHardware);
         //
         tvSetRev = findViewById(R.id.tvSetRev);
         tvSetTitle = findViewById(R.id.tvSettTitile);
@@ -96,6 +98,7 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
         btnSetLink.setText(resources.getString(R.string.string_sett_link));
         btnBurn.setText(resources.getString(R.string.string_sett_burning));
         btnAbout.setText(resources.getString(R.string.string_sett_About));
+        btnHardware.setText(resources.getString(R.string.string_sett_hard));
         btnSystem.setText(resources.getString(R.string.string_sett_system));
         tvSetTitle.setText(resources.getString(R.string.string_sett_title));
         /*tvTextFrq.setText(resources.getString(R.string.string_text_pv_tv_freq));
@@ -126,6 +129,7 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
         btnBurn.setOnClickListener(this);
         btnAbout.setOnClickListener(this);
         btnSystem.setOnClickListener(this);
+        btnHardware.setOnClickListener(this);
     }
 
 
@@ -149,6 +153,8 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v == btnSystem) {
             //launchActivity(UpdateActivity.class);
             appClose();
+        } else if(v==btnHardware){
+            launchActivity(HardwareActivity.class);
         }
     }
 

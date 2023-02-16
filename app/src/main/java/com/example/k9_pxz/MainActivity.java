@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         k9Alert = new K9Alert(this, this);
         //init lock
         //btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_mobile_friendly_32), null, null);
-        btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48));
+        btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48_wh));
         // btnMainLock.setText("Unlocked");
         isLockScreen = false;
         return true;
@@ -755,14 +755,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //show lock icon on the start button
     private void displayLock(boolean input) {
         Resources resources = getResourcesLanguage(language);
-
-        if (input) {
-            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_phonelink_lock_48_wh));
-            displayStatusScreen(resources.getString(R.string.string_text_action_locked));
-        } else {
-            btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48_wh));
-
-            displayStatusScreen(resources.getString(R.string.string_text_action_unlocked));
+        try {
+            if (input) {
+                btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_phonelink_lock_48_wh));
+                //lock button
+                btnMainLock.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), getDrawable(R.drawable.ic_baseline_lock_32), null, null);
+                //
+                displayStatusScreen(resources.getString(R.string.string_text_action_locked));
+            } else {
+                btnMainK9.setCompoundDrawablesWithIntrinsicBounds(null, null, null, getDrawable(R.drawable.ic_baseline_mobile_friendly_48_wh));
+                //
+                btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_32), null, null);
+                displayStatusScreen(resources.getString(R.string.string_text_action_unlocked));
+            }
+        }catch (Exception e){
+            Log.d(TAG, "displayLock: ex:"+e.getMessage());
         }
     }
 

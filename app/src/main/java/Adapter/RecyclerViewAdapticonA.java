@@ -56,22 +56,21 @@ public class RecyclerViewAdapticonA extends RecyclerView.Adapter<RecyclerViewAda
 
         switch (position) {
             case 0:
-                //setMargin(layoutparams, holder, 0, 0, 40, 10);
+                setMargin(layoutparams, holder, 0, 20, 20, 0);//0,25,40,10
                 break;
             case 1:
-                //setMargin(layoutparams, holder, 0, 0, 40, 20);
+                setMargin(layoutparams, holder, 0, 30, 20, 0);
                 break;
             case 2:
-               // setMargin(layoutparams, holder, 0, 0, 40, 0);
+                setMargin(layoutparams, holder, 0, 50, 20, 0);
                 break;
-            case 3:
-                //setMargin(layoutparams, holder, 0, 150, 40, 0);
+            case 3: setMargin(layoutparams, holder, 0, 65, 20, 0);
                 break;
             case 4:
-                //setMargin(layoutparams, holder, 0, 0, 40, 0);
+                setMargin(layoutparams, holder, 0, 72, 20, 0);
                 break;
             case 5:
-                //setMargin(layoutparams, holder, 5, 100, 5, 0);
+                setMargin(layoutparams, holder, 0, 0, 0, 5);
                 break;
         }
 

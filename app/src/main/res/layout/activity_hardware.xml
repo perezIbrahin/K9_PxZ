@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsActivity">
+    tools:context=".HardwareActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,72 +39,44 @@
                     android:orientation="vertical"
                     android:padding="5dp">
 
-                    <Button
-                        android:id="@+id/btnScanDev"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_baseline_toggle_on_24"
-                        android:text="Scan"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <TextView
-                        android:id="@+id/tvSettTitile"
+                        android:id="@+id/tvHardTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:text="Settings"
+                        android:text="Hardware"
                         android:textAllCaps="true"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/ivConnection"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/ivConnection"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:layout_weight="1"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_baseline_link_off_24" />
-
-                    <ImageView
-                        android:id="@+id/ivMcu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:visibility="invisible"
-                        app:layout_constraintBottom_toBottomOf="@+id/ivConnection"
-                        app:layout_constraintEnd_toStartOf="@+id/ivConnection"
-                        app:layout_constraintTop_toTopOf="@+id/ivConnection"
-                        app:srcCompat="@drawable/ic_memory_black_24dp" />
+                        app:layout_constraintVertical_bias="0.725" />
 
                     <Button
-                        android:id="@+id/btnHome"
+                        android:id="@+id/btnHardHome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
                         android:background="@drawable/btn_roundr_corner"
                         android:drawableStart="@drawable/ic_home_black_24dp"
                         android:text="Home"
-                        app:layout_constraintBottom_toBottomOf="@+id/btnScanDev"
-                        app:layout_constraintStart_toEndOf="@+id/btnScanDev"
-                        app:layout_constraintTop_toTopOf="@+id/btnScanDev" />
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tvSetHardRev"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="link"
-                        app:layout_constraintBottom_toTopOf="@+id/ivConnection"
-                        app:layout_constraintEnd_toEndOf="@+id/ivConnection" />
+                        android:text="rev"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />@+id/ivHardConnection"
+                        app:layout_constraintEnd_toEndOf="@+id/ivHardConnection" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -113,7 +85,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="783dp"
             android:layout_margin="10dp"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -126,12 +98,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:orientation="vertical">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewScan"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+
                 </LinearLayout>
             </ScrollView>
         </LinearLayout>

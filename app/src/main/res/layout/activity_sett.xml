@@ -89,7 +89,7 @@
                         tools:layout_editor_absoluteY="12dp" />
 
                     <TextView
-                        android:id="@+id/textView3"
+                        android:id="@+id/tvSetHardRev"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="link"
@@ -164,6 +164,15 @@
                         android:padding="5dp"
                         android:text="System"
                         android:textSize="@dimen/dim_text_24sp" />
+
+                    <Button
+                        android:id="@+id/btnHardware"
+                        android:layout_width="@dimen/dim_btn_set_W"
+                        android:layout_height="@dimen/dim_btn_set_H"
+                        android:background="@drawable/btn_roundr_corner"
+                        android:drawableTop="@drawable/ic_baseline_candlestick_chart_48"
+                        android:text="Hardware"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/tvSetRev"

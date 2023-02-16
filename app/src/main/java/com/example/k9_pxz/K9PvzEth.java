@@ -1,5 +1,6 @@
 package com.example.k9_pxz;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -207,6 +208,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private boolean flagIsTRA = false;
     private boolean flagIsTRB = false;
     private boolean isFlagIsSr = false;
+    private boolean isFlagMcuReady = false;
     private boolean flagIsStartReady = false;
     private Boolean flagIsMinZero = false;
     private boolean isFlagSetConnection = false;
@@ -270,8 +272,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private int mSp = 0;
     //alarm
     private boolean isAlarm = true;
-    private long TIMER_WACHT_DOG = 20000;
-    private long TIMER_LOOP_STATUS = 10000;
+    private long TIMER_WACHT_DOG = 3000;
+    private long TIMER_LOOP_STATUS = 3000;//
     //watchDog
     private CountDownTimer watchDogTimer;
     private CountDownTimer loopGetStatusTimer;
@@ -313,6 +315,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //
     private int counterUc = 0;//avoid bad flags
     private int counterOc = 0;
+
+    //Memory of transducers
+    private int memoryTransdA = -1;
+    private int memoryTransdB = -1;
+
+    //added
+    private int oldCurrentModule = 0;
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -485,7 +494,15 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         } else if (description.equalsIgnoreCase(utilDialog.LOCATION_CONFIRM_SIDERAIL)) {//
             isFlagIsSr = true;
             updateSideRail(controlGUI.POS0);
-            condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
+            //
+            boolean isTRAB = false;
+            if (flagIsTRA || flagIsTRB) {
+                isTRAB = true;
+            } else {
+                isTRAB = false;
+            }
+
+            condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, isTRAB, isTRAB, isFlagIsSr, isFlagMcuReady);//   condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr,isFlagMcuReady);
 
             //changed 10/19/22
             // displayOperation(displayOperations.DISPLAY_OPE_READY);//Ready
@@ -530,15 +547,63 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             sendSpTime(position, conditions);
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_A)) {
             if (!isTotalBody(mode)) {
-                //do not accept commands manualy is total body
-                sendSpRBA(position, conditions);
+
+                Log.d(TAG, "onItemPostSelect: mem a:memoryTransdA:"+memoryTransdA+".position:"+position);
+                //new
+                if (memoryTransdA != position) {
+                    memoryTransdA = position;
+                    //do not accept commands manualy is total body
+                    sendSpRBA(position, conditions);
+                } else {
+                    //clean flag
+                    cleanSelectedTrandA(conditions);
+                }
+
+
             }
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
+            Log.d(TAG, "onItemPostSelect: "+".position:"+position);
             if (!isTotalBody(mode)) {
                 //do not accept commands manualy is total body
-                sendSpRBB(position, conditions);
+
+                //new
+                if (memoryTransdB != position) {
+                    memoryTransdB = position;
+                    //do not accept commands manualy is total body
+                    sendSpRBB(position, conditions);
+                } else {
+                    //clean flag
+                    cleanSelectedTrandB(conditions);
+                }
+                //sendSpRBB(position, conditions);//working
             }
         }
+    }
+
+    private void cleanSelectedTrandA(boolean conditions) {
+        if (!conditions) {
+            Log.d(TAG, "cleanSelectedTrandA: ");
+            sendSpRBA(5, conditions); //clean
+        }
+    }
+
+    private void cleanSelectedTrandB(boolean conditions) {
+        if (!conditions) {
+            Log.d(TAG, "cleanSelectedTrandB: ");
+            sendSpRBB(5, conditions); //clean
+        }
+    }
+
+    private void cleanFlagsAfterResetTransA(){
+        flagIsTRA = false;
+        memoryTransdA=-1;
+
+    }
+
+    private void cleanFlagsAfterResetTransB(){
+
+        flagIsTRB = false;
+        memoryTransdB=-1;
     }
 
     /**********************************************
@@ -1210,7 +1275,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
+                    //added 02/10/23
                     controlIconTransdA(controlGUI.POS0);
+
+
                 } else if (value == setPoints.INT_BLE_SP_TRA1) {
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
@@ -1219,6 +1287,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS1);
+
                 } else if (value == setPoints.INT_BLE_SP_TRA2) {
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
@@ -1226,7 +1295,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
+
                     controlIconTransdA(controlGUI.POS2);
+
                 } else if (value == setPoints.INT_BLE_CMD_TOTAL_PERC) {
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
@@ -1235,6 +1306,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS_ALL_PERC);
+
                 }
 
 
@@ -1261,6 +1333,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS0);
+
                 } else if (value == setPoints.INT_BLE_SP_TRA1) {
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
@@ -1301,14 +1374,28 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS5);
-                } else if (value == setPoints.INT_BLE_CMD_TOTAL_VIB) {
+                } else if (value == setPoints.INT_BLE_SP_TRA6) {
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    cleanFlagsAfterResetTransA();
+                    //update iconA
+                    controlIconTransdA(controlGUI.POS0);
+
+
+                }else if (value == setPoints.INT_BLE_CMD_TOTAL_VIB) {
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //update iconA
-                    controlIconTransdA(controlGUI.POS_ALL_VIB);
+                    if (mode != status.SELECT_MODE_TOTAL_VIBRATION) {
+                        controlIconTransdA(controlGUI.POS_ALL_VIB);
+                    }
+
                 }
                 new_transdA = value;//save in memory
                 updateGUIRecyclerViewRbA();
@@ -1350,8 +1437,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //update iconB
                     controlIconTransdB(controlGUI.POS2);
                 } else if (value == setPoints.INT_BLE_CMD_TOTAL_PERC) {
-                    updateRecyclerViewRbB(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
-                    updateRecyclerViewRbB(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
@@ -1421,14 +1508,27 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS5);
+                } else if (value == setPoints.INT_BLE_SP_TRB6) {//clean
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //
+                    cleanFlagsAfterResetTransB();
+                    //update iconB
+                    controlIconTransdB(controlGUI.POS0);
                 } else if (value == setPoints.INT_BLE_CMD_TOTAL_VIB) {
-                    updateRecyclerViewRbB(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
-                    updateRecyclerViewRbB(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
-                    updateRecyclerViewRbB(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
-                    updateRecyclerViewRbB(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
-                    updateRecyclerViewRbB(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
-                    //update iconA
-                    controlIconTransdB(controlGUI.POS_ALL_VIB);
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));//DEF_RBA1
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(2, default_values.DEF_RBB3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(3, default_values.DEF_RBB4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
+                    //update iconB
+                    if (mode != status.SELECT_MODE_TOTAL_VIBRATION) {
+                        controlIconTransdB(controlGUI.POS_ALL_VIB);
+                    }
+
                 }
                 new_transdB = value;//save in memory
                 updateGUIRecyclerViewRbB();
@@ -1540,8 +1640,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         try {
             if (value == status.SELECT_SCREEN_UNLOCK) {
                 btnLockOp.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(R.drawable.ic_baseline_lock_open_32), null);
+                btnLockOp.setTextColor(getResources().getColor(R.color.black));
+                btnLockOp.setTextSize(25);
+                btnLockOp.setText(getResources().getString(R.string.string_text_btn_lock));
             } else if (value == status.SELECT_SCREEN_LOCK) {
                 btnLockOp.setCompoundDrawablesWithIntrinsicBounds(getDrawable(R.drawable.ic_baseline_circle_32), null, getDrawable(R.drawable.ic_baseline_lock_32), null);
+                btnLockOp.setTextColor(getResources().getColor(R.color.red));
+                btnLockOp.setTextSize(25);
+                btnLockOp.setText(getResources().getString(R.string.string_text_action_locked));
             }
         } catch (Exception e) {
             Log.d(TAG, "updateLockScreen: ex:" + e.getMessage());
@@ -1632,6 +1738,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //control icon transducers A
     private void controlIconTransdA(int value) {
         try {
+            Log.d(TAG, "controlIconTransdA: " + value);
             //controlIconSelectedTransdA(value);
 
             switch (value) {
@@ -1831,7 +1938,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             if(input==controlGUI.TRANSD_NONE){
                 updateRecyclerViewIconA(position, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, null);
             } else if(input==controlGUI.TRANSD_SELECTED){
-                updateRecyclerViewIconA(position, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                updateRecyclerViewIconA(position, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_32));
             }else if(input==controlGUI.TRANSD_COOLING){
                 updateRecyclerViewIconA(position, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_24_bl));
             }else if(input==controlGUI.TRANSD_ERROR){
@@ -2074,12 +2181,12 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //display feedback
-    private void displayFeedBackStatus(int value) {
+    private void displayFeedBackStatus(int value, int code) {
         try {
             if (value > 0) {
                 String str = (String) String.valueOf(value);
                 if (str != null) {
-                    tvCurrent.setText("stat:" + str);
+                    tvCurrent.setText("stat:" + str + "\r\n+code:" + code);
                 }
             }
         } catch (Exception e) {
@@ -2091,7 +2198,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private void displayDate() {
         try {
             if (tvDate != null) {
-                DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
+                @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm:ss");
                 String date = df.format(Calendar.getInstance().getTime());
                 if (date != null) {
                     tvDate.setText(date);
@@ -2234,21 +2341,25 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     resetCheckBockB();
                     //check mode
                     mode = status.SELECT_MODE_TOTAL_VIBRATION;
+                    //
                     updateFbRBA(mode, setPoints.INT_BLE_CMD_TOTAL_VIB);
                     updateFbRBb(mode, setPoints.INT_BLE_CMD_TOTAL_VIB);
+                    //
+                    controlIconTransdA(controlGUI.POS5);
+                    controlIconTransdB(controlGUI.POS5);
                 }
             }
         });
     }
 
     //update feedback status
-    private void updateFbStatus(int value) {
+    private void updateFbStatus(int value, int code) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG, "updateFbStatus: " + value);
                 //display info on screen
-                displayFeedBackStatus(value);
+                displayFeedBackStatus(value, code);
 
                 if (value == setPoints.INT_BLE_STATUS_READY) {
                     cleanFlagsOcUc();
@@ -2430,7 +2541,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //conditions necesary to start therapy
     private void condStartTherapy(boolean flagIsFreq, boolean flagIsInt, boolean flagIsTim,
-                                  boolean flagIsTRA, boolean flagIsTRB, boolean flagIsSR) {
+                                  boolean flagIsTRA, boolean flagIsTRB, boolean flagIsSR, boolean isFlagMcuReady) {
         if (true) {
             try {
                 // Stuff that updates the UI
@@ -2445,7 +2556,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //check side rail
                     k9Alert.alertDialogSiderail(dialogSideRailLang, nameBtnConfirm, nameBtnCancel);
                     return;
-                } else if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsTRB && flagIsSR) {
+                } else if (flagIsFreq && flagIsInt && flagIsTim && flagIsTRA && flagIsSR && isFlagMcuReady) {
                     startTherapy();
                 } else {
                     //missing parameter
@@ -2657,7 +2768,16 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         if (btnStart == v) {
             if (!isAlarm) {
                 if (!isLockScreen) {
-                    condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, isFlagIsSr);
+                    if(memoryTransdA==-1 && memoryTransdB==-1){
+                        flagIsTRA=false;
+                        flagIsTRB=false;
+                    }else{
+                        flagIsTRA=true;
+                        flagIsTRB=true;
+                    }
+
+
+                    condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, (flagIsTRA || flagIsTRB), (flagIsTRA || flagIsTRB), isFlagIsSr, isFlagMcuReady);
                 }
             } else {
                 Log.d(TAG, "onClick: alarm enable");
@@ -2798,6 +2918,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     break;
                 case 5:
                     //sendTCP(spEth.k9_fr_6);//max frecuency
+                    initTCP_IP();
                     break;
             }
         }
@@ -2826,6 +2947,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 case 5:
                     //max
                     //sendTCP(spEth.k9_in_7);
+                    disconnectTCP();
 
                     break;
             }
@@ -2874,6 +2996,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 case 4:
                     sendTCP(spEth.k9_ta_5);
                     break;
+                case 5:
+                    sendTCP(spEth.k9_ta_6);//clean
+                    break;
             }
         }
 
@@ -2898,6 +3023,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     break;
                 case 4:
                     sendTCP(spEth.k9_tb_5);
+                    break;
+                case 5:
+                    Log.d(TAG, "sendSpRBB: spEth.k9_tb_6");
+                    sendTCP(spEth.k9_tb_6);//clean
                     break;
             }
         }
@@ -3395,7 +3524,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
             @Override
             public void onFinish() {
-                watchDogTimerElapsed();
+                reconnectTCP_IP();//just for testing
+                Log.d(TAG, "watchDogTimerCom onFinish: Reconnecting tcp ip!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+                //watchDogTimerElapsed();//working
             }
         }.start();
     }
@@ -3456,22 +3588,54 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     }
 
+    //reconnect with device
+    private void reconnectTCP_IP() {
+
+        try { //new
+
+            Log.d(TAG, "reconnectTCP_IP: do nothing ");
+        } catch (Exception e) {
+            Log.d(TAG, "sendTCP: ex:" + e.getMessage());
+        }
+
+    }
+
     //send message using tcp ip
     private void sendTCP(String message) {
         if (message != null) {
-            try {
+
+
+            try { //new
+
                 client.sendMessage(message);
+                Log.d(TAG, "eth connection status:send :" + message);
+                isFlagMcuReady = false;
+               /* runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });*/
             } catch (Exception e) {
                 Log.d(TAG, "sendTCP: ex:" + e.getMessage());
             }
+
         }
     }
 
     //establish connection tcp
     private void connectionTCP() {
         try {
-            isConnectedTCP = true;
-            client.connect();
+            if (true) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        isConnectedTCP = true;
+                        client.connect();
+                        Log.d(TAG, "eth connection status: connectedTCP");
+                    }
+                });
+            }
         } catch (Exception e) {
             Log.d(TAG, "connectionTCP: ex:" + e.getMessage());
         }
@@ -3480,8 +3644,19 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //disconnect connection tcp
     private void disconnectTCP() {
         try {
-            isConnectedTCP = false;
-            client.disconnect();
+            if (true) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "eth connection status: disconnectTCP");
+                        isConnectedTCP = false;
+                        client.disconnect();
+
+                    }
+                });
+            }
+
+
         } catch (Exception e) {
             Log.d(TAG, "connectionTCP: ex:" + e.getMessage());
         }
@@ -3490,22 +3665,33 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //get status from ethernet
     private void feedbackFromEthernet(String message) {
         MessageEth messageEth = new MessageEth();
-        //Log.d(TAG, "statusEthernet:" + message);
+        Log.d(TAG, "statusEthernet:" + message);
+
+
+        /*
+         * Payload example:
+         * receive:k9_op_##_##
+         *
+         * |123456|78| |1011|
+         * |k9_op_|##|_##
+         *
+         * */
 
         if (message != null) {
             if (message.length() < 6) {
                 return;
             }
             //filter the message with the len
-            int startIndex = 0;
-            int endIndex = 10;
+            int startIndex = 0;//0
+            int endIndex = 6;//0
             //substring for the message received. Know from where
             String substrPayload = message.substring(startIndex, endIndex);
             Log.d(TAG, "statusEthernet:extracted payload ref: " + substrPayload);
 
+            /*get first code */
             //substring to get number
-            int startIndexPos = 10;
-            int endIndexPos = 12;
+            int startIndexPos = 6;
+            int endIndexPos = 8;
             String substrPos = message.substring(startIndexPos, endIndexPos);
             Log.d(TAG, "statusEthernet:extracted payload pos:" + substrPos);
             //check if substring is number
@@ -3515,6 +3701,25 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
             int myNum = Integer.parseInt(substrPos);
             Log.d(TAG, "statusEthernet: number:" + myNum);
+
+            /*get second code */
+            //substring to get number
+            int startIndexCode = 9;
+            int endIndexCode = 11;
+            String substrCode = message.substring(startIndexCode, endIndexCode);
+            Log.d(TAG, "statusEthernet:extracted payload code:" + substrCode);
+            //check if substring is number
+            if (!substrCode.matches("\\d+(?:\\.\\d+)?")) {
+                return;
+            }
+
+            int myCode = Integer.parseInt(substrCode);
+            Log.d(TAG, "statusEthernet: myCode:" + myCode);
+
+            updateFbStatus(myNum, myCode);
+            //
+            reloadRequestStatus();
+
 
             try {
                 if (substrPayload.contains(messageEth.PAYLOAD_ETH_CON)) {
@@ -3533,32 +3738,38 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                         return;
                     }
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_FRQ)) {//freq
+                    isFlagMcuReady = true;
                     modelBtnFreqArrayList.clear();
                     updateFbFreq(myNum);
                     beepSound();
                     return;
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_INT)) {//int
+                    isFlagMcuReady = true;
                     modelBtnIntArrayList.clear();
                     updateFbInt(myNum);
                     beepSound();
                     return;
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TIM)) {//tim
+                    isFlagMcuReady = true;
                     modelBtnTimeArrayList.clear();
                     updateFbTime(myNum);
                     beepSound();
                     return;
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TA)) {//Transd-A
+                    isFlagMcuReady = true;
                     resetCheckBockA();
                     updateFbRBA(mode, myNum);
                     beepSound();
                     return;
-                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TB)) {//Transd-A
+                } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TB)) {//Transd-B
+                    isFlagMcuReady = true;
                     resetCheckBockB();
-                    Log.d(TAG, "statusEthernet: mode:" + mode);
+                    Log.d(TAG, "statusEthernet: mode:" + mode+".num:"+myNum);
                     updateFbRBb(mode, myNum);
                     beepSound();
                     return;
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_MD)) {//mode
+                    isFlagMcuReady = true;
                     updateFbModes(myNum);
                     beepSound();
                     return;
@@ -3567,15 +3778,82 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     beepSound();
                     return;
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_ST)) {//status from host
-                    //substring to get number
-                    //int startIndexStatPos = 10;
+                    Log.d(TAG, "feedbackFromEthernet:oldCurrentModule " + oldCurrentModule);
+                    Log.d(TAG, "feedbackFromEthernet:myCode " + myCode);
 
-                    // String substrStatPos = message.substring(startIndexStatPos, message.length() - 1);
-                    // Log.d(TAG, "statusEthernet:extracted payload pos:" + substrStatPos);
+                    //enable MCU
+                    if (!isFlagMcuReady) {
+                        if (myNum == 91) {
+                            Log.d(TAG, "feedbackFromEthernet: enable star from mcu");
+                            isFlagMcuReady = true;
+                        }
+                    }
 
-                    updateFbStatus(myNum);
+
+                    if (oldCurrentModule != myCode && oldCurrentModule != 99) {
+                        Log.d(TAG, "feedbackFromEthernet: " + myCode);
+                        if (myCode == messageEth.CURRENT_MODULE_A1B1) {
+                            oldCurrentModule = myCode;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    controlIconTransdA(controlGUI.POS1);
+                                    controlIconTransdB(controlGUI.POS1);
+                                }
+                            });
+
+                            return;
+                        } else if (myCode == messageEth.CURRENT_MODULE_A2B2) {
+                            oldCurrentModule = myCode;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    controlIconTransdA(controlGUI.POS2);
+                                    controlIconTransdB(controlGUI.POS2);
+                                }
+                            });
+
+                            return;
+                        } else if (myCode == messageEth.CURRENT_MODULE_A3B3) {
+                            oldCurrentModule = myCode;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    controlIconTransdA(controlGUI.POS3);
+                                    controlIconTransdB(controlGUI.POS3);
+                                }
+                            });
+
+                            return;
+                        } else if (myCode == messageEth.CURRENT_MODULE_A4B4) {
+                            oldCurrentModule = myCode;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    controlIconTransdA(controlGUI.POS4);
+                                    controlIconTransdB(controlGUI.POS4);
+                                }
+                            });
+
+                            return;
+                        } else if (myCode == messageEth.CURRENT_MODULE_A5B5) {
+                            oldCurrentModule = myCode;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    controlIconTransdA(controlGUI.POS5);
+                                    controlIconTransdB(controlGUI.POS5);
+                                }
+                            });
+
+                            return;
+                        }
+                    }
+
+
+                    //updateFbStatus(myNum, myCode);
                     //
-                    reloadRequestStatus();
+                    //reloadRequestStatus();
                     return;
                 }
 
@@ -3586,7 +3864,69 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
     }
 
-    //alarms
+    //get status from ethernet
+    private int feedbackFromEthernetStatus(int myCode) {
+        MessageEth messageEth = new MessageEth();
+
+        if (myCode == messageEth.CURRENT_MODULE_A1B1) {
+            oldCurrentModule = myCode;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    controlIconTransdA(controlGUI.POS1);
+                    controlIconTransdB(controlGUI.POS1);
+                }
+            });
+
+            return myCode;
+        } else if (myCode == messageEth.CURRENT_MODULE_A2B2) {
+            oldCurrentModule = myCode;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    controlIconTransdA(controlGUI.POS2);
+                    controlIconTransdB(controlGUI.POS2);
+                }
+            });
+
+            return myCode;
+        } else if (myCode == messageEth.CURRENT_MODULE_A3B3) {
+            oldCurrentModule = myCode;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    controlIconTransdA(controlGUI.POS3);
+                    controlIconTransdB(controlGUI.POS3);
+                }
+            });
+
+            return myCode;
+        } else if (myCode == messageEth.CURRENT_MODULE_A4B4) {
+            oldCurrentModule = myCode;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    controlIconTransdA(controlGUI.POS4);
+                    controlIconTransdB(controlGUI.POS4);
+                }
+            });
+
+            return myCode;
+        } else if (myCode == messageEth.CURRENT_MODULE_A5B5) {
+            oldCurrentModule = myCode;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    controlIconTransdA(controlGUI.POS5);
+                    controlIconTransdB(controlGUI.POS5);
+                }
+            });
+
+            return myCode;
+        }
+        return myCode;
+
+    }
 
 
     /*update from tcp ip-Data from the communication*/

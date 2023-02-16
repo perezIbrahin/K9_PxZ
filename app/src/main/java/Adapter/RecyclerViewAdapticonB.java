@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.k9_pxz.R;
@@ -46,6 +47,28 @@ public class RecyclerViewAdapticonB extends RecyclerView.Adapter<RecyclerViewAda
         TextSize textSize = new TextSize();
         ModelBtn modelBtn = modelArrayList.get(position);
         holder.imageView.setImageDrawable(modelBtn.getMenuDrawable());
+
+        final ConstraintLayout.LayoutParams layoutparams = (ConstraintLayout.LayoutParams) holder.imageView.getLayoutParams();
+
+        switch (position) {
+            case 0:
+                setMargin(layoutparams, holder, 20, 20, 0, 0);//0,25,40,10
+                break;
+            case 1:
+                setMargin(layoutparams, holder, 20, 30, 0, 0);
+                break;
+            case 2:
+                setMargin(layoutparams, holder, 20, 50, 0, 0);
+                break;
+            case 3: setMargin(layoutparams, holder, 20, 65, 0, 0);
+                break;
+            case 4:
+                setMargin(layoutparams, holder, 20, 72, 0, 0);
+                break;
+            case 5:
+                setMargin(layoutparams, holder, 0, 0, 0, 5);
+                break;
+        }
     }
 
     @Override
@@ -59,5 +82,10 @@ public class RecyclerViewAdapticonB extends RecyclerView.Adapter<RecyclerViewAda
             super(itemView);
             imageView=itemView.findViewById(R.id.ivTransduccer);
         }
+    }
+
+    private void setMargin(ConstraintLayout.LayoutParams params, RecyclerViewAdapticonB.ViewHolder holder, int left, int top, int right, int bot) {
+        params.setMargins(left, top, right, bot);
+        holder.imageView.setLayoutParams(params);
     }
 }

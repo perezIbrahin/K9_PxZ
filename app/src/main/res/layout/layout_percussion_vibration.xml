@@ -306,6 +306,7 @@
         android:layout_marginEnd="16dp"
         android:gravity="center"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout"
         app:layout_constraintTop_toTopOf="@+id/linearLayout">
 
@@ -331,7 +332,7 @@
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@+id/linearLayout"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout">
+        app:layout_constraintTop_toTopOf="@+id/LLRbA">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -411,7 +412,7 @@
     <LinearLayout
         android:id="@+id/LLIconA"
         android:layout_width="wrap_content"
-        android:layout_height="250dp"
+        android:layout_height="260dp"
         android:orientation="vertical"
         android:translationY="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
@@ -428,7 +429,7 @@
     <LinearLayout
         android:id="@+id/LLIconB"
         android:layout_width="wrap_content"
-        android:layout_height="250dp"
+        android:layout_height="260dp"
         android:orientation="vertical"
         android:translationY="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout"

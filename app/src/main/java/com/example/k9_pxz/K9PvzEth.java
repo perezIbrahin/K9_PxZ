@@ -547,8 +547,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             sendSpTime(position, conditions);
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_A)) {
             if (!isTotalBody(mode)) {
-
-                Log.d(TAG, "onItemPostSelect: mem a:memoryTransdA:"+memoryTransdA+".position:"+position);
+                Log.d(TAG, "onItemPostSelect: mem a:memoryTransdA:" + memoryTransdA + ".position:" + position);
                 //new
                 if (memoryTransdA != position) {
                     memoryTransdA = position;
@@ -558,11 +557,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //clean flag
                     cleanSelectedTrandA(conditions);
                 }
-
-
             }
         } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
-            Log.d(TAG, "onItemPostSelect: "+".position:"+position);
+            Log.d(TAG, "onItemPostSelect: " + ".position:" + position);
             if (!isTotalBody(mode)) {
                 //do not accept commands manualy is total body
 
@@ -594,16 +591,16 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
     }
 
-    private void cleanFlagsAfterResetTransA(){
+    private void cleanFlagsAfterResetTransA() {
         flagIsTRA = false;
-        memoryTransdA=-1;
+        memoryTransdA = -1;
 
     }
 
-    private void cleanFlagsAfterResetTransB(){
+    private void cleanFlagsAfterResetTransB() {
 
         flagIsTRB = false;
-        memoryTransdB=-1;
+        memoryTransdB = -1;
     }
 
     /**********************************************
@@ -1266,6 +1263,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //radio buttons just for Percussion
     private boolean updateButtonsRbAPercussion(int value) {
+        Log.d(TAG, "updateButtonsRbAPercussion: "+value);
         if (value > 0) {
             try {
                 if (value == setPoints.INT_BLE_SP_TRA_NONE) {
@@ -1298,12 +1296,18 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
                     controlIconTransdA(controlGUI.POS2);
 
+                } else if (value == setPoints.INT_BLE_SP_TRA6) {//clean
+                    updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    cleanFlagsAfterResetTransA();
+                    //added 02/10/23
+                    controlIconTransdA(controlGUI.POS0);
+
                 } else if (value == setPoints.INT_BLE_CMD_TOTAL_PERC) {
+                    Log.d(TAG, "updateButtonsRbAPercussion:setPoints.INT_BLE_CMD_TOTAL_PERC ");
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
-                    //updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
-                    //updateRecyclerViewRbA(3, default_values.DEF_RBA4, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
-                    //updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+
                     //update iconA
                     controlIconTransdA(controlGUI.POS_ALL_PERC);
 
@@ -1323,7 +1327,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     // Radio buttons for Percussion and vibration update GUI  RAdioButton -A
     private boolean updateButtonsRbA(int value) {
-        if (value > 0) {
+        if (value > 0) {/**/
             try {
                 if (value == setPoints.INT_BLE_SP_TRA_NONE) {
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
@@ -1374,7 +1378,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewRbA(4, default_values.DEF_RBA5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     //update iconA
                     controlIconTransdA(controlGUI.POS5);
-                } else if (value == setPoints.INT_BLE_SP_TRA6) {
+                } else if (value == setPoints.INT_BLE_SP_TRA6) {//clean
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
@@ -1385,7 +1389,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     controlIconTransdA(controlGUI.POS0);
 
 
-                }else if (value == setPoints.INT_BLE_CMD_TOTAL_VIB) {
+                } else if (value == setPoints.INT_BLE_CMD_TOTAL_VIB) {
                     updateRecyclerViewRbA(0, default_values.DEF_RBA1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(1, default_values.DEF_RBA2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbA(2, default_values.DEF_RBA3, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
@@ -1436,6 +1440,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //updateRecyclerViewRbB(4, default_values.DEF_RBB5, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
                     //update iconB
                     controlIconTransdB(controlGUI.POS2);
+                } else if (value == setPoints.INT_BLE_SP_TRB6) {//clean
+                    updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_radio_button_unchecked_48));
+                    //
+                    cleanFlagsAfterResetTransB();
+                    //update iconB
+                    controlIconTransdB(controlGUI.POS0);
                 } else if (value == setPoints.INT_BLE_CMD_TOTAL_PERC) {
                     updateRecyclerViewRbB(0, default_values.DEF_RBB1, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
                     updateRecyclerViewRbB(1, default_values.DEF_RBB2, default_values.DEF_STATUS_UNCHECKED, getDrawable(R.drawable.ic_baseline_circle_48));
@@ -1582,7 +1593,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private int updateModes(int value) {
         if (value > 0) {
             try {
-                if (value == setPoints.INT_BLE_SP_MODE3) {//added 10/19/22
+                if (value == setPoints.INT_BLE_SP_MODE1) {//added 10/19/22
+                    mode = selectMode(status.SELECT_MODE_PERCUSSION);
+                    return setPoints.INT_BLE_SP_MODE1;
+                } else if (value == setPoints.INT_BLE_SP_MODE2) {//added 10/19/22
+                    mode = selectMode(status.SELECT_MODE_VIBRATION);
+                    return setPoints.INT_BLE_SP_MODE2;
+                } else if (value == setPoints.INT_BLE_SP_MODE3) {//added 10/19/22
                     mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
                     return setPoints.INT_BLE_SP_MODE3;
                 } else if (value == setPoints.INT_BLE_SP_MODE4) {//added 10/19/22
@@ -2250,6 +2267,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //update displayRBA
     private void updateFbRBA(int mode, int value) {
+        Log.d(TAG, "updateFbRBA: mode:"+mode+".value:"+value);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -2323,8 +2341,26 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             public void run() {
                 int ret = updateModes(value);
                 Log.d(TAG, "updateFbModes: ");
-                if (ret == setPoints.INT_BLE_SP_MODE3) {//Added 10/19/22
+                if (ret == setPoints.INT_BLE_SP_MODE1) {//Added 10/19/22
+                    Log.d(TAG, "updateFbCommands: setPointsBluetooth.PERC");
+                    mode = status.SELECT_MODE_PERCUSSION;
+                    //
+                    memoryTransdA = -1;
+                    memoryTransdB = -1;
+                    Log.d(TAG, "updateFbModes:modes: "+ mode);
+                } else if (ret == setPoints.INT_BLE_SP_MODE2) {//Added 10/19/22
+                    mode = status.SELECT_MODE_VIBRATION;
+                    Log.d(TAG, "updateFbCommands: setPointsBluetooth.vib");
+                    //
+                    memoryTransdA = -1;
+                    memoryTransdB = -1;
+
+                    Log.d(TAG, "updateFbModes:modes: "+ mode);
+                } else if (ret == setPoints.INT_BLE_SP_MODE3) {//Added 10/19/22
                     Log.d(TAG, "updateFbCommands: setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC");
+                    //
+                    memoryTransdA = 2;
+                    memoryTransdB = 2;
 
                     resetCheckBockA();
                     resetCheckBockB();
@@ -2333,14 +2369,19 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     mode = status.SELECT_MODE_TOTAL_PERCUSSION;
                     updateFbRBA(mode, setPoints.INT_BLE_CMD_TOTAL_PERC);
                     updateFbRBb(mode, setPoints.INT_BLE_CMD_TOTAL_PERC);
+                    Log.d(TAG, "updateFbModes:modes: "+ mode);
 
                 } else if (ret == setPoints.INT_BLE_SP_MODE4) {//Added 10/19/22
                     Log.d(TAG, "updateFbCommands: total vib");
+                    //
+                    memoryTransdA = 4;
+                    memoryTransdB = 4;
 
                     resetCheckBockA();
                     resetCheckBockB();
                     //check mode
                     mode = status.SELECT_MODE_TOTAL_VIBRATION;
+                    Log.d(TAG, "updateFbModes:modes: "+ mode);
                     //
                     updateFbRBA(mode, setPoints.INT_BLE_CMD_TOTAL_VIB);
                     updateFbRBb(mode, setPoints.INT_BLE_CMD_TOTAL_VIB);
@@ -2768,15 +2809,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         if (btnStart == v) {
             if (!isAlarm) {
                 if (!isLockScreen) {
-                    if(memoryTransdA==-1 && memoryTransdB==-1){
-                        flagIsTRA=false;
-                        flagIsTRB=false;
-                    }else{
-                        flagIsTRA=true;
-                        flagIsTRB=true;
+                    if (memoryTransdA == -1 && memoryTransdB == -1) {
+                        flagIsTRA = false;
+                        flagIsTRB = false;
+                    } else {
+                        flagIsTRA = true;
+                        flagIsTRB = true;
                     }
-
-
                     condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, (flagIsTRA || flagIsTRB), (flagIsTRA || flagIsTRB), isFlagIsSr, isFlagMcuReady);
                 }
             } else {
@@ -3502,6 +3541,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //
     private void setWatchDogCounter() {
+        Log.d(TAG, "setWatchDogCounter: ");
         //timer delay
         watchDogTimerCom();
         //request status
@@ -3764,12 +3804,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TB)) {//Transd-B
                     isFlagMcuReady = true;
                     resetCheckBockB();
-                    Log.d(TAG, "statusEthernet: mode:" + mode+".num:"+myNum);
+
                     updateFbRBb(mode, myNum);
                     beepSound();
                     return;
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_MD)) {//mode
                     isFlagMcuReady = true;
+                    Log.d(TAG, "statusEthernet: num:"  + myNum);
                     updateFbModes(myNum);
                     beepSound();
                     return;

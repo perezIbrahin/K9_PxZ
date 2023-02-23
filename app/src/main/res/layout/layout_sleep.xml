@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/ivSleep"
         android:layout_width="0dp"
         android:layout_height="878dp"
         android:adjustViewBounds="true"

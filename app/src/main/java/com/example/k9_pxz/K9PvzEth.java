@@ -258,6 +258,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private String dialogMissTrb = "0";
     private String dialogUnderCurrent = "0";
     private String dialogOverCurrent = "0";
+    private String dialogAutoSleep = "0";
 
     //serial number
     private String Serial_Number_Product = "12PV123456";
@@ -322,6 +323,12 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //added
     private int oldCurrentModule = 0;
+
+    //sleep mode automatic
+    private boolean isSleepMode = false;
+    private int MAX_AUTO_SLEEP = 20;//counter sleep mode
+    private int autoSleepCounter = MAX_AUTO_SLEEP;
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -520,6 +527,12 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         } else if (description.equalsIgnoreCase(utilDialog.OVER_CURRENT_CONFIRM)) {
             Log.d(TAG, "onItemSetupInfo: OVER_CURRENT_CONFIRM");
             isFlagAlarmOc = false;
+        } else if (description.equalsIgnoreCase(utilDialog.OVER_CURRENT_CONFIRM)) {
+            Log.d(TAG, "onItemSetupInfo: OVER_CURRENT_CONFIRM");
+            isFlagAlarmOc = false;
+        } else if (description.equalsIgnoreCase(utilDialog.LOCATION_AUTO_SLEEP)) {
+            Log.d(TAG, "onItemSetupInfo: LOCATION_AUTO_SLEEP");
+            resetSleepMode();
         }
     }
 
@@ -533,6 +546,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         Log.d(TAG, "onItemPostSelect: pos" + position + "val:" + value);
         //conditions to disable the use of setpoints
         boolean conditions = isTherapyOn || isLockScreen;
+
+        resetSleepMode();//rset sleep mode
 
         if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_FREQ)) {
             //send data of freq
@@ -776,6 +791,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
     }
 
+    //launch home activity
+    private void goSleep() {
+        launchActivity(SleepActivity.class);
+    }
+
     //change activity
     private void launchActivity(Class mclass) {
         if (mclass != null) {
@@ -903,6 +923,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         dialogMissTime = resources.getString(R.string.string_text_check_tim);
         dialogMissTra = resources.getString(R.string.string_text_check_transdA);
         dialogMissTrb = resources.getString(R.string.string_text_check_transdB);
+        dialogAutoSleep = resources.getString(R.string.string_sleep_question);
 
         //check if percussion or Percussion/Vibration
         typeOfTherapy = selectTypeOfTherapy(resources, Serial_Number_Product);
@@ -1263,7 +1284,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //radio buttons just for Percussion
     private boolean updateButtonsRbAPercussion(int value) {
-        Log.d(TAG, "updateButtonsRbAPercussion: "+value);
+        Log.d(TAG, "updateButtonsRbAPercussion: " + value);
         if (value > 0) {
             try {
                 if (value == setPoints.INT_BLE_SP_TRA_NONE) {
@@ -1755,9 +1776,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //control icon transducers A
     private void controlIconTransdA(int value) {
         try {
-            Log.d(TAG, "controlIconTransdA: " + value);
+            Log.d(TAG, "controlIconTransdA  #1558: " + value);
             //controlIconSelectedTransdA(value);
 
+            //new
+            if (value < 0 || value > 7) {
+                return;
+            }
             switch (value) {
                 case 0:
                     //none
@@ -1805,7 +1830,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewIconA(4, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
                     break;
                 case 6://total perc
-                    updateRecyclerViewIconA(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    //updateRecyclerViewIconA(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
                     updateRecyclerViewIconA(1, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
                     break;
                 case 7://total vib
@@ -1817,8 +1842,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     break;
             }
             updateGUIRecyclerViewIconA();
+
         } catch (Exception e) {
-            Log.d(TAG, "controlIconTransdA: " + e.getMessage());
+            Log.d(TAG, "controlIconTransdA:#1826 ex" + e.getMessage());
         }
     }
 
@@ -1872,8 +1898,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewIconB(4, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
                     break;
                 case 6://total perc
-                    updateRecyclerViewIconB(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
-                    updateRecyclerViewIconB(1, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    //updateRecyclerViewIconB(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
+                    //updateRecyclerViewIconB(1, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
                     break;
                 case 7://total vib
                     updateRecyclerViewIconB(0, default_values.DEF_STATUS_ICON, default_values.DEF_STATUS_ICON_RUNNING, getDrawable(R.drawable.ic_baseline_surround_sound_og_24));
@@ -2267,7 +2293,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //update displayRBA
     private void updateFbRBA(int mode, int value) {
-        Log.d(TAG, "updateFbRBA: mode:"+mode+".value:"+value);
+        Log.d(TAG, "updateFbRBA: mode:" + mode + ".value:" + value);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -2339,7 +2365,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                int ret = updateModes(value);
+                int ret = updateModes(value);//mode percussion
                 Log.d(TAG, "updateFbModes: ");
                 if (ret == setPoints.INT_BLE_SP_MODE1) {//Added 10/19/22
                     Log.d(TAG, "updateFbCommands: setPointsBluetooth.PERC");
@@ -2347,16 +2373,16 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     //
                     memoryTransdA = -1;
                     memoryTransdB = -1;
-                    Log.d(TAG, "updateFbModes:modes: "+ mode);
-                } else if (ret == setPoints.INT_BLE_SP_MODE2) {//Added 10/19/22
+                    Log.d(TAG, "updateFbModes:modes: " + mode);
+                } else if (ret == setPoints.INT_BLE_SP_MODE2) {//mode vibration
                     mode = status.SELECT_MODE_VIBRATION;
                     Log.d(TAG, "updateFbCommands: setPointsBluetooth.vib");
                     //
                     memoryTransdA = -1;
                     memoryTransdB = -1;
 
-                    Log.d(TAG, "updateFbModes:modes: "+ mode);
-                } else if (ret == setPoints.INT_BLE_SP_MODE3) {//Added 10/19/22
+                    Log.d(TAG, "updateFbModes:modes: " + mode);
+                } else if (ret == setPoints.INT_BLE_SP_MODE3) {//mode total perc
                     Log.d(TAG, "updateFbCommands: setPointsBluetooth.INT_BLE_CMD_TOTAL_PERC");
                     //
                     memoryTransdA = 2;
@@ -2369,9 +2395,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     mode = status.SELECT_MODE_TOTAL_PERCUSSION;
                     updateFbRBA(mode, setPoints.INT_BLE_CMD_TOTAL_PERC);
                     updateFbRBb(mode, setPoints.INT_BLE_CMD_TOTAL_PERC);
-                    Log.d(TAG, "updateFbModes:modes: "+ mode);
+                    Log.d(TAG, "updateFbModes:modes: " + mode);
+                    controlIconTransdA(controlGUI.POS2);
+                    controlIconTransdB(controlGUI.POS2);
 
-                } else if (ret == setPoints.INT_BLE_SP_MODE4) {//Added 10/19/22
+                } else if (ret == setPoints.INT_BLE_SP_MODE4) {//total vibration
                     Log.d(TAG, "updateFbCommands: total vib");
                     //
                     memoryTransdA = 4;
@@ -2381,7 +2409,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     resetCheckBockB();
                     //check mode
                     mode = status.SELECT_MODE_TOTAL_VIBRATION;
-                    Log.d(TAG, "updateFbModes:modes: "+ mode);
+                    Log.d(TAG, "updateFbModes:modes: " + mode);
                     //
                     updateFbRBA(mode, setPoints.INT_BLE_CMD_TOTAL_VIB);
                     updateFbRBb(mode, setPoints.INT_BLE_CMD_TOTAL_VIB);
@@ -2806,6 +2834,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     @Override
     public void onClick(View v) {
+        resetSleepMode();//rset sleep mode
         if (btnStart == v) {
             if (!isAlarm) {
                 if (!isLockScreen) {
@@ -2833,44 +2862,56 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             if (!isFlagSetConnection) {
                 setConnetion();
             }
-        } else if (btnSelectPer == v) {
+        } else if (btnSelectPer == v) {//mode percussion
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     if (!isLockScreen) {
-                        mode = selectMode(status.SELECT_MODE_PERCUSSION);
-                        Log.d(TAG, "onClick: mode percussion");
-                        sendSpPercussion();
+                        //added 02/23/23
+                        if (mode != status.SELECT_MODE_PERCUSSION) {
+                            mode = selectMode(status.SELECT_MODE_PERCUSSION);
+                            Log.d(TAG, "onClick: mode percussion");
+                            sendSpPercussion();
+                        }
+
+
                     }
                 }
             }
-        } else if (btnSelectVib == v) {
+        } else if (btnSelectVib == v) {//mode vibration
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     if (!isLockScreen) {
-                        mode = selectMode(status.SELECT_MODE_VIBRATION);
-                        Log.d(TAG, "onClick: mode vibration");
-                        sendSpVibration();
+                        if (mode != status.SELECT_MODE_VIBRATION) {
+                            mode = selectMode(status.SELECT_MODE_VIBRATION);
+                            Log.d(TAG, "onClick: mode vibration");
+                            sendSpVibration();
+                        }
                     }
                 }
             }
-        } else if (btnSelectTotalPer == v) {
+        } else if (btnSelectTotalPer == v) {//mode total perc
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     if (!isLockScreen) {
-                        sendSpTotalPercussion();
+                        if (mode != status.SELECT_MODE_TOTAL_PERCUSSION) {
+                            sendSpTotalPercussion();
+                        }
+
                         //mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
                     }
                 }
             }
-        } else if (btnSelectTotalVib == v) {
+        } else if (btnSelectTotalVib == v) {//mode total vibration
             if (isTherapyOn == false) {
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     if (!isLockScreen) {
-                        sendSpTotalVibration();
+                        if (mode != status.SELECT_MODE_TOTAL_VIBRATION) {
+                            sendSpTotalVibration();
+                        }
                         //mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
                     }
                 }
@@ -2897,6 +2938,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             case MotionEvent.ACTION_UP:
                 handler.removeCallbacks(runDelayButton);
                 Log.d(TAG, "onTouch: remove");
+
                 break;
         }
         return true;
@@ -2957,7 +2999,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     break;
                 case 5:
                     //sendTCP(spEth.k9_fr_6);//max frecuency
-                    initTCP_IP();
+                    //initTCP_IP();
                     break;
             }
         }
@@ -2986,7 +3028,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 case 5:
                     //max
                     //sendTCP(spEth.k9_in_7);
-                    disconnectTCP();
+                    //disconnectTCP();
 
                     break;
             }
@@ -3387,13 +3429,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         } else {
             counterUc++;
         }
-
-
     }
 
     //notification overCurrent
     private void notificationOverCurrent() {
-
         if (counterOc > 3) {
             if (!isFlagAlarmOc) {
                 k9Alert.alertDialogOverCurrent(dialogOverCurrent, dialogConfirmLang);
@@ -3414,6 +3453,22 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     //notification alarmDummy
     private void notificationAlarmDummy() {
 
+    }
+
+    //notifications sleep
+    private void notificationSystemSleep() {
+        Log.d(TAG, "notificationSystemSleep: ");
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Stuff that updates the UI
+                //k9Alert.alertDialogSystemEmergencyStop(dialogEmergStop, dialogConfirmLang);
+                k9Alert.alertDialogAutoSleep(dialogAutoSleep, dialogConfirmLang, dialogCancelLang);
+
+
+            }
+        });
     }
 
 
@@ -3650,6 +3705,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 client.sendMessage(message);
                 Log.d(TAG, "eth connection status:send :" + message);
                 isFlagMcuReady = false;
+
+
                /* runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -3706,6 +3763,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private void feedbackFromEthernet(String message) {
         MessageEth messageEth = new MessageEth();
         Log.d(TAG, "statusEthernet:" + message);
+
+        sleepMode(isTherapyOn);//auto sleep mode
 
 
         /*
@@ -3810,7 +3869,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     return;
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_MD)) {//mode
                     isFlagMcuReady = true;
-                    Log.d(TAG, "statusEthernet: num:"  + myNum);
+                    Log.d(TAG, "statusEthernet: num:" + myNum);
                     updateFbModes(myNum);
                     beepSound();
                     return;
@@ -4062,8 +4121,45 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     /**********************************************
-     *
+     * Sleep mode
      */
+    private boolean sleepMode(boolean isWorking) {
+        /*private int autoSleepCounter=0;
+        private int MAX_AUTO_SLEEP=20;*/
+        if (!isWorking) {
+            //counter
+            if (autoSleepCounter ==0) {
+                //go to sleep mode
+                if (!isLockScreen) {
+                    //goHome();
+                    goSleep();
+                }
+                return true;
+            } else if (autoSleepCounter > 0 && autoSleepCounter < 5) {
+                //close connection and send to sleep mode
+                if (!isSleepMode) {
+                    notificationSystemSleep();
+                    isSleepMode = true;
+                }
+                autoSleepCounter--;
+                Log.d(TAG, "sleepMode: enable");
+                return true;
+            }
+            autoSleepCounter--;
+            Log.d(TAG, "sleepMode: counter:" + autoSleepCounter);
+            return false;
+        } else {
+            resetSleepMode();
+            return false;
+        }
+    }
+
+    //reset sleep mode
+    private void resetSleepMode() {
+        autoSleepCounter = MAX_AUTO_SLEEP;
+        isSleepMode = false;
+    }
+
 
     /**********************************************
      *

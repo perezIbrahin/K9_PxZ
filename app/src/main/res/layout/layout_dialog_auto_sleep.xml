@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/imageView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_warning_amber_56" />
+
+    <TextView
+        android:id="@+id/tvDilgSleepRev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="rev"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTextDialogSleep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="@string/string_sleep_question"
+        android:textAlignment="center"
+        android:textSize="@dimen/dim_text_dialog_siderail"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView12" />
+
+    <Button
+        android:id="@+id/btnSleepConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/btn_main"
+        android:text="@string/string_btn_SR_confirm"
+        android:textColor="@color/colorFla"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.384"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCounterSleep" />
+
+    <Button
+        android:id="@+id/btnSleepCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/btn_stop_red"
+        android:text="@string/string_btn_SR_cancel"
+        android:textColor="@color/colorFla"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSleepConfirm"
+        app:layout_constraintStart_toEndOf="@+id/btnSleepConfirm"
+        app:layout_constraintTop_toTopOf="@+id/btnSleepConfirm"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/tvCounterSleep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="0"
+        android:textColor="#FFD54F"
+        android:textSize="@dimen/dim_text_dialog_siderail"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/tvTextDialogSleep"
+        app:layout_constraintStart_toStartOf="@+id/tvTextDialogSleep"
+        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogSleep" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

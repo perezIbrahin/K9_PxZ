@@ -156,8 +156,8 @@
     <string name="string_text_check_freq">Select frequency</string>
     <string name="string_text_check_tim">Select timer</string>
     <string name="string_text_check_int">Select intensity</string>
-    <string name="string_text_check_transdA">Select transducers A</string>
-    <string name="string_text_check_transdB">Select transducers B</string>
+    <string name="string_text_check_transdA">Select R(Right) modules or</string>
+    <string name="string_text_check_transdB">Select L(Left) modules</string>
     <string name="string_name_therapy_complete">Therapy complete.</string>
     <string name="string_name_therapy">FULL BODY PERCUSSION/VIBRATION THERAPY</string>
     <string name="string_name_percussion_therapy">Percussion Therapy</string>
@@ -177,6 +177,9 @@
     <string name="string_text_pres_start">Press to start.</string>
     <string name="string_text_lost_connection">Connection lost!</string>
     <string name="string_text_lost_connection_code">Error code 1001</string>
+
+    <!-- name auto sleep mode -->
+    <string name="string_sleep_question">Are you still there?</string>
 
     <!-- main screen  button -->
     <string name="string_text_main_manual">Manual</string>
@@ -242,6 +245,9 @@
     <string name="string_com_connected">Connected</string>
     <string name="string_com_discconnected">Disconnected</string>
 
+    <!-- module -->
+    <string name="string_mod_right">RIGHT</string>
+    <string name="string_mod_left">LEFT</string>
 
     <!-- language translation-->
     <string-array name="language_option">

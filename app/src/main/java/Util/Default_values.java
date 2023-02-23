@@ -24,17 +24,18 @@ public class Default_values {
     public String DEF_TIM4 = "20";
     public String DEF_TIM5 = "25";
     //select transducer position A
-    public String DEF_RBA1 = "A1";
-    public String DEF_RBA2 = "A2";
-    public String DEF_RBA3 = "A3";
-    public String DEF_RBA4 = "A4";
-    public String DEF_RBA5 = "A5";
+    //changed a by R
+    public String DEF_RBA1 = "R1";
+    public String DEF_RBA2 = "R2";
+    public String DEF_RBA3 = "R3";
+    public String DEF_RBA4 = "R4";
+    public String DEF_RBA5 = "R5";
     //select transducer position B
-    public String DEF_RBB1 = "B1";
-    public String DEF_RBB2 = "B2";
-    public String DEF_RBB3 = "B3";
-    public String DEF_RBB4 = "B4";
-    public String DEF_RBB5 = "B5";
+    public String DEF_RBB1 = "L1";
+    public String DEF_RBB2 = "L2";
+    public String DEF_RBB3 = "L3";
+    public String DEF_RBB4 = "L4";
+    public String DEF_RBB5 = "L5";
     //
     public String DEF_STATUS_FREQ1 = TEXT_INT;
     public String DEF_STATUS_FREQ2 = TEXT_INT;

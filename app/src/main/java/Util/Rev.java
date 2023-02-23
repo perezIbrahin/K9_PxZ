@@ -32,5 +32,6 @@ public class Rev {
     public String APP_REV_PAGE_55 = "P55/"+Rev;//Emergency stop
     public String APP_REV_PAGE_56 = "P56/"+Rev;//Under current
     public String APP_REV_PAGE_57 = "P57/"+Rev;//Over current
+    public String APP_REV_PAGE_58 = "P58/"+Rev;//Auto sleep
 
 }

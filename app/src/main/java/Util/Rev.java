@@ -3,7 +3,7 @@ package Util;
 
 public class Rev {
 
-    private String Rev="3.2.3";
+    private String Rev="3.2.5";
 
     //Hsitory
     //public static final String APP_REV= "1.1";//04/01/19 Initial release

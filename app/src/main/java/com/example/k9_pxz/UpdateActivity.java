@@ -61,7 +61,7 @@ public class UpdateActivity extends AppCompatActivity {
         //Adding revision
         displaySoftRev(rev.APP_REV_PAGE_14);
 
-        initWebView();
+        //initWebView();
     }
 
     private void initGui() {

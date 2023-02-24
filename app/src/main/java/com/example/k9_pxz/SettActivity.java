@@ -169,7 +169,7 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
     public void onItemPostSelect(int position, String value) {
         Log.d(TAG, "onItemPostSelect Activity Setting: " + position + "value:" + value);
         if (value.equalsIgnoreCase(navigation.NAV_LINK)) {
-            launchActivity(ScanActivity.class);
+            launchActivity(UpdateActivity.class);// launchActivity(ScanActivity.class);
         }
     }
 

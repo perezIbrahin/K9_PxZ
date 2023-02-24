@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/ivSleep"
+        android:id="@+id/ivAnimateLogo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:adjustViewBounds="true"

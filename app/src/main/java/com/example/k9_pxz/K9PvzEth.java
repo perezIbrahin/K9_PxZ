@@ -24,10 +24,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -91,6 +93,7 @@ import Util.Validation;
 public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, RecyclerViewClickInterface, View.OnClickListener, Observer, View.OnLongClickListener, View.OnTouchListener {
     private static final String TAG = "K9PvzEth";
     /*GUI*/
+    private ConstraintLayout clPercussionVib;
     //modes
     private Button btnSelectPer;
     private Button btnSelectVib;
@@ -326,8 +329,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //sleep mode automatic
     private boolean isSleepMode = false;
-    private int MAX_AUTO_SLEEP = 20;//counter sleep mode
+    private int MAX_AUTO_SLEEP = 60;//counter sleep mode
     private int autoSleepCounter = MAX_AUTO_SLEEP;
+
+    //system ready
+    private boolean isReadyOperate = true;
+
+    //visible code
+    private boolean isVisibleCode=false;
 
 
     @Override
@@ -401,6 +410,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
      */
     //init GUI
     private void initGUI() {
+        clPercussionVib = findViewById(R.id.clPercussionVib);
         btnSelectPer = findViewById(R.id.btnSelPerc);
         btnSelectVib = findViewById(R.id.btnSelVib);
         btnSelectTotalPer = findViewById(R.id.btnTotalPerc);
@@ -442,6 +452,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
         //Invisible button ready. Used in older revision
         updateBtnReady(controlGUI.POS0);
+
+        //
+        tvCurrent.setVisibility(View.INVISIBLE);
+        tvCurrent.setVisibility(View.INVISIBLE);
+
+        //
+        tvCurrent.setVisibility(View.INVISIBLE);
 
 
         return true;
@@ -532,7 +549,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             isFlagAlarmOc = false;
         } else if (description.equalsIgnoreCase(utilDialog.LOCATION_AUTO_SLEEP)) {
             Log.d(TAG, "onItemSetupInfo: LOCATION_AUTO_SLEEP");
-            resetSleepMode();
+            // resetSleepMode();
         }
     }
 
@@ -547,49 +564,55 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         //conditions to disable the use of setpoints
         boolean conditions = isTherapyOn || isLockScreen;
 
-        resetSleepMode();//rset sleep mode
+        // resetSleepMode();//rset sleep mode
 
-        if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_FREQ)) {
-            //send data of freq
-            sendSpFreq(position, conditions);//isTherapyOn
-        } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_INT)) {
-            Log.d(TAG, "onItemPostSelect: int");
-            //send data of Int
-            sendSpInt(position, conditions);
-        } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_TIM)) {
-            Log.d(TAG, "onItemPostSelect: time");
-            //send data of Time
-            sendSpTime(position, conditions);
-        } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_A)) {
-            if (!isTotalBody(mode)) {
-                Log.d(TAG, "onItemPostSelect: mem a:memoryTransdA:" + memoryTransdA + ".position:" + position);
-                //new
-                if (memoryTransdA != position) {
-                    memoryTransdA = position;
+        if (isReadyOperate) {//added 02/24/23//wait until step down finished
+            if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_FREQ)) {
+                //send data of freq
+                sendSpFreq(position, conditions);//isTherapyOn
+            } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_INT)) {
+                Log.d(TAG, "onItemPostSelect: int");
+                //send data of Int
+                sendSpInt(position, conditions);
+            } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_TIM)) {
+                Log.d(TAG, "onItemPostSelect: time");
+                //send data of Time
+                sendSpTime(position, conditions);
+            } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_A)) {
+                if (!isTotalBody(mode)) {
+                    Log.d(TAG, "onItemPostSelect: mem a:memoryTransdA:" + memoryTransdA + ".position:" + position);
+                    //new
+                    if (memoryTransdA != position) {
+                        memoryTransdA = position;
+                        //do not accept commands manualy is total body
+                        sendSpRBA(position, conditions);
+                    } else {
+                        //clean flag
+                        cleanSelectedTrandA(conditions);
+                    }
+                }
+            } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
+                Log.d(TAG, "onItemPostSelect: " + ".position:" + position);
+                if (!isTotalBody(mode)) {
                     //do not accept commands manualy is total body
-                    sendSpRBA(position, conditions);
-                } else {
-                    //clean flag
-                    cleanSelectedTrandA(conditions);
+
+                    //new
+                    if (memoryTransdB != position) {
+                        memoryTransdB = position;
+                        //do not accept commands manualy is total body
+                        sendSpRBB(position, conditions);
+                    } else {
+                        //clean flag
+                        cleanSelectedTrandB(conditions);
+                    }
+                    //sendSpRBB(position, conditions);//working
                 }
             }
-        } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
-            Log.d(TAG, "onItemPostSelect: " + ".position:" + position);
-            if (!isTotalBody(mode)) {
-                //do not accept commands manualy is total body
-
-                //new
-                if (memoryTransdB != position) {
-                    memoryTransdB = position;
-                    //do not accept commands manualy is total body
-                    sendSpRBB(position, conditions);
-                } else {
-                    //clean flag
-                    cleanSelectedTrandB(conditions);
-                }
-                //sendSpRBB(position, conditions);//working
-            }
+        } else {
+            waitReadyConditions();
         }
+
+
     }
 
     private void cleanSelectedTrandA(boolean conditions) {
@@ -2431,9 +2454,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 displayFeedBackStatus(value, code);
 
                 if (value == setPoints.INT_BLE_STATUS_READY) {
+                    isReadyOperate = true;
                     cleanFlagsOcUc();
                 } else if (value == setPoints.INT_BLE_STATUS_WORKING) {
-
+                    isReadyOperate = false;
                 } else if (value == setPoints.INT_BLE_STATUS_ALARM1) {
                     notificationAlarmDummy();
                 } else if (value == setPoints.INT_BLE_STATUS_ALARM2) {//over current
@@ -2812,6 +2836,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
      */
     //events btns
     private void eventBtn() {
+        clPercussionVib.setOnClickListener(this);
         btnSelectPer.setOnClickListener(this);
         btnSelectVib.setOnClickListener(this);
         btnSelectTotalPer.setOnClickListener(this);
@@ -2830,22 +2855,31 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         //btnLockOp.setOnLongClickListener(this);
         btnLockOp.setOnTouchListener(this);
 
+        tvRev.setOnClickListener(this);//hide code
+
     }
+
 
     @Override
     public void onClick(View v) {
-        resetSleepMode();//rset sleep mode
+        // resetSleepMode();//rset sleep mode
         if (btnStart == v) {
             if (!isAlarm) {
                 if (!isLockScreen) {
-                    if (memoryTransdA == -1 && memoryTransdB == -1) {
-                        flagIsTRA = false;
-                        flagIsTRB = false;
+
+                    if (isReadyOperate) {//added 02/24/23//wait until step down finished
+                        if (memoryTransdA == -1 && memoryTransdB == -1) {
+                            flagIsTRA = false;
+                            flagIsTRB = false;
+                        } else {
+                            flagIsTRA = true;
+                            flagIsTRB = true;
+                        }
+                        condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, (flagIsTRA || flagIsTRB), (flagIsTRA || flagIsTRB), isFlagIsSr, isFlagMcuReady);
                     } else {
-                        flagIsTRA = true;
-                        flagIsTRB = true;
+                        waitReadyConditions();
                     }
-                    condStartTherapy(flagIsFreq, flagIsInt, flagIsTim, (flagIsTRA || flagIsTRB), (flagIsTRA || flagIsTRB), isFlagIsSr, isFlagMcuReady);
+
                 }
             } else {
                 Log.d(TAG, "onClick: alarm enable");
@@ -2868,10 +2902,15 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 if (isLockMode == false) {
                     if (!isLockScreen) {
                         //added 02/23/23
-                        if (mode != status.SELECT_MODE_PERCUSSION) {
-                            mode = selectMode(status.SELECT_MODE_PERCUSSION);
-                            Log.d(TAG, "onClick: mode percussion");
-                            sendSpPercussion();
+
+                        if (isReadyOperate) {//added 02/24/23//wait until step down finished
+                            if (mode != status.SELECT_MODE_PERCUSSION) {
+                                mode = selectMode(status.SELECT_MODE_PERCUSSION);
+                                Log.d(TAG, "onClick: mode percussion");
+                                sendSpPercussion();
+                            }
+                        } else {
+                            waitReadyConditions();
                         }
 
 
@@ -2883,11 +2922,16 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     if (!isLockScreen) {
-                        if (mode != status.SELECT_MODE_VIBRATION) {
-                            mode = selectMode(status.SELECT_MODE_VIBRATION);
-                            Log.d(TAG, "onClick: mode vibration");
-                            sendSpVibration();
+                        if (isReadyOperate) {//added 02/24/23//wait until step down finished
+                            if (mode != status.SELECT_MODE_VIBRATION) {
+                                mode = selectMode(status.SELECT_MODE_VIBRATION);
+                                Log.d(TAG, "onClick: mode vibration");
+                                sendSpVibration();
+                            }
+                        } else {
+                            waitReadyConditions();
                         }
+
                     }
                 }
             }
@@ -2896,6 +2940,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     if (!isLockScreen) {
+                        if (isReadyOperate) {//added 02/24/23//wait until step down finished
+
+                        } else {
+                            waitReadyConditions();
+                        }
                         if (mode != status.SELECT_MODE_TOTAL_PERCUSSION) {
                             sendSpTotalPercussion();
                         }
@@ -2909,12 +2958,29 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 Log.d(TAG, "onClick: isLockMode" + isLockMode);
                 if (isLockMode == false) {
                     if (!isLockScreen) {
-                        if (mode != status.SELECT_MODE_TOTAL_VIBRATION) {
-                            sendSpTotalVibration();
+                        if (isReadyOperate) {//added 02/24/23//wait until step down finished
+                            if (mode != status.SELECT_MODE_TOTAL_VIBRATION) {
+                                sendSpTotalVibration();
+                            }
+                            //mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
+                        } else {
+                            waitReadyConditions();
                         }
-                        //mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
+
                     }
                 }
+            }
+        } else if (clPercussionVib == v) {
+            resetSleepMode();
+        }else if(tvRev==v){
+            if(isVisibleCode){
+                tvCurrent.setVisibility(View.INVISIBLE);
+                isVisibleCode=false;
+                return;
+            }else {
+                tvCurrent.setVisibility(View.VISIBLE);
+                isVisibleCode=true;
+                return;
             }
         }
 
@@ -4128,7 +4194,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         private int MAX_AUTO_SLEEP=20;*/
         if (!isWorking) {
             //counter
-            if (autoSleepCounter ==0) {
+            if (autoSleepCounter == 0) {
                 //go to sleep mode
                 if (!isLockScreen) {
                     //goHome();
@@ -4160,10 +4226,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         isSleepMode = false;
     }
 
-
     /**********************************************
-     *
+     * wait for conditions
      */
+
+    private void waitReadyConditions() {
+        Toast.makeText(getApplicationContext(), "Wait...", Toast.LENGTH_SHORT).show();
+    }
 
     /**********************************************
      *

@@ -235,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
     //init array spinner language
     private void initArrayLang() {
         Context context = LocaleHelper.setLocale(MainActivity.this, "en");

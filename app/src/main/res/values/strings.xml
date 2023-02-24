@@ -227,12 +227,13 @@
     <string name="string_text_spare10" translatable="false">spare</string>
 
     <!-- setting page -->
-    <string name="string_sett_link">Link</string>
+    <string name="string_sett_link">Update</string>
     <string name="string_sett_burning">Burning</string>
     <string name="string_sett_About">About</string>
     <string name="string_sett_system">System</string>
     <string name="string_sett_title">Settings</string>
     <string name="string_sett_hard">Hardware</string>
+    <string name="string_software_update">Software Update</string>
 
     <!-- alarms -->
     <string name="string_alarm_emergency_stop">Error code:25 </string>

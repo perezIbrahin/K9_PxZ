@@ -31,12 +31,13 @@ public class ManualActivity extends AppCompatActivity {
     //
     TextView tvManualRev;
     WebView webview ;
+    PDFView pdfViewK9;
 
     //revision
     private Rev rev = new Rev();
 
     // for PDF view.
-    PDFView pdfView;
+    //PDFView pdfView;
     //locATION OF THE MANUAL
     String pdfurl = "https://drive.google.com/file/d/1hzyLk88dUOuFaFJyDvU_75f4rKXdtHmK/view?usp=sharing";
 
@@ -64,13 +65,16 @@ public class ManualActivity extends AppCompatActivity {
         //initPDF();
 
         //web view
-        initWebView();
+        //initWebView();
+
+        loadPdf();
     }
 
     //GUI
     private void initGUI() {
         tvManualRev = (TextView) findViewById(R.id.tvManualRev);
         webview = (WebView) findViewById(R.id.webview);
+        pdfViewK9=findViewById(R.id.pdfView);
     }
 
     //load layout
@@ -137,6 +141,18 @@ public class ManualActivity extends AppCompatActivity {
         // initializing our pdf view.
         //pdfView = findViewById(R.id.idPDFView);
         new RetrivePDFfromUrl().execute(pdfurl);
+    }
+
+    private void loadPdf(){
+        try {
+            if(pdfViewK9!=null){
+                pdfViewK9.fromAsset("k9_pxz_3_2_6.pdf").load();
+            }
+
+
+        }catch (Exception e){
+            Log.d(TAG, "loadPdf: ex:"+e.getMessage());
+        }
     }
 
     //
@@ -209,7 +225,7 @@ public class ManualActivity extends AppCompatActivity {
             Log.d(TAG, "onPostExecute:after the execution of our async ");
             // after the execution of our async
             // task we are loading our pdf in our pdf view.
-            pdfView.fromStream(inputStream).load();
+            //pdfView.fromStream(inputStream).load();
         }
     }
 

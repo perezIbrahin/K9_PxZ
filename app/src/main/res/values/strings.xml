@@ -141,7 +141,6 @@
     <string name="menu_about">About</string>
 
 
-
     <!-- MCU ERROR -->
     <string name="k9_i2c_error">Bus I2C error on K9</string>
     <string name="k9_mcu_error">MCU error on K9</string>

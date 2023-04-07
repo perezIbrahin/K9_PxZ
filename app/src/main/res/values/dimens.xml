@@ -126,4 +126,20 @@
     <dimen name="dim_btn_SR_H">160dp</dimen>
     <dimen name="dim_btn_SR_W">160dp</dimen>
 
+    <!--ssize buttons main menu-->
+    <dimen name="btn_nav_W">100dp</dimen>
+    <dimen name="btn_nav_H">95dp</dimen>
+
+    <dimen name="btn_nav_W1">160dp</dimen>
+    <dimen name="btn_nav_H1">150dp</dimen>
+
+    <dimen name="btn_nav_W2">120dp</dimen>
+    <dimen name="btn_nav_H2">100dp</dimen>
+
+    <dimen name="btn_nav_W3">100dp</dimen>
+    <dimen name="btn_nav_H3">80dp</dimen>
+
+    <dimen name="btn_text_menu">17sp</dimen>
+
+
 </resources>

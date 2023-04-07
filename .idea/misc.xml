@@ -44,9 +44,11 @@
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_burning_rutine.xml" value="0.34455128205128205" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_hardware.xml" value="0.19010416666666666" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_info.xml" value="0.1" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_k750.xml" value="0.16419141914191418" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_k9.xml" value="0.16377171215880892" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_location.xml" value="0.26484375" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_main.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_main_k9_k750.xml" value="0.22161458333333334" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_manual.xml" value="0.2" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_percussion.xml" value="0.21527117031398668" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/activity_scan.xml" value="0.21890547263681592" />
@@ -70,6 +72,7 @@
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/layout_load_system.xml" value="0.515625" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/layout_loading_system.xml" value="0.25" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/layout_main_page.xml" value="0.3348783314020857" />
+        <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/layout_main_page_k9_k750.xml" value="0.16233498349834982" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/layout_percussion_vibration.xml" value="0.3" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/layout_sleep.xml" value="0.3" />
         <entry key="..\:/Users/Fain/RepositoryAndroid/K9_PxZ/app/src/main/res/layout/layout_therapy_complete.xml" value="0.22684352517985612" />

@@ -259,4 +259,8 @@
     </string-array>
     <string name="string_text_pv_tv_int">Intensity</string>
 
+    <!-- K750 -->
+    <string name="string_k750_title">HOSPITAL BED FRAME</string>
+    <string name="string_k750_main_btn">K750</string>
+
 </resources>

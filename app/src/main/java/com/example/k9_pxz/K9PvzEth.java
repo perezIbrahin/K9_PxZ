@@ -262,6 +262,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private String dialogUnderCurrent = "0";
     private String dialogOverCurrent = "0";
     private String dialogAutoSleep = "0";
+    private String dialogSoppingWait = "0";
 
     //serial number
     private String Serial_Number_Product = "12PV123456";
@@ -329,7 +330,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //sleep mode automatic
     private boolean isSleepMode = false;
-    private int MAX_AUTO_SLEEP = 60;//counter sleep mode
+    private int MAX_AUTO_SLEEP = 600;//counter sleep mode
     private int autoSleepCounter = MAX_AUTO_SLEEP;
 
     //system ready
@@ -947,6 +948,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         dialogMissTra = resources.getString(R.string.string_text_check_transdA);
         dialogMissTrb = resources.getString(R.string.string_text_check_transdB);
         dialogAutoSleep = resources.getString(R.string.string_sleep_question);
+        dialogSoppingWait= resources.getString(R.string.string_text_dial_stoping);
 
         //check if percussion or Percussion/Vibration
         typeOfTherapy = selectTypeOfTherapy(resources, Serial_Number_Product);
@@ -1132,14 +1134,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                   // updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_FREQ1) {
                     updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
 
                 } else if (value == setPoints.INT_BLE_SP_FREQ2) {
                     updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
@@ -1147,7 +1149,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
 
                 } else if (value == setPoints.INT_BLE_SP_FREQ3) {
                     updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
@@ -1155,28 +1157,28 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_FREQ4) {
                     updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_FREQ5) {
                     updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
-                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_FREQ_MAX) {
                     updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                    //updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                 } else {
                     Log.d(TAG, "updateButtonsFrequencyF: empty");
                 }
@@ -1202,49 +1204,49 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_INT1) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_INT2) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_INT3) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_INT4) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_INT5) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
-                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    //updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_INT_MAX) {
                     updateRecyclerViewI(0, default_values.DEF_INT1, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(1, default_values.DEF_INT2, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
-                    updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                   // updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                 }
                 updateGUIRecyclerViewI();
             } catch (Exception e) {
@@ -2708,6 +2710,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         if (!isLockScreen || isTherapyOn) {
             cancelReady();
         }
+
     }
 
     //stop system by alarm
@@ -3193,6 +3196,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             case 2:
                 if (enable) {
                     sendTCP(spEth.k9_op_3);//stop
+                    //text stopping wait
+                    notificationSystemStoppingWait();
                 }
                 break;
         }
@@ -3216,7 +3221,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private void sendSpVibration() {
         sendTCP(spEth.k9_md_2);//mode vibration
     }
-
 
     //send mode Total percussion
     private void sendSpTotalPercussion() {
@@ -3531,12 +3535,22 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 // Stuff that updates the UI
                 //k9Alert.alertDialogSystemEmergencyStop(dialogEmergStop, dialogConfirmLang);
                 k9Alert.alertDialogAutoSleep(dialogAutoSleep, dialogConfirmLang, dialogCancelLang);
-
-
             }
         });
     }
 
+    //notification stopping wait
+    private void notificationSystemStoppingWait() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Stuff that updates the UI
+                //k9Alert.alertDialogSystemEmergencyStop(dialogEmergStop, dialogConfirmLang);
+                k9Alert.alertDialogStoppingWait(dialogSoppingWait, dialogConfirmLang, dialogCancelLang);
+            }
+        });
+
+    }
 
     /**********************************************
      * Alert dialog
@@ -4232,6 +4246,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     private void waitReadyConditions() {
         Toast.makeText(getApplicationContext(), "Wait...", Toast.LENGTH_SHORT).show();
+
+
     }
 
     /**********************************************

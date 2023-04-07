@@ -122,10 +122,10 @@
         android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
+        app:layout_constraintTop_toBottomOf="@+id/ivIturnLogo" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/ivKapLogo"
         android:layout_width="169dp"
         android:layout_height="43dp"
         app:layout_constraintBottom_toTopOf="@+id/tvRev"
@@ -142,24 +142,24 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView9"
+        android:id="@+id/ivIturnLogo"
         android:layout_width="@dimen/dim_icon_logoa_W"
         android:layout_height="@dimen/dim_icon_logoa_H"
         android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/imageView10"
+        app:layout_constraintEnd_toEndOf="@+id/ivItuenr"
         app:layout_constraintHorizontal_bias="0.467"
-        app:layout_constraintStart_toStartOf="@+id/imageView10"
+        app:layout_constraintStart_toStartOf="@+id/ivItuenr"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         app:srcCompat="@drawable/iturn" />
 
     <ImageView
-        android:id="@+id/imageView10"
+        android:id="@+id/ivItuenr"
         android:layout_width="@dimen/dim_icon_logo_W"
         android:layout_height="40dp"
         app:layout_constraintBottom_toTopOf="@+id/tvTherapyName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView9"
+        app:layout_constraintTop_toBottomOf="@+id/ivIturnLogo"
         app:layout_constraintVertical_bias="0.097"
         app:srcCompat="@drawable/iturna" />
 
@@ -192,9 +192,9 @@
         android:textColor="#FF8A65"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/imageView2"
-        app:layout_constraintEnd_toEndOf="@+id/imageView9"
-        app:layout_constraintStart_toStartOf="@+id/imageView9" />
+        app:layout_constraintBottom_toTopOf="@+id/ivKapLogo"
+        app:layout_constraintEnd_toEndOf="@+id/ivIturnLogo"
+        app:layout_constraintStart_toStartOf="@+id/ivIturnLogo" />
 
     <TextView
         android:id="@+id/tvDatem"

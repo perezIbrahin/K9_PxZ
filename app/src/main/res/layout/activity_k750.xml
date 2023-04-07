@@ -278,9 +278,9 @@
                                 android:layout_marginStart="16dp"
                                 android:text="Patient ID:"
                                 android:textSize="18sp"
-                                app:layout_constraintBottom_toBottomOf="@+id/imageView10"
-                                app:layout_constraintStart_toEndOf="@+id/imageView10"
-                                app:layout_constraintTop_toTopOf="@+id/imageView10" />
+                                app:layout_constraintBottom_toBottomOf="@+id/ivItuenr"
+                                app:layout_constraintStart_toEndOf="@+id/ivItuenr"
+                                app:layout_constraintTop_toTopOf="@+id/ivItuenr" />
 
                             <TextView
                                 android:id="@+id/tvNotification"
@@ -297,7 +297,7 @@
                                 app:layout_constraintVertical_bias="1.0" />
 
                             <ImageView
-                                android:id="@+id/imageView10"
+                                android:id="@+id/ivItuenr"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
@@ -310,9 +310,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="16dp"
-                                app:layout_constraintEnd_toEndOf="@+id/imageView10"
-                                app:layout_constraintStart_toStartOf="@+id/imageView10"
-                                app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+                                app:layout_constraintEnd_toEndOf="@+id/ivItuenr"
+                                app:layout_constraintStart_toStartOf="@+id/ivItuenr"
+                                app:layout_constraintTop_toBottomOf="@+id/ivItuenr" />
 
                             <TextView
                                 android:id="@+id/textView23"

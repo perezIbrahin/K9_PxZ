@@ -326,7 +326,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
 
     //alarm
     private boolean isAlarm = true;
-    private boolean isAlarmUc=false;//flag alarm under current
+    private boolean isAlarmUc = false;//flag alarm under current
     private long TIMER_WACHT_DOG = 20000;
 
     //wachtDog
@@ -3240,7 +3240,7 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
         } else if (description.equalsIgnoreCase(utilDialog.THERAPY_DONE)) {
             Log.d(TAG, "onItemSetupInfo: THERAPY_DONE");
 
-        }else if(description.equalsIgnoreCase(utilDialog.LOCATION_ACK_CON_FAIL)){
+        } else if (description.equalsIgnoreCase(utilDialog.LOCATION_ACK_CON_FAIL)) {
             //counterFail=0;
         }
     }
@@ -4230,7 +4230,6 @@ public class VibrationPercussionActivity extends AppCompatActivity implements Vi
             }
         });
     }
-
 
     //set alarm
     private void setAlarmEmerg(boolean input) {

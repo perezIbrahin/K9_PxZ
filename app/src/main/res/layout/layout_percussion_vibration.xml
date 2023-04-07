@@ -684,4 +684,14 @@
         app:layout_constraintStart_toStartOf="@+id/LLRbB"
         app:layout_constraintTop_toTopOf="@+id/textView3" />
 
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="@dimen/dim_select_pv_W"
+        android:layout_height="@dimen/dim_select_pv_H"
+        app:layout_constraintBottom_toBottomOf="@+id/btnLockOp"
+        app:layout_constraintEnd_toStartOf="@+id/LLInt"
+        app:layout_constraintStart_toEndOf="@+id/LLTime"
+        app:layout_constraintTop_toTopOf="@+id/btnLockOp"
+        app:srcCompat="@drawable/iturn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

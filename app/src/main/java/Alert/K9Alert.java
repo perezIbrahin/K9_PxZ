@@ -906,4 +906,117 @@ public class K9Alert extends AppCompatActivity {
             Log.d(TAG, "alertDialogAutoSleep: " + e.getMessage());
         }
     }
+
+    //After stop Wait
+    public void alertDialogStoppingWait(String title, String confirm, String cancel) {
+        CountDownTimer countDownTimer ;
+
+        try {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_dialog_wait, null);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setView(promptsView);
+            alertDialogBuilder.setCancelable(false);
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDilgWaitRev);
+            tvRev.setText(rev.APP_REV_PAGE_59);
+
+
+            //get text view for dialog
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvTextDialogWait);
+            //set text
+            if (title != null) {
+                tvTextDialogSR.setText(title);
+            }
+            //text timer
+            final TextView tvTextDialogTimer = (TextView) promptsView
+                    .findViewById(R.id.tvCounterWait);
+
+
+            countDownTimer=new CountDownTimer(5000,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    Log.d(TAG, "onTick  countDownTimer: "+millisUntilFinished/1000);
+                    int value=(int)millisUntilFinished/1000;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(tvTextDialogTimer!=null){
+                                if(value>0){
+                                    Log.d(TAG, "onTick  countDownTimer int: "+value);
+                                    tvTextDialogTimer.setText((String.valueOf(value)));
+                                }else{
+                                    Log.d(TAG, "onTick  countDownTimer int: "+"0");
+                                    tvTextDialogTimer.setText("0");
+                                }
+                            }
+                        }
+                    });
+
+
+                }
+
+                @Override
+                public void onFinish() {
+                    alertDialog.dismiss();
+                }
+            }.start();
+            /*
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnSleepConfirm );
+            final Button btnCancel = (Button) promptsView.findViewById(R.id.btnSleepCancel);
+
+            //set text buttons with language confirm
+            if (btnConf != null) {
+                btnConf.setText(confirm);
+            }
+
+            //set text buttons with language cancel
+            if (btnCancel != null) {
+                btnCancel.setText(cancel);
+            }*/
+
+            /*
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_AUTO_SLEEP", util_dialog.LOCATION_AUTO_SLEEP);
+                            alertDialog.dismiss();
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogAutoSleep: ex:" + e.getMessage());
+                }
+            }*/
+
+            /*
+            //button cancel
+            if (btnCancel != null) {
+                try {
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertDialog.dismiss();
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogAutoSleep: ex:" + e.getMessage());
+                }
+            }*/
+
+            // show it
+            alertDialog.show();
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogStopping wait: " + e.getMessage());
+        }
+    }
 }

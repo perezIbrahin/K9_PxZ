@@ -89,6 +89,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/ivKapLogo"
+                android:layout_width="300dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="28dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/kap_logo2" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
@@ -98,7 +111,6 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_margin="10dp"
-        android:layout_marginBottom="92dp"
         android:background="@drawable/btn_main"
         android:drawableBottom="@drawable/ic_baseline_lock_open_48"
         android:elevation="10dp"
@@ -106,7 +118,7 @@
         android:text="@string/string_name_btn_main"
         android:textColor="@color/colorBlueGrey"
         android:textSize="@dimen/dim_text_btn_main"
-        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,15 +136,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="169dp"
-        android:layout_height="43dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvRev"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/logo_kap" />
+        app:layout_constraintTop_toBottomOf="@+id/ivIturnLogo" />
 
     <TextView
         android:id="@+id/tvRev"
@@ -144,18 +148,20 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView9"
+        android:id="@+id/ivIturnLogo"
         android:layout_width="@dimen/dim_icon_logoa_W"
         android:layout_height="@dimen/dim_icon_logoa_H"
         android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/imageView10"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="@+id/ivItuenr"
         app:layout_constraintHorizontal_bias="0.467"
-        app:layout_constraintStart_toStartOf="@+id/imageView10"
+        app:layout_constraintStart_toStartOf="@+id/ivItuenr"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
         app:srcCompat="@drawable/iturn" />
 
     <ImageView
-        android:id="@+id/imageView10"
+        android:id="@+id/ivItuenr"
         android:layout_width="@dimen/dim_icon_logo_W"
         android:layout_height="40dp"
         app:layout_constraintBottom_toTopOf="@+id/tvTherapyName"

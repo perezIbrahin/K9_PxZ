@@ -3,6 +3,7 @@ package com.example.k9_pxz;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -80,6 +81,7 @@ import Util.DisplayOperations;
 import Util.IntToArray;
 import Util.Key_Util;
 import Util.LocaleHelper;
+import Util.Modes;
 import Util.RecyclerLocations;
 import Util.Rev;
 import Util.SetPoints;
@@ -337,7 +339,21 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private boolean isReadyOperate = true;
 
     //visible code
-    private boolean isVisibleCode=false;
+    private boolean isVisibleCode = false;
+
+
+    //load configuration
+    private int positionSample = 0;
+    private boolean conditionsSample = true;
+    private int iSample;
+
+    //save setpoints
+    private int SP_FREQ = 0;
+    private int SP_INT = 0;
+    private int SP_TIM = 0;
+    private int SP_TRA = 0;
+    private int SP_TRB = 0;
+    private int SP_MODE = 0;
 
 
     @Override
@@ -377,6 +393,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         displayDate();
         //orientation of the screen landscape
         setOrientationLandscape();
+        //load settings
+        loadPreferences();
+        //send the last configuration
+        loadLastConfig();
     }
 
     @Override
@@ -391,11 +411,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause: ");
+        savePreferences();
         super.onPause();
     }
 
     @Override
     protected void onStop() {
+        Log.d(TAG, "onStop: ");
         super.onStop();
         //cancel timer to request status from host
         cancelRequestStatus();
@@ -403,7 +426,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
         super.onDestroy();
+        // savePreferences();
     }
 
     /**********************************************
@@ -506,6 +531,65 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     }
 
+    //get settings
+    private void getSettings(int value) {
+        switch (value) {
+            case 0:
+                iSample++;
+                break;
+            case 1:
+                positionSample = SP_FREQ;
+                Log.d(TAG, "run: delay freq:" + SP_FREQ);
+                sendSpFreq(positionSample, false);
+                iSample++;
+                break;
+            case 2:
+                positionSample = SP_INT;
+                Log.d(TAG, "run: delay int:" + SP_INT);
+                sendSpInt(positionSample, false);
+                iSample++;
+                break;
+            case 3:
+                positionSample = SP_TIM;
+                sendSpTime(positionSample, false);
+                iSample++;
+                break;
+            case 4:
+                positionSample=SP_MODE;
+                sendModes( SP_MODE);
+                iSample++;
+                break;
+            case 5:
+                positionSample = SP_TRA;
+                Log.d(TAG, "getSettings:SP_TRA "+SP_TRA);
+                sendSpRBA(positionSample, false);
+                iSample++;
+                break;
+            case 6:
+                positionSample = SP_TRB;
+                Log.d(TAG, "getSettings:SP_TRB: "+SP_TRB);
+                sendSpRBB(positionSample, false);
+                iSample++;
+                break;
+        }
+
+    }
+
+    //load last configuration
+    private void loadLastConfig() {
+
+        for (int i = 0; i < 7; i++) {
+            Handler handlerDelay = new Handler();
+            handlerDelay.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG, "run:  iSample:" + iSample);
+                    getSettings(iSample);
+                }
+            }, 1000 * i);
+        }
+    }
+
     /**********************************************
      *Interface
      */
@@ -571,14 +655,17 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_FREQ)) {
                 //send data of freq
                 sendSpFreq(position, conditions);//isTherapyOn
+                SP_FREQ = position;//save in memory last update
             } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_INT)) {
                 Log.d(TAG, "onItemPostSelect: int");
                 //send data of Int
                 sendSpInt(position, conditions);
+                SP_INT = position;//save in memory last update
             } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_VIB_TIM)) {
                 Log.d(TAG, "onItemPostSelect: time");
                 //send data of Time
                 sendSpTime(position, conditions);
+                SP_TIM = position;//save in memory last update
             } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_A)) {
                 if (!isTotalBody(mode)) {
                     Log.d(TAG, "onItemPostSelect: mem a:memoryTransdA:" + memoryTransdA + ".position:" + position);
@@ -587,6 +674,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                         memoryTransdA = position;
                         //do not accept commands manualy is total body
                         sendSpRBA(position, conditions);
+                        SP_TRA = position;//save in memory last update
                     } else {
                         //clean flag
                         cleanSelectedTrandA(conditions);
@@ -602,6 +690,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                         memoryTransdB = position;
                         //do not accept commands manualy is total body
                         sendSpRBB(position, conditions);
+                        SP_TRB = position;//save in memory last update
                     } else {
                         //clean flag
                         cleanSelectedTrandB(conditions);
@@ -948,7 +1037,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         dialogMissTra = resources.getString(R.string.string_text_check_transdA);
         dialogMissTrb = resources.getString(R.string.string_text_check_transdB);
         dialogAutoSleep = resources.getString(R.string.string_sleep_question);
-        dialogSoppingWait= resources.getString(R.string.string_text_dial_stoping);
+        dialogSoppingWait = resources.getString(R.string.string_text_dial_stoping);
 
         //check if percussion or Percussion/Vibration
         typeOfTherapy = selectTypeOfTherapy(resources, Serial_Number_Product);
@@ -1134,7 +1223,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewF(2, default_values.DEF_FREQ3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(3, default_values.DEF_FREQ4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewF(4, default_values.DEF_FREQ5, default_values.DEF_STATUS_UNCHECKED, null);
-                   // updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
+                    // updateRecyclerViewF(5, default_values.DEF_FREQ_MAX, default_values.DEF_STATUS_UNCHECKED, null);
                 } else if (value == setPoints.INT_BLE_SP_FREQ1) {
                     updateRecyclerViewF(0, default_values.DEF_FREQ1, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                     updateRecyclerViewF(1, default_values.DEF_FREQ2, default_values.DEF_STATUS_UNCHECKED, null);
@@ -1246,7 +1335,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     updateRecyclerViewI(2, default_values.DEF_INT3, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(3, default_values.DEF_INT4, default_values.DEF_STATUS_UNCHECKED, null);
                     updateRecyclerViewI(4, default_values.DEF_INT5, default_values.DEF_STATUS_UNCHECKED, null);
-                   // updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
+                    // updateRecyclerViewI(5, default_values.DEF_INT_MAX, default_values.DEF_STATUS_CHECKED, getDrawable(R.drawable.ic_baseline_circle_32));
                 }
                 updateGUIRecyclerViewI();
             } catch (Exception e) {
@@ -2865,11 +2954,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     @Override
     public void onClick(View v) {
+        Modes modes = new Modes();
         // resetSleepMode();//rset sleep mode
         if (btnStart == v) {
             if (!isAlarm) {
                 if (!isLockScreen) {
-
                     if (isReadyOperate) {//added 02/24/23//wait until step down finished
                         if (memoryTransdA == -1 && memoryTransdB == -1) {
                             flagIsTRA = false;
@@ -2905,18 +2994,18 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 if (isLockMode == false) {
                     if (!isLockScreen) {
                         //added 02/23/23
-
                         if (isReadyOperate) {//added 02/24/23//wait until step down finished
                             if (mode != status.SELECT_MODE_PERCUSSION) {
                                 mode = selectMode(status.SELECT_MODE_PERCUSSION);
                                 Log.d(TAG, "onClick: mode percussion");
-                                sendSpPercussion();
+                                //sendSpPercussion();
+                                SP_MODE = modes.MODE_PERC;
+                                sendModes(SP_MODE);
+
                             }
                         } else {
                             waitReadyConditions();
                         }
-
-
                     }
                 }
             }
@@ -2929,7 +3018,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                             if (mode != status.SELECT_MODE_VIBRATION) {
                                 mode = selectMode(status.SELECT_MODE_VIBRATION);
                                 Log.d(TAG, "onClick: mode vibration");
-                                sendSpVibration();
+                                //sendSpVibration();
+                                SP_MODE = modes.MODE_VIB;
+                                sendModes(SP_MODE);
                             }
                         } else {
                             waitReadyConditions();
@@ -2949,7 +3040,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                             waitReadyConditions();
                         }
                         if (mode != status.SELECT_MODE_TOTAL_PERCUSSION) {
-                            sendSpTotalPercussion();
+                            //sendSpTotalPercussion();
+                            SP_MODE = modes.MODE_FULL_PERC;
+                            sendModes(SP_MODE);
                         }
 
                         //mode = selectMode(status.SELECT_MODE_TOTAL_PERCUSSION);
@@ -2963,7 +3056,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     if (!isLockScreen) {
                         if (isReadyOperate) {//added 02/24/23//wait until step down finished
                             if (mode != status.SELECT_MODE_TOTAL_VIBRATION) {
-                                sendSpTotalVibration();
+                                //sendSpTotalVibration();
+                                SP_MODE = modes.MODE_TOTAL_VIB;
+                                sendModes(SP_MODE);
                             }
                             //mode = selectMode(status.SELECT_MODE_TOTAL_VIBRATION);
                         } else {
@@ -2975,14 +3070,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             }
         } else if (clPercussionVib == v) {
             resetSleepMode();
-        }else if(tvRev==v){
-            if(isVisibleCode){
+        } else if (tvRev == v) {
+            if (isVisibleCode) {
                 tvCurrent.setVisibility(View.INVISIBLE);
-                isVisibleCode=false;
+                isVisibleCode = false;
                 return;
-            }else {
+            } else {
                 tvCurrent.setVisibility(View.VISIBLE);
-                isVisibleCode=true;
+                isVisibleCode = true;
                 return;
             }
         }
@@ -3212,9 +3307,30 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
     }
 
+    //send modes
+    private int sendModes(int modes) {
+
+        switch (modes) {
+            case 1:
+                sendTCP(spEth.k9_md_1);//mode percussion
+                break;
+            case 2:
+                sendTCP(spEth.k9_md_2);//mode vibration
+                break;
+            case 3:
+                sendTCP(spEth.k9_md_3);//mode full percussion
+                break;
+            case 4:
+                sendTCP(spEth.k9_md_4);//mode total vibration
+                break;
+        }
+        return modes;
+    }
+
     //send mode percussion
     private void sendSpPercussion() {
         sendTCP(spEth.k9_md_1);//mode percussion
+        SP_MODE = 1;
     }
 
     //send mode vibration
@@ -3943,7 +4059,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 } else if (substrPayload.contains(messageEth.PAYLOAD_ETH_TB)) {//Transd-B
                     isFlagMcuReady = true;
                     resetCheckBockB();
-
                     updateFbRBb(mode, myNum);
                     beepSound();
                     return;
@@ -4246,9 +4361,38 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     private void waitReadyConditions() {
         Toast.makeText(getApplicationContext(), "Wait...", Toast.LENGTH_SHORT).show();
-
-
     }
+
+    /**********************************************
+     *SAVE PREFERENCES
+     */
+    private void savePreferences() {
+        SharedPreferences sharedPref = getSharedPreferences(keyUtil.KEY_SETTINGS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(keyUtil.KEY_FREQ, SP_FREQ);
+        editor.putInt(keyUtil.KEY_INT, SP_INT);
+        editor.putInt(keyUtil.KEY_TIME, SP_TIM);
+        editor.putInt(keyUtil.KEY_TRA, SP_TRA);
+        editor.putInt(keyUtil.KEY_TTRB, SP_TRB);
+        editor.putInt(keyUtil.KEY_MODE, SP_MODE);
+        editor.commit();
+        Log.d(TAG, "savePreferences: freq:" + SP_FREQ);
+    }
+
+    /**********************************************
+     *LOAD PREFERENCES
+     */
+    private void loadPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences(keyUtil.KEY_SETTINGS, MODE_PRIVATE);
+        SP_FREQ = sharedPref.getInt(keyUtil.KEY_FREQ, 0);
+        SP_INT = sharedPref.getInt(keyUtil.KEY_INT, 0);
+        SP_TIM = sharedPref.getInt(keyUtil.KEY_TIME, 0);
+        SP_TRA = sharedPref.getInt(keyUtil.KEY_TRA, 0);
+        SP_TRB = sharedPref.getInt(keyUtil.KEY_TTRB, 0);
+        SP_MODE = sharedPref.getInt(keyUtil.KEY_MODE, 0);
+        Log.d(TAG, "loadPreferences: freq:" + (String.valueOf(SP_FREQ)));
+    }
+
 
     /**********************************************
      *

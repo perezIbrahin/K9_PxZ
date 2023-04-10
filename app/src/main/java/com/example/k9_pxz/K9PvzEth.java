@@ -330,7 +330,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //sleep mode automatic
     private boolean isSleepMode = false;
-    private int MAX_AUTO_SLEEP = 600;//counter sleep mode
+    private int MAX_AUTO_SLEEP = 256;//counter sleep mode
     private int autoSleepCounter = MAX_AUTO_SLEEP;
 
     //system ready

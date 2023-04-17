@@ -2,11 +2,7 @@ package Model;
 
 public class ModelBurn {
     private String modName;
-    private String modFreq;
-    private String modTime;
-    private String modInt;
-    private String modCycles;
-    private String modStatus;
+    private String modSerial;
 
     public String getModName() {
         return modName;
@@ -14,6 +10,22 @@ public class ModelBurn {
 
     public void setModName(String modName) {
         this.modName = modName;
+    }
+
+    public String getModSerial() {
+        return modSerial;
+    }
+
+    public void setModSerial(String modSerial) {
+        this.modSerial = modSerial;
+    }
+
+    public String getModDesc() {
+        return modDesc;
+    }
+
+    public void setModDesc(String modDesc) {
+        this.modDesc = modDesc;
     }
 
     public String getModFreq() {
@@ -40,13 +52,52 @@ public class ModelBurn {
         this.modInt = modInt;
     }
 
-    public String getModCycles() {
-        return modCycles;
+
+    public String getModStart() {
+        return modStart;
     }
 
-    public void setModCycles(String modCycles) {
-        this.modCycles = modCycles;
+    public void setModStart(String modStart) {
+        this.modStart = modStart;
     }
+
+    public String getModEnd() {
+        return modEnd;
+    }
+
+    public void setModEnd(String modEnd) {
+        this.modEnd = modEnd;
+    }
+
+    private String modDesc;
+    //parameters
+    private String modFreq;
+    private String modTime;
+    private String modInt;
+    //module
+    private String modTransdA;
+
+    public String getModTransdA() {
+        return modTransdA;
+    }
+
+    public void setModTransdA(String modTransdA) {
+        this.modTransdA = modTransdA;
+    }
+
+    public String getModTransdB() {
+        return modTransdB;
+    }
+
+    public void setModTransdB(String modTransdB) {
+        this.modTransdB = modTransdB;
+    }
+
+    private String modTransdB;
+    //status
+    private String modStart;
+    private String modEnd;
+    private String modStatus;
 
     public String getModStatus() {
         return modStatus;

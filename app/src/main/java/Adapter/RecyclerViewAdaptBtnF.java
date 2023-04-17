@@ -52,6 +52,7 @@ public class RecyclerViewAdaptBtnF extends RecyclerView.Adapter<RecyclerViewAdap
         TextSize textSize=new TextSize();
 
         ModelBtn modelBtnFreq= modelArrayList.get(position);
+
         Log.d(TAG, "onBindViewHolder: "+modelArrayList.get(position).getBtnName());
         holder.button.setText(modelBtnFreq.getBtnName());
         holder.button.setCompoundDrawablesRelativeWithIntrinsicBounds(modelBtnFreq.getMenuDrawable(), null, null, null);

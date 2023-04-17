@@ -197,7 +197,8 @@
 
     <!-- dialog loading screen  button -->
     <string name="string_text_dial_stoping">System is stopping! Please wait.&quot;</string>
-    <string name="string_text_dial_loading">Loading. Please wait...&quot;</string>
+    <string name="string_text_dial_loading">System is loading! Please wait.&quot;</string>
+
     <string name="string_text_dial_enter_pass">Enter password : </string>
 
 

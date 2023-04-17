@@ -57,7 +57,7 @@ public class HardwareActivity extends AppCompatActivity {
     //init GUI
     private void  initGui(){
         tvTitle=findViewById(R.id.tvHardTitle);
-        tvRev=findViewById(R.id.tvSetHardRev);
+        tvRev=findViewById(R.id.tvConBurn);
 
         btnHome=findViewById(R.id.btnHardHome);
     }

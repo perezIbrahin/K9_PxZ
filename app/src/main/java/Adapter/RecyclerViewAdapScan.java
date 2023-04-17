@@ -81,7 +81,7 @@ public class RecyclerViewAdapScan extends RecyclerView.Adapter<RecyclerViewAdapS
             super(itemView);
             tvname=itemView.findViewById(R.id.tvBurnModule);
             tvUUid=itemView.findViewById(R.id.tvBurnFreq);
-            tvRssi=itemView.findViewById(R.id.tvBurnStatus);
+            tvRssi=itemView.findViewById(R.id.tvModule);
         }
 
 

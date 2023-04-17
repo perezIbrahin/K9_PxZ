@@ -89,7 +89,7 @@
                         tools:layout_editor_absoluteY="12dp" />
 
                     <TextView
-                        android:id="@+id/tvSetHardRev"
+                        android:id="@+id/tvConBurn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="link"

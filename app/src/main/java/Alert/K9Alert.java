@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -937,8 +938,78 @@ public class K9Alert extends AppCompatActivity {
             final TextView tvTextDialogTimer = (TextView) promptsView
                     .findViewById(R.id.tvCounterWait);
 
+            //prograess bar
+            final ProgressBar progressBar=(ProgressBar) promptsView.findViewById(R.id.pbWait);
+            progressBar.setMax(5000);
+
 
             countDownTimer=new CountDownTimer(5000,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    Log.d(TAG, "onTick  countDownTimer: "+millisUntilFinished/1000);
+                    int value=(int)millisUntilFinished/1;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(tvTextDialogTimer!=null){
+                                if(value>0){
+                                    Log.d(TAG, "onTick  countDownTimer int: "+value);
+                                    tvTextDialogTimer.setText((String.valueOf(value)));
+                                    progressBar.setProgress(value);
+                                }else{
+                                    Log.d(TAG, "onTick  countDownTimer int: "+"0");
+                                    tvTextDialogTimer.setText("0");
+                                }
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onFinish() {
+                    alertDialog.dismiss();
+                }
+            }.start();
+
+            // show it
+            alertDialog.show();
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogStopping wait: " + e.getMessage());
+        }
+    }
+
+    //After stop Wait
+    public void alertDialogLoading(String title, String confirm, String cancel) {
+        CountDownTimer countDownTimer ;
+
+        try {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_dialog_loading, null);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setView(promptsView);
+            alertDialogBuilder.setCancelable(false);
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            //set the revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDilgLoadRev);
+            tvRev.setText(rev.APP_REV_PAGE_60);
+
+
+            //get text view for dialog
+            final TextView tvTextDialogSR = (TextView) promptsView
+                    .findViewById(R.id.tvTextDialogLoad);
+            //set text
+            if (title != null) {
+                tvTextDialogSR.setText(title);
+            }
+            //text timer
+            final TextView tvTextDialogTimer = (TextView) promptsView
+                    .findViewById(R.id.tvCounterLoad);
+
+
+            countDownTimer=new CountDownTimer(7000,1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     Log.d(TAG, "onTick  countDownTimer: "+millisUntilFinished/1000);
@@ -957,8 +1028,6 @@ public class K9Alert extends AppCompatActivity {
                             }
                         }
                     });
-
-
                 }
 
                 @Override
@@ -966,52 +1035,6 @@ public class K9Alert extends AppCompatActivity {
                     alertDialog.dismiss();
                 }
             }.start();
-            /*
-            //get buttons
-            final Button btnConf = (Button) promptsView.findViewById(R.id.btnSleepConfirm );
-            final Button btnCancel = (Button) promptsView.findViewById(R.id.btnSleepCancel);
-
-            //set text buttons with language confirm
-            if (btnConf != null) {
-                btnConf.setText(confirm);
-            }
-
-            //set text buttons with language cancel
-            if (btnCancel != null) {
-                btnCancel.setText(cancel);
-            }*/
-
-            /*
-            //button confirm
-            if (btnConf != null) {
-                try {
-                    btnConf.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_AUTO_SLEEP", util_dialog.LOCATION_AUTO_SLEEP);
-                            alertDialog.dismiss();
-                        }
-                    });
-
-                } catch (Exception e) {
-                    Log.d(TAG, "alertDialogAutoSleep: ex:" + e.getMessage());
-                }
-            }*/
-
-            /*
-            //button cancel
-            if (btnCancel != null) {
-                try {
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            alertDialog.dismiss();
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.d(TAG, "alertDialogAutoSleep: ex:" + e.getMessage());
-                }
-            }*/
 
             // show it
             alertDialog.show();

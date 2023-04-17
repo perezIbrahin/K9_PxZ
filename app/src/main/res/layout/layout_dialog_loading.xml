@@ -11,14 +11,14 @@
         android:id="@+id/imageView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTextDialogWait"
-        app:layout_constraintEnd_toEndOf="@+id/tvTextDialogWait"
-        app:layout_constraintStart_toStartOf="@+id/tvTextDialogWait"
+        android:layout_marginBottom="56dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTextDialogLoad"
+        app:layout_constraintEnd_toEndOf="@+id/tvTextDialogLoad"
+        app:layout_constraintStart_toStartOf="@+id/tvTextDialogLoad"
         app:srcCompat="@drawable/ic_baseline_timelapse_57" />
 
     <TextView
-        android:id="@+id/tvDilgWaitRev"
+        android:id="@+id/tvDilgLoadRev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="rev"
@@ -26,10 +26,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvTextDialogWait"
+        android:id="@+id/tvTextDialogLoad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/string_text_dial_stoping"
+        android:text="@string/string_text_dial_loading"
         android:textAlignment="center"
         android:textSize="@dimen/dim_text_dialog_siderail"
         android:textStyle="bold"
@@ -39,26 +39,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvCounterWait"
+        android:id="@+id/tvCounterLoad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="0"
         android:textSize="@dimen/dim_text_dialog_siderail"
         android:textStyle="bold"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="@+id/tvTextDialogWait"
-        app:layout_constraintStart_toStartOf="@+id/tvTextDialogWait"
-        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogWait" />
-
-    <ProgressBar
-        android:id="@+id/pbWait"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="20sp"
-        android:layout_marginTop="44dp"
-        app:layout_constraintEnd_toEndOf="@+id/tvTextDialogWait"
-        app:layout_constraintStart_toStartOf="@+id/tvTextDialogWait"
-        app:layout_constraintTop_toBottomOf="@+id/tvCounterWait" />
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/tvTextDialogLoad"
+        app:layout_constraintStart_toStartOf="@+id/tvTextDialogLoad"
+        app:layout_constraintTop_toBottomOf="@+id/tvTextDialogLoad" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

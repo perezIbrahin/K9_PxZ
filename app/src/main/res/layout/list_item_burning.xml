@@ -15,131 +15,194 @@
         android:layout_margin="5dp"
         android:padding="5dp">
 
-        <ImageView
-            android:id="@+id/imageView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:adjustViewBounds="true"
-            app:layout_constraintBottom_toBottomOf="@+id/tvBurnStatus"
-            app:layout_constraintEnd_toStartOf="@+id/tvBurnStatus"
-            app:layout_constraintTop_toTopOf="@+id/tvBurnStatus"
-            app:layout_constraintVertical_bias="0.62"
-            app:srcCompat="@drawable/ic_baseline_info_24" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteX="5dp"
+            tools:layout_editor_absoluteY="5dp">
 
-        <TextView
-            android:id="@+id/tvBurnModule"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:hint="Module"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/ivCloudStatus"
-            app:layout_constraintStart_toEndOf="@+id/ivCloudStatus"
-            app:layout_constraintTop_toTopOf="@+id/ivCloudStatus"
-            app:layout_constraintVertical_bias="1.0" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1.2"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvBurnFreq"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="F=30Hz"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvBurnModule"
-            app:layout_constraintTop_toBottomOf="@+id/tvBurnModule"
-            app:layout_constraintVertical_bias="1.0" />
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="INDEX:"
+                    android:textAllCaps="true"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/ivCloudStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintStart_toEndOf="@+id/divider3"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_developer_board_black_24dp" />
+                <View
+                    android:id="@+id/divider14"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="2dp"
+                    android:background="?android:attr/listDivider" />
 
-        <TextView
-            android:id="@+id/tvBurnStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:text="Pass"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvBurnModule" />
+                <TextView
+                    android:id="@+id/tvBurnIndex"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:text="0" />
+            </LinearLayout>
 
-        <View
-            android:id="@+id/divider3"
-            android:layout_width="2dp"
-            android:layout_height="103dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="5dp"
-            android:background="?android:attr/listDivider"
-            android:elevation="-5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/divider3"
-            app:layout_constraintEnd_toEndOf="@+id/divider3"
-            app:layout_constraintStart_toStartOf="@+id/divider3"
-            app:layout_constraintTop_toTopOf="@+id/divider3"
-            app:srcCompat="@drawable/ic_baseline_radio_button_checked_24" />
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Parameters:"
+                    android:textAllCaps="true"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvBurnTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="T=25min"
-            android:textSize="20sp"
-            android:typeface="normal"
-            app:layout_constraintBottom_toBottomOf="@+id/tvBurnFreq"
-            app:layout_constraintStart_toEndOf="@+id/tvBurnFreq"
-            app:layout_constraintTop_toTopOf="@+id/tvBurnFreq" />
+                <View
+                    android:id="@+id/divider12"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="2dp"
+                    android:background="?android:attr/listDivider" />
 
-        <TextView
-            android:id="@+id/tvBurnInt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="I=80%"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tvBurnTime"
-            app:layout_constraintStart_toEndOf="@+id/tvBurnTime"
-            app:layout_constraintTop_toTopOf="@+id/tvBurnTime" />
+                <TextView
+                    android:id="@+id/tvBurnFreq"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:hint="F(Hz)=35"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="normal" />
 
-        <TextView
-            android:id="@+id/tvBurnCycle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cycle=0"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tvBurnInt"
-            app:layout_constraintEnd_toEndOf="@+id/tvBurnStatus"
-            app:layout_constraintTop_toTopOf="@+id/tvBurnInt" />
+                <TextView
+                    android:id="@+id/tvBurnTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="T(min)=0"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="normal" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Parameters"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/tvBurnTime"
-            app:layout_constraintEnd_toEndOf="@+id/tvBurnInt"
-            app:layout_constraintStart_toStartOf="@+id/tvBurnFreq"
-            app:layout_constraintTop_toBottomOf="@+id/tvBurnModule" />
+                <TextView
+                    android:id="@+id/tvBurnInt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="I(%)=90"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvModule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Module:"
+                    android:textAllCaps="true"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/divider13"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="2dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/tvBurnModuleA"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="A1"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvBurnModuleB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="B1"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/TvStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Status:"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/divider3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="2dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:id="@+id/tvBurnCycleStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Status:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvBurnStartCycle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Start:"
+                    android:textColor="@color/googleGreen"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvBurnEndCycle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="End:"
+                    android:textColor="#E57373"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import Alert.CustomAlert;
 import Alert.K9Alert;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
@@ -38,6 +39,7 @@ import Util.Beep;
 import Util.Languages;
 import Util.LocaleHelper;
 import Util.Rev;
+import Util.Safety;
 import Util.Status;
 import Util.Util_Dialog;
 import Util.Validation;
@@ -189,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLanguage = (Spinner) findViewById(R.id.spinnerLang);
         tvTherapyName = findViewById(R.id.tvTherapyName);
         tvStatusScreen = findViewById(R.id.tvScreenStatus);
-        tvDatem=findViewById(R.id.tvDatem);
+        tvDatem = findViewById(R.id.tvDatem);
     }
 
     private boolean initApp() {
@@ -417,7 +419,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else if (v == btnMainSett) {
             if (!isLockScreenMain) {
-                launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");
+                CustomAlert customAlert;
+                Safety safety = new Safety();
+
+                customAlert = new CustomAlert(this, this);
+                customAlert.showDialog();
+                customAlert.showDialogLink(safety.PASS_QC);
+
+                ///launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");//working
             } else {
                 toastMessage();
             }
@@ -592,6 +601,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Status status = new Status();
         if (position == status.STATUS_SERIAL_LINK) {
             Serial_Number_Product = value;
+        } else if (position == status.STATUS_PASS) {
+          if(value== status.PASS_OK){
+              launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");//working
+          }
         }
 
     }
@@ -641,14 +654,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //set orientation
-    private void setOrientationLandscape(){
+    private void setOrientationLandscape() {
         try {
             int orientation = this.getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
-        }catch (Exception e){
-            Log.d(TAG, "setOrientationLandscape: ex:"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "setOrientationLandscape: ex:" + e.getMessage());
         }
     }
 
@@ -660,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     (new View.OnSystemUiVisibilityChangeListener() {
                         @Override
                         public void onSystemUiVisibilityChange(int visibility) {
-                            Log.d(TAG, "onSystemUiVisibilityChange: "+visibility);
+                            Log.d(TAG, "onSystemUiVisibilityChange: " + visibility);
                             // Note that system bars will only be "visible" if none of the
                             // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
                             if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
@@ -698,6 +711,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onItemSetupInfo(String name, String description) {
+        Log.d(TAG, "onItemSetupInfo:name " + name + "desc:" + description);
         if (description.equalsIgnoreCase(utilDialog.LOCATION_CONFIRM_LOCK)) {
 
             setLockScreen(getResourcesLanguage(language));
@@ -706,7 +720,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onItemSetupAlarm(String name, String description, String location) {
-
+        Log.d(TAG, "onItemSetupAlarm: name:" + name + "desc:" + description + ".location:" + location);
     }
 
     //get resources for the language
@@ -769,8 +783,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 btnMainLock.setCompoundDrawablesWithIntrinsicBounds(null, getDrawable(R.drawable.ic_baseline_lock_32), null, null);
                 displayStatusScreen(resources.getString(R.string.string_text_action_unlocked));
             }
-        }catch (Exception e){
-            Log.d(TAG, "displayLock: ex:"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "displayLock: ex:" + e.getMessage());
         }
     }
 
@@ -871,22 +885,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //dispay date
-    private void displayDate(){
+    private void displayDate() {
         try {
-            if(tvDatem!=null){
+            if (tvDatem != null) {
                 DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
                 String date = df.format(Calendar.getInstance().getTime());
-                if(date!=null){
+                if (date != null) {
                     tvDatem.setText(date);
                 }
             }
-        }catch (Exception e){
-            Log.d(TAG, "displayDate: ex:"+e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "displayDate: ex:" + e.getMessage());
         }
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent  motionEvent) {
+    public boolean onTouch(View v, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 handlerMain = new Handler();
@@ -928,7 +942,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return isLockScreenMain;
         }
         isLockScreenMain = false;
-       // updateLockScreen(status.SELECT_SCREEN_UNLOCK);
+        // updateLockScreen(status.SELECT_SCREEN_UNLOCK);
         //lockMode(isLockScreen);
         beepSound();
         displayLock(isLockScreenMain);

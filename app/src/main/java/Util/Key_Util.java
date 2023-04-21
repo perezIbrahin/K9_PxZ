@@ -31,6 +31,8 @@ public class Key_Util {
 
     //
     public String KEY_SETTINGS="KEY_SETTINGS";
+    public String KEY_SETTINGS2="KEY_SETTINGS2";
+
     public String KEY_FREQ="KEY_FREQ";
     public String KEY_INT="KEY_INT";
     public String KEY_TIME="KEY_TIME";
@@ -38,6 +40,8 @@ public class Key_Util {
     public String KEY_TTRB="KEY_TTRB";
     public String KEY_MODE="KEY_MODE";
 
+    public String KEY_SERIAL_NUMBER="KEY_SERIAL_NUMBER";
+    public String KEY_ID="KEY_ID";
 
 
 

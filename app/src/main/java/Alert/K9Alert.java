@@ -40,7 +40,6 @@ public class K9Alert extends AppCompatActivity {
     private Context contextLoc;
     private Resources resources;
 
-
     public K9Alert(InterfaceSetupInfo interfaceSetupInfo, Context context) {
         this.interfaceSetupInfo = interfaceSetupInfo;
         this.context = context;
@@ -304,6 +303,103 @@ public class K9Alert extends AppCompatActivity {
                     });
                 } catch (Exception e) {
                     Log.d(TAG, "alertDialogSiderail: ex:" + e.getMessage());
+                }
+            }
+
+
+            //alertDialogBuilder.setView(promptsView);
+
+            // set dialog message
+           /* alertDialogBuilder
+                    .setCancelable(false)
+
+                    .setNegativeButton("Confirm",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_SIDERAIL", util_dialog.LOCATION_CONFIRM_SIDERAIL);
+                                }
+                            })
+
+                    .setPositiveButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            }
+                    );*/
+
+            // show it
+            alertDialog.show();
+        } catch (Exception e) {
+            Log.d(TAG, "alertDialogSiderail: " + e.getMessage());
+        }
+    }
+
+    //Burn process end
+    public void alertDialogBurnEnd(String title, String confirm, String cancel) {
+        try {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.layout_burn_process_end, null);
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setView(promptsView);
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            //get text view revision
+            final TextView tvRev = (TextView) promptsView
+                    .findViewById(R.id.tvDilgBurnRev);
+            //set text revision
+            tvRev.setText(rev.APP_REV_PAGE_61);
+            //get text view for dialog
+            final TextView tvTextDialog = (TextView) promptsView
+                    .findViewById(R.id.tvTextDialogBurnTitle);
+            //set text
+            if (title != null) {
+                tvTextDialog.setText(title);
+            }
+
+
+            //get buttons
+            final Button btnConf = (Button) promptsView.findViewById(R.id.btnConfConfirm);
+
+            final Button btnCancel = (Button) promptsView.findViewById(R.id.btnSRCancel);
+
+            //set text buttons with language confirm
+            if (btnConf != null) {
+                btnConf.setText(confirm);
+            }
+
+            //set text buttons with language cancel
+            if (btnCancel != null) {
+                btnCancel.setText(cancel);
+            }
+
+            //button confirm
+            if (btnConf != null) {
+                try {
+                    btnConf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_CONFIRM_BURNING_DONEL", util_dialog.LOCATION_CONFIRM_BURNING_DONE);
+                            alertDialog.dismiss();
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogBurning: ex:" + e.getMessage());
+                }
+            }
+
+            //button cancel
+            if (btnCancel != null) {
+                try {
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alertDialog.dismiss();
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.d(TAG, "alertDialogBurning: ex:" + e.getMessage());
                 }
             }
 

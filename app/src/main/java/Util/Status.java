@@ -18,6 +18,7 @@ public class Status {
     public String BLE_CONNECTED="connected";
     public String BLE_DISCONNECTED="disconnected";
     //
+    public int STATUS_PASS=1;
     public int STATUS_SERIAL_LINK=2;
     public int STATUS_SCAN =4;
 
@@ -37,6 +38,9 @@ public class Status {
     //ethernet
     public String ETH_SOCKET_NOT_WORKING="ETH_SOCKET_NOT_WORKING";
     public String ETH_SOCKET_CAN_CONNECT="ETH_SOCKET_CAN_CONNECT";
+
+    //
+    public String PASS_OK="GO_LINK";
 
 
 

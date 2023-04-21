@@ -7,6 +7,7 @@ import android.icu.text.CaseMap;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -300,8 +301,12 @@ public class CustomAlert extends AppCompatActivity {
             Log.d(TAG, "onClick: uuid" + uuid);
         } else {
             Log.d(TAG, "onClick: uuid null");
-            tvLinkBle.setText("00:00:00:00:00");
+            tvLinkBle.setText("00000");
         }
+
+        //request focus
+        userInput.requestFocus();
+
 
         // set dialog message
         alertDialogBuilder
@@ -311,10 +316,9 @@ public class CustomAlert extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 /** DO THE METHOD HERE WHEN PROCEED IS CLICKED*/
                                 String user_text = (userInput.getText()).toString();
-
-
                                 if (!user_text.isEmpty()) {
                                     saveSerialNumber(user_text);
+                                    Log.d(TAG, "onClick:user_text+ "+user_text);
                                 } else {
                                     Log.d(user_text, "string is empty");
                                     String message = "The password you have entered is incorrect." + " \n \n" + "Please try again!";

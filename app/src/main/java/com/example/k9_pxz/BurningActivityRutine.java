@@ -3,15 +3,22 @@ package com.example.k9_pxz;
 import static Util.LogUtils.LOGE;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -21,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,11 +55,34 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;*/
 
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
@@ -78,6 +109,7 @@ import Util.Key_Util;
 import Util.LocaleHelper;
 import Util.Modes;
 import Util.SetPoints;
+import Util.Setpoint;
 import Util.TagRefrence;
 import Util.Util_Burn;
 import Util.Util_timer;
@@ -90,20 +122,21 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
      *
      * https://www.youtube.com/watch?v=gpH4Zr1ffnU*/
     //GUI
-    private Button btnBurnStart,btnBurnSerial;
+    private Button btnBurnStart, btnBurnSerial;
     private Button btnBurnStop;
     private Button btnBurnClean;
     private Button btnBurnReport;
     private Button btnHome;
-    private TextView tvCurrent, tvStartTime, tvStopTime, tvElapsedTime, tvUpdateFb, tvOperation, tvElapsedCycle;
+    private TextView tvCurrent, tvStartTime, tvStopTime, tvElapsedTime, tvUpdateFb, tvOperation, tvElapsedCycle, tvBurnSerial;
     private TextView tvCon;
+
     //Language
     private String language = "en";
     private Resources resources;
     //private String
     private String BLE_ADD_GOT = "0";
     private String SERIAL_NUMBER = "0";
-    CustomAlert customAlert;
+
 
     public String DATA_BLE_ADD = "DATA_BLE_ADD";
     public String DATA_SYSTEM_SERIAL = "DATA_SYSTEM_SERIAL";
@@ -131,6 +164,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private CountDownTimer timerTherapy = null;
     private boolean isEnableGui = false;
     private K9Alert k9Alert;
+    CustomAlert customAlert;
     //TCP ip
     private TcpClient client;
     //ethernet TCp
@@ -160,14 +194,21 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private int positionSample = 0;
     private boolean conditionsSample = true;
     private int iSample;
-
+    private Setpoint setpoint = new Setpoint();
     //save setpoints
     private int SP_FREQ = 4;//35hz
     private int SP_INT = 4;//90%
-    private int SP_TIM = 0;//4//25min
+    private int SP_TIM = 4;//4//25min
     private int SP_TRA = 1;
     private int SP_TRB = 1;
     private int SP_MODE = 1;
+
+
+    private String SP_FREQ_STR = "30";
+    private String SP_INT_STR = "90";
+    private String SP_TIM_STR = "25";
+    private String SP_TRA_STR = "1";
+    private String SP_TRB_STR = "1";
 
 
     //Dialog for text alert
@@ -189,6 +230,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private String dialogAutoSleep = "0";
     private String dialogSoppingWait = "0";
     private String dialogSoppingLoading = "0";
+    private String dialogSoppingBurningEnd = "0";
     //
     private boolean isTherapyOn = false;
     private boolean isLockScreen = false;
@@ -209,12 +251,17 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
 
     private int currentCycle = 0;//move cycles
     private int currentIndex = 0;//index to print
+    private int repeatCycle = 0;
 
-    private int timerBurn=0;
+    private int timerBurn = 0;
 
     String dest;
 
     String mPath = "0";
+
+    //save setpoints
+    private String SERIAL = "0";
+    private String DEVICE_ID = "123456";
 
     //hide navigation bar
     private int currentApiVersion;
@@ -244,6 +291,26 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
 
         displayTimeElapsed("00:00");
         displayTimeElapsed("00:00:00");
+
+        enableWIFI();
+
+        //
+        loadPreferences();
+        //load serial number
+        if (SERIAL_NUMBER.equalsIgnoreCase("0")) {
+            //disable buttons
+            displaySerialNumber("empty");
+            hideBtnSerialEmpty(true);//true
+        } else {
+            displaySerialNumber(SERIAL_NUMBER);
+            hideBtnSerialEmpty(false);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        savePreferences();
+        super.onStop();
     }
 
     /**********************************************
@@ -352,36 +419,84 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
 
         updateGuiRecyclerViewBurn(String.valueOf(mIndex), modelBurns.get(mIndex).getModFreq(), modelBurns.get(mIndex).getModInt(), modelBurns.get(mIndex).getModTime(), modelBurns.get(mIndex).getModTransdA(), modelBurns.get(mIndex).getModTransdB(), burnSequence.SEQ_STATUS_STATUS + status, burnSequence.SEQ_STATUS_START + modelBurns.get(mIndex).getModStart(), burnSequence.SEQ_STATUS_END + stopCycle);
         updateRecyclerViewBurn();
+
+
     }
 
     //load status when start
-    private void updateSequenceStatusStart(int index, String status, String cycleStart) {
+    private void updateSequenceStatus(int index, String status, String TRA1, String TRB1) {
 
-        // modelBurns.get(index).getModName();
-        int mIndex = 0;
-        /*
-        if (index > 0) {
-            mIndex = index - 1;
-        } else {
-            mIndex = 0;
-        }*/
-        mIndex = modelBurns.size() - 1;
+        String TRA = "L1";
+        String TRB = "R1";
+
+
+        int mIndex = index;// modelBurns.size() - 1;
         Log.d(TAG, "updateSequenceStatusStop: mIndex: " + mIndex);
         Log.d(TAG, "updateSequenceStatusStop:size: " + modelBurns.size());
 
-        //parameters
-        modelBurns.get(mIndex).getModFreq();
-        modelBurns.get(mIndex).getModInt();
-        modelBurns.get(mIndex).getModTime();
-        //trans
-        modelBurns.get(mIndex).getModTransdA();
-        modelBurns.get(mIndex).getModTransdB();
-        //cycle
-        //modelBurns.get(mIndex).getModStart();
+        if (mIndex == 0) {
 
-        updateGuiRecyclerViewBurn(String.valueOf(mIndex), modelBurns.get(mIndex).getModFreq(), modelBurns.get(mIndex).getModInt(), modelBurns.get(mIndex).getModTime(), modelBurns.get(mIndex).getModTransdA(), modelBurns.get(mIndex).getModTransdB(), burnSequence.SEQ_STATUS_STATUS + status, burnSequence.SEQ_STATUS_START + cycleStart, burnSequence.SEQ_STATUS_END + "-");
-        updateRecyclerViewBurn();
+            Log.d(TAG, "updateSequenceStatusStart:mIndex == 0 ");
+            //updateGuiRecyclerViewBurnIndex(mIndex, String.valueOf(mIndex), modelBurns.get(mIndex).getModFreq(), modelBurns.get(mIndex).getModInt(), modelBurns.get(mIndex).getModTime(), modelBurns.get(mIndex).getModTransdA(), modelBurns.get(mIndex).getModTransdB(), burnSequence.SEQ_STATUS_STATUS + status, burnSequence.SEQ_STATUS_START + cycleStart, burnSequence.SEQ_STATUS_END + "-");
+            updateGuiRecyclerViewBurn(String.valueOf(mIndex), burnSequence.SEQ_FREQ, burnSequence.SEQ_INT, burnSequence.SEQ_TIME, TRA1, TRB1, burnSequence.SEQ_STATUS_STATUS + status, burnSequence.SEQ_STATUS_START + getCurrentTime(), burnSequence.SEQ_STATUS_END + "-");
+            updateRecyclerViewBurn();
+
+        } else {
+            Log.d(TAG, "updateSequenceStatusStart:mIndex != 0  ");
+
+            //get old parameters
+            String Fre = modelBurns.get(mIndex - 1).getModFreq();
+            String Int = modelBurns.get(mIndex - 1).getModInt();
+            String Tim = modelBurns.get(mIndex - 1).getModTime();
+
+            if (!TRA1.equalsIgnoreCase("-")) {
+                TRA = TRA1;
+            } else {
+                TRA = modelBurns.get(mIndex - 1).getModTransdA();
+            }
+
+            if (!TRB1.equalsIgnoreCase("-")) {
+                TRB = TRB1;
+            } else {
+                TRB = modelBurns.get(mIndex - 1).getModTransdB();
+            }
+            //trans
+
+
+            //cycle
+            String statusCycle = modelBurns.get(mIndex - 1).getModStatus();
+            String startCycle = modelBurns.get(mIndex - 1).getModStart();
+            String stopCycle = modelBurns.get(mIndex - 1).getModEnd();
+            //modelBurns.get(mIndex).getModStart();
+
+            // updateGuiRecyclerViewBurn(String.valueOf(mIndex),Fre, Int, Tim, TRA, TRB, burnSequence.SEQ_STATUS_STATUS + status, burnSequence.SEQ_STATUS_START + cycleStart, burnSequence.SEQ_STATUS_END + "-");
+            //update new parametres
+            if (status.equalsIgnoreCase(burnSequence.SEQ_STATUS_INIT)) {
+                startCycle = burnSequence.SEQ_STATUS_START + getCurrentTime();
+                stopCycle = burnSequence.SEQ_STATUS_END + "-";
+            } else if (status.equalsIgnoreCase(burnSequence.SEQ_STATUS_START)) {
+                startCycle = burnSequence.SEQ_STATUS_START + getCurrentTime();
+                stopCycle = burnSequence.SEQ_STATUS_END + "-";
+            } else if (status.equalsIgnoreCase(burnSequence.SEQ_STATUS_STOPPED)) {
+                stopCycle = burnSequence.SEQ_STATUS_END + getCurrentTime();
+            } else if (status.equalsIgnoreCase(burnSequence.SEQ_STATUS_PASS)) {
+                stopCycle = burnSequence.SEQ_STATUS_END + getCurrentTime();
+            }
+            Log.d(TAG, "updateSequenceStatus: statusCycle old status:" + statusCycle + ".index:" + mIndex);
+            Log.d(TAG, "updateSequenceStatus: statusCycle new status:" + status + ".index:" + mIndex);
+
+
+            if (!statusCycle.equalsIgnoreCase(burnSequence.SEQ_STATUS_STATUS + status)) {
+                updateGuiRecyclerViewBurnIndex(mIndex, String.valueOf(mIndex), Fre, Int, Tim, TRA, TRB, burnSequence.SEQ_STATUS_STATUS + status, startCycle, stopCycle);
+                updateRecyclerViewBurn();
+            } else {
+                currentIndex--;
+            }
+
+
+        }
     }
+
 
     /**********************************************
      *Init
@@ -389,7 +504,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
 
     //init GUI
     private void initGUI() {
-        btnBurnSerial= findViewById(R.id.btnBurnSerial);
+        btnBurnSerial = findViewById(R.id.btnBurnSerial);
         btnBurnStart = findViewById(R.id.btnBurnStart);
         btnBurnStop = findViewById(R.id.btnBurnStop);
         btnBurnClean = findViewById(R.id.btnBurnClean);
@@ -403,6 +518,8 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         tvUpdateFb = findViewById(R.id.tvUpdateFb);
         tvOperation = findViewById(R.id.tvOperation);
         tvElapsedCycle = findViewById(R.id.tvElapsedCycle);
+        tvBurnSerial = findViewById(R.id.tvBurnSerial);
+
     }
 
     //Init all
@@ -441,6 +558,9 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     //init system
     private boolean initApp() {
         k9Alert = new K9Alert(this, this);
+        customAlert = new CustomAlert(this, this);
+
+
         isAlarm = false;//just for test
         return true;
     }
@@ -456,11 +576,35 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         btnBurnReport.setOnClickListener(this);
         btnHome.setOnClickListener(this);
         btnBurnSerial.setOnClickListener(this);
+
     }
 
     @Override
     public void onItemPostSelect(int position, String value) {
+        Log.d(TAG, "onItemPostSelect: position:" + position + "value:" + value);
+        SERIAL_NUMBER = value;
+        savePreferences();
+        //
+        displaySerialNumber(SERIAL_NUMBER);
+        if (SERIAL_NUMBER.equalsIgnoreCase("0")) {
+            hideBtnSerialEmpty(true);
+        } else {
+            hideBtnSerialEmpty(false);
+        }
+    }
 
+    private void hideBtnSerialEmpty(boolean input) {
+        if (input) {
+            btnBurnStart.setVisibility(View.INVISIBLE);
+            btnBurnStop.setVisibility(View.INVISIBLE);
+            btnBurnClean.setVisibility(View.INVISIBLE);
+            btnBurnReport.setVisibility(View.INVISIBLE);
+        } else {
+            btnBurnStart.setVisibility(View.VISIBLE);
+            btnBurnStop.setVisibility(View.VISIBLE);
+            btnBurnClean.setVisibility(View.VISIBLE);
+            btnBurnReport.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -469,18 +613,24 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
             startTherapy();
         } else if (v == btnBurnStop) {
             stopTherapy();
+            printModel();
+            operationPrint();//create pdf
         } else if (v == btnBurnClean) {
             if (!isTherapyOn) {
                 operationClean();
+                // operationPrint();//just for testing
+
             }
         } else if (v == btnBurnReport) {
             //createPDF();
             if (!isTherapyOn) {
-                operationPrint();
+                //operationPrint();
+                Intent intent = new Intent(BurningActivityRutine.this, ReportBurnActivity.class);
+                startActivity(intent);
             }
         } else if (v == btnHome) {
             goHome();
-        }else if (v == btnBurnSerial) {
+        } else if (v == btnBurnSerial) {
             operationSerialNumber();
         }
     }
@@ -630,6 +780,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         dialogAutoSleep = resources.getString(R.string.string_sleep_question);
         dialogSoppingWait = resources.getString(R.string.string_text_dial_stoping);
         dialogSoppingLoading = resources.getString(R.string.string_text_dial_loading);
+        dialogSoppingBurningEnd = resources.getString(R.string.string_text_burning_done);
         //check if percussion or Percussion/Vibration
     }
 
@@ -684,7 +835,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
                     text = resources.getString(R.string.string_text_btn_stopped);
                 }
                 if (text != null) {
-                    tvOperation.setText(text);
+                    tvOperation.setText("Status:" + text);
                 }
             } catch (Exception e) {
                 Log.d(TAG, "displayOperation: Ex" + e.getMessage());
@@ -698,7 +849,8 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
             if (value > 0) {
                 String str = (String) String.valueOf(value);
                 if (str != null) {
-                    tvCurrent.setText("stat:" + str + "\r\n+code:" + code);
+                    //tvCurrent.setText("stat:" + str + "\r\n+code:" + code);
+                    tvCurrent.setText("---");
                 }
             }
         } catch (Exception e) {
@@ -739,7 +891,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private void displayTimerMinSec(String time) {
         if (time != null) {
             try {
-                tvElapsedCycle.setText(burnSequence.SEQ_STATUS_CURRENT_CYCLE+time);
+                tvElapsedCycle.setText(burnSequence.SEQ_STATUS_CURRENT_CYCLE + time);
             } catch (Exception e) {
                 Log.d(TAG, "displayTimerMinSec: ex" + e.getMessage());
             }
@@ -759,7 +911,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private void displayBurnProcessStart(String time) {
         try {
             tvStartTime.setText(burnSequence.SEQ_STATUS_START + time);
-            Log.d(TAG, "displayBurnProcessStart: "+time);
+            Log.d(TAG, "displayBurnProcessStart: " + time);
         } catch (Exception e) {
             Log.d(TAG, "displayBurnProcessStart: ex:" + e.getMessage());
         }
@@ -775,11 +927,25 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     }
 
     //display time elapsed
-    private void displayTimeElapsed(String time){
+    private void displayTimeElapsed(String time) {
         try {
             tvElapsedTime.setText(burnSequence.SEQ_STATUS_CURRENT_BURN + time);
         } catch (Exception e) {
             Log.d(TAG, "displayBurntvElapsedTime: ex:" + e.getMessage());
+        }
+    }
+
+    //display serial number
+    private void displaySerialNumber(String serial) {
+        try {
+            if (serial.isEmpty()) {
+                tvBurnSerial.setText("Serial:" + "0");
+            } else {
+                tvBurnSerial.setText("Serial:" + serial);
+            }
+
+        } catch (Exception e) {
+            Log.d(TAG, "displaySerialNumber: ex:" + e.getMessage());
         }
     }
 
@@ -1023,10 +1189,11 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
                     //update display with language
                     displayStartCommand(resources.getString(R.string.string_text_btn_running));
                     //
-                    currentIndex++;
+
                     Log.d(TAG, "run:currentIndex: " + currentIndex);
                     // updateSequenceStatusStop(currentIndex, burnSequence.SEQ_STATUS_WORKING, burnSequence.SEQ_STATUS_EMPTY);//UPDATE ON DISPLAY
-                    updateSequenceStatusStart(currentIndex, burnSequence.SEQ_STATUS_WORKING, getCurrentTime());
+                    updateSequenceStatus(currentIndex, burnSequence.SEQ_STATUS_WORKING, "-", "-");
+                    currentIndex++;
 
                 } else if (ret == setPoints.INT_BLE_CMD_STOP) {
                     displayStartCommand(resources.getString(R.string.string_text_btn_start));
@@ -1034,18 +1201,23 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
                     if (isFlagTimerElapsed) {
                         notificationTimerElapsed();
                         //burn process end
-                        if (modelBurns.get(currentIndex - 1).getModStatus() != burnSequence.SEQ_STATUS_PASS) {
+                        if (modelBurns.get(currentIndex - 1).getModStatus() != burnSequence.SEQ_STATUS_PASS) {//modelBurns.get(currentIndex - 1).getModStatus() != burnSequence.SEQ_STATUS_PASS)
+
+                            // updateSequenceStatusStop(currentIndex, burnSequence.SEQ_STATUS_PASS, getCurrentTime());//UPDATE ON DISPLAY
+
+                            updateSequenceStatus(currentIndex, burnSequence.SEQ_STATUS_PASS, "-", "-");
                             currentIndex++;//currentCycle
-                            updateSequenceStatusStop(currentCycle, burnSequence.SEQ_STATUS_PASS, getCurrentTime());//UPDATE ON DISPLAY
                         }
                         //
                         nextCycle();
                     } else {
                         forceStopTimerTherapy();
                         //
-                        if (modelBurns.get(currentIndex - 1).getModStatus() != burnSequence.SEQ_STATUS_STOPPED) {
+                        if (modelBurns.get(currentIndex - 1).getModStatus() != burnSequence.SEQ_STATUS_STOPPED) {// if (modelBurns.get(currentIndex - 1).getModStatus() != burnSequence.SEQ_STATUS_STOPPED)
+
+                            //updateSequenceStatusStop(currentIndex, burnSequence.SEQ_STATUS_STOPPED, getCurrentTime());//UPDATE ON DISPLAY
+                            updateSequenceStatus(currentIndex, burnSequence.SEQ_STATUS_STOPPED, "-", "-");
                             currentIndex++;
-                            updateSequenceStatusStop(currentIndex, burnSequence.SEQ_STATUS_STOPPED, getCurrentTime());//UPDATE ON DISPLAY
                         }
                     }
                 }
@@ -1749,7 +1921,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private boolean forceStopTimerTherapy() {
         stopTherapy();
         cleanFlagAfterStop();
-        isTherapyOn = false;
+        //isTherapyOn = false;
         cleanTimerTherapy();
         cleanDisplayTimer();
         //
@@ -1764,18 +1936,19 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
 
     @Override
     public void onItemSetupInfo(String name, String description) {
+        Log.d(TAG, "onItemSetupInfo: name:" + name + ". desc:" + description);
 
     }
 
     @Override
     public void onItemSetupAlarm(String name, String description, String location) {
-
+        Log.d(TAG, "onItemSetupAlarm: name:" + name + ".desc:" + description);
     }
 
     //control operation start
     private void startTherapy() {
         ControlGUI controlGUI = new ControlGUI();
-        Log.d(TAG, "startTherapy: "+isTherapyOn);
+        Log.d(TAG, "startTherapy: " + isTherapyOn);
         sendSpCommand(controlGUI.CMD_ON, isTherapyOn);
     }
 
@@ -1789,6 +1962,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         if (!isLockScreen || isTherapyOn) {
             //cancelReady();
         }
+
 
     }
 
@@ -1806,7 +1980,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
 
     //timer therapy
     private void runTimerTherapy(long time, long countInterval) {
-        ConvertTimeMin convertTimeMin= new ConvertTimeMin();
+        ConvertTimeMin convertTimeMin = new ConvertTimeMin();
 
         try {
             cleanTimerTherapy();
@@ -1865,7 +2039,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
                     //
                     timerBurn++;
                     //
-                    String getTime=convertTimeMin.getDurationString(timerBurn);
+                    String getTime = convertTimeMin.getDurationString(timerBurn);
 
                     displayTimeElapsed(String.valueOf(getTime));
                 }
@@ -1884,154 +2058,140 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     //next cycle
     private void nextCycle() {
         Log.d(TAG, "nextCycle: ");
-        displayBurnProcessStart(getCurrentTime());
+        //displayBurnProcessStart(getCurrentTime());
 
         currentCycle++;
-        Log.d(TAG, "nextCycle:  currentCycle:"+ currentCycle);
+        Log.d(TAG, "nextCycle:  currentCycle:" + currentCycle);
         loadSequences(currentCycle);
     }
 
     //load seq
     private void loadSequences(int currentCycle) {
+        int tra = 0;
+        int trb = 0;
         switch (currentCycle) {
             case 0:
                 iSample = 0;
-                sequence1();
+                displayBurnProcessStart(getCurrentTime());
+                displayBurnProcessEnd("-");
+                //sequence1();//l1
+                tra = 0;
+                trb = 0;
+                setSeqInit(tra, trb);
                 break;
             case 1:
-                iSample = 0;
-                sequence2();
+                iSample = 0;//l2
+                tra = 1;
+                trb = 1;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
                 break;
             case 2:
-                iSample = 0;
-                sequence3();
+                iSample = 0;//l3
+                tra = 2;
+                trb = 2;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
                 break;
             case 3:
-                iSample = 0;
-                sequence4();
+                iSample = 0;//l4
+                tra = 3;
+                trb = 3;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
                 break;
             case 4:
-                iSample = 0;
-                sequence5();
+                iSample = 0;//l5
+                tra = 4;
+                trb = 4;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
                 break;
             case 5:
-                //end
-                displayBurnProcessEnd(getCurrentTime());
+                iSample = 0;//l1
+                tra = 0;
+                trb = 0;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
                 break;
             case 6:
-
-
+                iSample = 0;//l2
+                tra = 1;
+                trb = 1;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
+                break;
+            case 7:
+                iSample = 0;//l3
+                tra = 2;
+                trb = 2;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
+                break;
+            case 8:
+                iSample = 0;//l4
+                tra = 3;
+                trb = 3;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
+                break;
+            case 9:
+                iSample = 0;//l5
+                tra = 4;
+                trb = 4;
+                setSeqInit(tra, trb);
+                delayStartTherapy();
+                break;
+            case 10:
+                //end
+                operationPrint();//just for testing
+                displayBurnProcessEnd(getCurrentTime());
+                k9Alert.alertDialogBurnEnd(dialogSoppingBurningEnd, dialogConfirmLang, dialogCancelLang);
+                break;
+            case 11:
                 break;
         }
 
     }
 
-    //sequence
-    private void sequence1() {
-        //load configuration into the screen
-        displayBurnProcessStart(getCurrentTime());
-        displayBurnProcessEnd("-");
+    //load seq. on screen
+    private void setSeqInit(int ta, int tb) {
+        Log.d(TAG, "run:setSeqInit currentIndex: " + currentIndex);
+        String TRA = burnSequence.SEQ_TRA1;
+        String TRB = burnSequence.SEQ_TRA1;
+        switch (ta) {
+            case 0:
+                TRA = burnSequence.SEQ_TRA1;
+                TRB = burnSequence.SEQ_TRA1;
+                break;
+            case 1:
+                TRA = burnSequence.SEQ_TRA2;
+                TRB = burnSequence.SEQ_TRA2;
+                break;
+            case 2:
+                TRA = burnSequence.SEQ_TRA3;
+                TRB = burnSequence.SEQ_TRA3;
+                break;
+            case 3:
+                TRA = burnSequence.SEQ_TRA4;
+                TRB = burnSequence.SEQ_TRA4;
+                break;
+            case 4:
+                TRA = burnSequence.SEQ_TRA5;
+                TRB = burnSequence.SEQ_TRA5;
+                break;
+        }
+
+
+        updateSequenceStatus(currentIndex, burnSequence.SEQ_STATUS_INIT, TRA, TRB);
 
         currentIndex++;
-        updateGuiRecyclerViewBurn(String.valueOf(currentIndex - 1), burnSequence.SEQ_FREQ, burnSequence.SEQ_INT, burnSequence.SEQ_TIME, burnSequence.SEQ_TRA1, burnSequence.SEQ_TRB1, burnSequence.SEQ_STATUS_STATUS + burnSequence.SEQ_STATUS_INIT, burnSequence.SEQ_STATUS_START + getCurrentTime(), burnSequence.SEQ_STATUS_END + "-");
-        updateRecyclerViewBurn();
-        //send configuration to mcu
-        int tra = 0;
-        int trb = 0;
-        loadLastConfig(tra, trb);
-
-    }
-
-    //sequence
-    private void sequence2() {
-        //load configuration into the screen
-        currentIndex++;
-        Log.d(TAG, "sequence2: currentIndex: " + currentIndex);
-        updateGuiRecyclerViewBurn(String.valueOf(currentIndex - 1), burnSequence.SEQ_FREQ, burnSequence.SEQ_INT, burnSequence.SEQ_TIME, burnSequence.SEQ_TRA2, burnSequence.SEQ_TRB2, burnSequence.SEQ_STATUS_STATUS + burnSequence.SEQ_STATUS_INIT, burnSequence.SEQ_STATUS_START + getCurrentTime(), burnSequence.SEQ_STATUS_END + "-");
-        updateRecyclerViewBurn();
-        //send configuration to mcu
-        int tra = 1;
-        int trb = 1;
-        loadLastConfig(tra, trb);
+        loadLastConfig(ta, tb);
 
         memoryLastTimer = SP_TIM;
         loadDisplayTimerCountFirstTime(memoryLastTimer);
-        //
-        Handler handlerDelay = new Handler();
-        handlerDelay.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startTherapy();
-            }
-        }, 10000);
-    }
 
-    //sequence
-    private void sequence3() {
-        //load configuration into the screen
-        currentIndex++;
-        updateGuiRecyclerViewBurn(String.valueOf(currentIndex - 1), burnSequence.SEQ_FREQ, burnSequence.SEQ_INT, burnSequence.SEQ_TIME, burnSequence.SEQ_TRA3, burnSequence.SEQ_TRB3, burnSequence.SEQ_STATUS_STATUS + burnSequence.SEQ_STATUS_INIT, burnSequence.SEQ_STATUS_START + getCurrentTime(), burnSequence.SEQ_STATUS_END + "-");
-        updateRecyclerViewBurn();
-        //send configuration to mcu
-        int tra = 2;
-        int trb = 2;
-        loadLastConfig(tra, trb);
 
-        memoryLastTimer = SP_TIM;
-        loadDisplayTimerCountFirstTime(memoryLastTimer);
-        //
-        Handler handlerDelay1 = new Handler();
-        handlerDelay1.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "run: startTherapy3");
-                startTherapy();
-            }
-        }, 10000);
-    }
-
-    //sequence
-    private void sequence4() {
-        //load configuration into the screen
-        updateGuiRecyclerViewBurn(String.valueOf(currentIndex - 1), burnSequence.SEQ_FREQ, burnSequence.SEQ_INT, burnSequence.SEQ_TIME, burnSequence.SEQ_TRA4, burnSequence.SEQ_TRB4, burnSequence.SEQ_STATUS_STATUS + burnSequence.SEQ_STATUS_INIT, burnSequence.SEQ_STATUS_START + getCurrentTime(), burnSequence.SEQ_STATUS_END + "-");
-        updateRecyclerViewBurn();
-        //send configuration to mcu
-        int tra = 3;
-        int trb = 3;
-        loadLastConfig(tra, trb);
-
-        memoryLastTimer = SP_TIM;
-        loadDisplayTimerCountFirstTime(memoryLastTimer);
-        //
-        Handler handlerDelay = new Handler();
-        handlerDelay.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startTherapy();
-            }
-        }, 10000);
-    }
-
-    //sequence
-    private void sequence5() {
-        //load configuration into the screen
-        updateGuiRecyclerViewBurn(String.valueOf(currentIndex - 1), burnSequence.SEQ_FREQ, burnSequence.SEQ_INT, burnSequence.SEQ_TIME, burnSequence.SEQ_TRA5, burnSequence.SEQ_TRB5, burnSequence.SEQ_STATUS_STATUS + burnSequence.SEQ_STATUS_INIT, burnSequence.SEQ_STATUS_START + getCurrentTime(), burnSequence.SEQ_STATUS_END + "-");
-        updateRecyclerViewBurn();
-        //send configuration to mcu
-        int tra = 4;
-        int trb = 4;
-        loadLastConfig(tra, trb);
-
-        memoryLastTimer = SP_TIM;
-        loadDisplayTimerCountFirstTime(memoryLastTimer);
-        //
-        Handler handlerDelay = new Handler();
-        handlerDelay.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startTherapy();
-            }
-        }, 10000);
     }
 
     /**********************************************
@@ -2120,21 +2280,411 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         loadSequences(currentCycle);
         displayOperation(displayOperations.DISPLAY_OPE_CLEAN);// display clean
         //
-        displayBurnProcessStart("-");
+        //displayBurnProcessStart("-");
         displayBurnProcessEnd("-");
         //
-        timerBurn=0;
+        timerBurn = 0;
         displayTimeElapsed("00:00:00");
+
+
+        try {
+            createPdfFile();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
 
     }
 
     //operation clean
     private void operationPrint() {
+
+        //createDocument();
+        try {
+            createPdfFile();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
         displayOperation(displayOperations.DISPLAY_OPE_PRINT);// display print
+
     }
 
     //operation serial number
     private void operationSerialNumber() {
 
+        // Fetching Android ID and storing it into a constant
+        Context context = (Context) this;
+        ContentResolver result = (ContentResolver) context.getContentResolver();
+        String mId = Settings.Secure.getString(result, Settings.Secure.ANDROID_ID);
+        Log.d(TAG, "operationSerialNumber: id:" + mId);
+        if (mId != null) {
+            customAlert.showDialogSerialLink(mId);
+        } else {
+            customAlert.showDialogSerialLink("00000000");
+        }
+    }
+
+
+    /**********************************************
+     *SAVE PREFERENCES
+     */
+    private void savePreferences() {
+        SharedPreferences sharedPref = getSharedPreferences(keyUtil.KEY_SETTINGS2, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(keyUtil.KEY_SERIAL_NUMBER, SERIAL_NUMBER);
+        editor.putString(keyUtil.KEY_ID, DEVICE_ID);
+        editor.commit();
+        Log.d(TAG, "savePreferences: SERIAL:" + SERIAL_NUMBER);
+    }
+
+    /**********************************************
+     *LOAD PREFERENCES
+     */
+    private void loadPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences(keyUtil.KEY_SETTINGS2, MODE_PRIVATE);
+        SERIAL_NUMBER = sharedPref.getString(keyUtil.KEY_SERIAL_NUMBER, "0");
+        DEVICE_ID = sharedPref.getString(keyUtil.KEY_ID, "12345");
+        Log.d(TAG, "loadPreferences:KEY_SERIAL_NUMBER:" + SERIAL_NUMBER);
+    }
+
+    //disable WIFi
+    private void enableWIFI() {
+        try {
+            WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            if (wifi != null) {
+                if (wifi.isWifiEnabled()) {
+                    wifi.setWifiEnabled(true);
+                    Log.d(TAG, "enable WIFI:");
+                }
+            }
+            ConnectivityManager connec = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            // ARE WE CONNECTED TO THE NET
+            if (connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED ||
+                    connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) {
+                Log.d(TAG, "enableWIFI: ");
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "disableWIFI: ex:" + e.getMessage());
+        }
+    }
+
+
+    /**********************************************
+     *CREATE DOCUMENT
+     */
+    //working
+    private void createPdfFile() throws DocumentException {
+        String fileName = "";
+        Document document = new Document();
+        // Location to save
+        fileName = "k9_burning" + ".pdf";
+        Context context = getApplicationContext();
+        String dest = context.getExternalFilesDir(null) + "/";
+
+        File dir = new File(dest);
+        if (!dir.exists())
+            dir.mkdirs();
+
+        try {
+            File file = new File(dest, fileName);
+            file.createNewFile();
+            FileOutputStream fOut = new FileOutputStream(file, false);
+            PdfWriter.getInstance(document, fOut);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+            Log.v("PdfError", e.toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.v("PdfError", e.toString());
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Open to write
+        document.open();
+        document.add(new Paragraph("70.1.15.1 Rev:New\n"));
+        document.add(new Chunk(""));
+
+        addMetaData(document);
+        addTitlePage(document);
+
+        document.close();
+
+        File pdfFile = new File(dest + "/" + fileName);
+        if (!pdfFile.exists()) {
+            pdfFile.mkdir();
+        }
+
+        if (pdfFile != null && pdfFile.exists()) //Checking for the file is exist or not
+        {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+
+
+            Uri mURI = FileProvider.getUriForFile(
+                    context,
+                    context.getApplicationContext()
+                            .getPackageName() + ".provider", pdfFile);
+            // intent.setDataAndType(mURI, "application/pdf");
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            try {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //context.startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+
+            Toast.makeText(context, "The file not exists! ", Toast.LENGTH_SHORT).show();
+
+        }
+
+
+    }
+
+    public void addMetaData(Document document) {
+        document.addTitle("RESUME");
+        document.addSubject("Person Info");
+        document.addKeywords("Personal, Education, Skills");
+        document.addAuthor("Ibrahin");
+        document.addCreator("KAP");
+    }
+
+    public void addTitlePage(Document document) throws DocumentException { // Font Style for Document
+        Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
+        Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 22, Font.BOLD
+                | Font.UNDERLINE, BaseColor.GRAY);
+        Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
+        Font normal = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL); // Start New Paragraph
+        Paragraph prHead = new Paragraph(); // Set Font in this Paragraph
+        //title
+        prHead.setFont(titleFont); // Add item into Paragraph
+        prHead.add("\nBurning process\n"); // Create Table into Document with 1 Row
+        PdfPTable myTable = new PdfPTable(1); // 100.0f mean width of table is same as Document size
+        myTable.setWidthPercentage(100.0f); // Create New Cell into Table
+        PdfPCell myCell = new PdfPCell(new Paragraph(""));
+        myCell.setBorder(Rectangle.BOTTOM); // Add Cell into Table
+        myTable.addCell(myCell);
+        //head
+        prHead.setFont(catFont);
+        prHead.add("\n Company: KAP MEDICAL\n \n");
+        prHead.setAlignment(Element.ALIGN_CENTER); // Add all above details into Document
+        document.add(prHead);
+        document.add(myTable);
+        document.add(myTable); // Now Start another New Paragraph
+        Paragraph prPersinalInfo = new Paragraph();
+        prPersinalInfo.setFont(smallBold);
+        prPersinalInfo.setAlignment(Element.ALIGN_LEFT);
+        prPersinalInfo.add("Address:");
+        prPersinalInfo.add("1395 Pico St\n");
+
+        prPersinalInfo.add("City: Corona. State: CA\n");
+        prPersinalInfo.add("Country: USA Zip Code: 92881\n");
+        prPersinalInfo.add("Mobile: (951) 340-4360 Fax: (951) 340-4360 Email: sales@kapmedical.com \n\n");
+        document.add(prPersinalInfo);
+        document.add(myTable);
+        document.add(myTable);
+        Paragraph prProfile = new Paragraph();
+        //
+        prProfile.setAlignment(Element.ALIGN_CENTER);
+        prProfile.setFont(catFont);
+        prProfile.add("\nProduct:K9\n");
+        prProfile.add("Serial:");
+        prProfile.add(SERIAL_NUMBER + "\n\n");
+        prProfile.add("\n \n Burning by:");
+        prProfile.add("___________________________________________.\n\n");
+
+        document.add(prProfile); // Create new Page in PDF
+        document.add(myTable);
+
+        //test result
+        Paragraph prBurning = new Paragraph();
+
+        //document.add(myTable);
+        Log.d(TAG, "addTitlePage:modelBurns.size(): " + modelBurns.size());
+
+
+        for (int i = 0; i < modelBurns.size(); i++) {
+            Log.d(TAG, "addTitlePage: i:" + i);
+
+            //parametres:
+            prProfile.setFont(catFont);
+            prBurning.add("Parameters:\n");
+            prBurning.setAlignment(Element.ALIGN_CENTER);
+
+            //prBurning.setFont(smallBold);
+            //index
+            prBurning.add("Index:");
+            prBurning.add(modelBurns.get(i).getModName());
+            //freq
+            prBurning.add("     ");
+            prBurning.add(modelBurns.get(i).getModFreq());
+            //int
+            prBurning.add("     ");
+            prBurning.add(modelBurns.get(i).getModInt());
+            //time
+            prBurning.add("     ");
+            prBurning.add(modelBurns.get(i).getModTime());
+            prBurning.add("\n\n");
+
+            prProfile.setFont(catFont);
+            prBurning.setAlignment(Element.ALIGN_CENTER);
+            prBurning.add(" Modules:\n");
+            //transducer-A
+            //prBurning.setFont(smallBold);
+            prBurning.add("     ");
+            prBurning.add(modelBurns.get(i).getModTransdA() + "");
+            //transducer-B
+            prBurning.add("     ");
+            prBurning.add(modelBurns.get(i).getModTransdB() + "");
+            //Status label:
+            prBurning.add("\n\n");
+
+            prProfile.setFont(catFont);
+            prBurning.setAlignment(Element.ALIGN_CENTER);
+            prBurning.add("Status:");
+
+
+            //status
+            //prBurning.setFont(smallBold);
+            prBurning.add(modelBurns.get(i).getModStart() + "\n");
+            prBurning.add(modelBurns.get(i).getModEnd() + "\n");
+            prBurning.add(modelBurns.get(i).getModStatus() + "\n");
+            prBurning.add("\n___________________________________________\n\n");
+
+            //document.add(myTable);
+            // Create new Page in PDF
+            //document.add(myTable);
+        }
+
+        document.add(prBurning);
+        document.add(myTable);
+        //end
+        document.newPage();
+    }
+
+    /*Ethernet*/
+
+    public static boolean doesEthExist() {
+        List<String> list = getListOfNetworkInterfaces();
+
+        return list.contains("eth0");
+    }
+
+    public static List<String> getListOfNetworkInterfaces() {
+
+        List<String> list = new ArrayList<String>();
+
+        Enumeration<NetworkInterface> nets = null;
+
+        try {
+            nets = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+        for (NetworkInterface netint : Collections.list(nets)) {
+
+            list.add(netint.getName());
+        }
+
+        return list;
+
+    }
+
+    //connect ethernet
+    public String connectEthernet() {
+        StringBuffer output = new StringBuffer();
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec("ifconfig eth0 up");
+            p.waitFor();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "  exception " + e.toString());
+            e.printStackTrace();
+        }
+        String response = output.toString();
+        Log.d(TAG, " response " + response);
+        return response;
+    }
+
+    public static boolean isEthOn() {
+
+        try {
+
+            String line;
+            boolean r = false;
+
+            Process p = Runtime.getRuntime().exec("netcfg");
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((line = input.readLine()) != null) {
+
+                if (line.contains("eth0")) {
+                    if (line.contains("UP")) {
+                        r = true;
+                    } else {
+                        r = false;
+                    }
+                }
+            }
+            input.close();
+
+            Log.e("OLE", "isEthOn: " + r);
+            return r;
+
+        } catch (IOException e) {
+            Log.e("OLE", "Runtime Error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    public static void turnEthOnOrOff() {
+
+        try {
+
+            if (isEthOn()) {
+                Runtime.getRuntime().exec("ifconfig eth0 down");
+
+            } else {
+                Runtime.getRuntime().exec("ifconfig eth0 up");
+            }
+
+        } catch (IOException e) {
+            Log.e("OLE", "Runtime Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**/
+    private void printModel() {
+        Log.d(TAG, "printModel: modelBurns.size():" + modelBurns.size());
+        for (int i = 0; i < modelBurns.size(); i++) {
+            Log.d(TAG, "printModel: " + modelBurns.get(i).getModName());
+            Log.d(TAG, "printModel: " + modelBurns.get(i).getModStatus());
+            Log.d(TAG, "printModel: " + modelBurns.get(i).getModStart());
+            Log.d(TAG, "printModel: " + modelBurns.get(i).getModEnd());
+
+        }
+    }
+
+    //delay
+    private void delayStartTherapy() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startTherapy();
+            }
+        }, 10000);
     }
 }

@@ -249,7 +249,7 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onItemSetupInfo(String name, String description) {
-
+        Log.d(TAG, "onItemSetupInfo: name:"+name+".desc:"+description);
     }
 
     @Override

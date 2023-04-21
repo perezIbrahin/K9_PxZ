@@ -148,8 +148,6 @@ public class ManualActivity extends AppCompatActivity {
             if(pdfViewK9!=null){
                 pdfViewK9.fromAsset("k9_pxz_3_2_6.pdf").load();
             }
-
-
         }catch (Exception e){
             Log.d(TAG, "loadPdf: ex:"+e.getMessage());
         }

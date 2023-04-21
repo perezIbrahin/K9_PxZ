@@ -13,4 +13,8 @@ public class Message {
     public  String MESSAGE_SYSTEM_READY="Ready to use!";
     public  String MESSAGE_SYSTEM_STOPPED="Stopped";
     public  String MESSAGE_SYSTEM_RUNNING="Running";
+    public Object obj;
+    public Object arg1;
+    public Object arg2;
+    public int what;
 }

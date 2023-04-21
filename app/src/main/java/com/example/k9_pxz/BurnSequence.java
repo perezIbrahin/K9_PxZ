@@ -4,7 +4,7 @@ public class BurnSequence {
     public String SEQ_NAME_1="SEQ1";
 
     //
-    public String SEQ_FREQ="F(Hz)=30";
+    public String SEQ_FREQ="F(Hz)=35";
     public String SEQ_INT="I(%)=90";
     public String SEQ_TIME="T(min)=25";
     //
@@ -22,7 +22,7 @@ public class BurnSequence {
     //STATUS
     public String SEQ_STATUS_START="START: ";
     public String SEQ_STATUS_END="END: ";
-    public String SEQ_STATUS_STATUS="STATUS: ";
+    public String SEQ_STATUS_STATUS="STATUS:";
     public String SEQ_STATUS_CURRENT_CYCLE="CYCLE TIME(MM:SS): ";
     public String SEQ_STATUS_CURRENT_BURN="TOTAL BURNING TIME(HH:MM:SS): ";
     //

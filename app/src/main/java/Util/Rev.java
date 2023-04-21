@@ -3,7 +3,7 @@ package Util;
 
 public class Rev {
 
-    private String Rev="3.3.0";
+    private String Rev="3.3.4";
 
     //Hsitory
     //public static final String APP_REV= "1.1";//04/01/19 Initial release
@@ -23,6 +23,7 @@ public class Rev {
     public String APP_REV_PAGE_13 = "P13/"+Rev;//Manual
     public String APP_REV_PAGE_14 = "P14/"+Rev;//Settings
     public String APP_REV_PAGE_15 = "P15/"+Rev;//Hardware
+    public String APP_REV_PAGE_16= "P16/"+Rev;//Report Burning
     //dialog
     public String APP_REV_PAGE_50 = "P50/"+Rev;//Dialog side rail is up
     public String APP_REV_PAGE_51 = "P51/"+Rev;//Dialog check configuration
@@ -35,5 +36,6 @@ public class Rev {
     public String APP_REV_PAGE_58 = "P58/"+Rev;//Auto sleep
     public String APP_REV_PAGE_59 = "P59/"+Rev;//stopping, wait
     public String APP_REV_PAGE_60 = "P60/"+Rev;//loading
+    public String APP_REV_PAGE_61 = "P61/"+Rev;//Burning
 
 }

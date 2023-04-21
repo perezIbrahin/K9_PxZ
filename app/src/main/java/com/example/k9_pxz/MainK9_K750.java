@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import Alert.CustomAlert;
 import Alert.K9Alert;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
@@ -35,6 +36,7 @@ import Util.Beep;
 import Util.Languages;
 import Util.LocaleHelper;
 import Util.Rev;
+import Util.Safety;
 import Util.Status;
 import Util.Util_Dialog;
 import Util.Validation;
@@ -425,8 +427,15 @@ public class MainK9_K750 extends AppCompatActivity implements View.OnClickListen
             }
 
         } else if (v == btnMainSett) {
+            CustomAlert customAlert;
+            Safety safety=new Safety();
+
             if (!isLockScreenMain) {
-                launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");
+               // launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");
+                customAlert = new CustomAlert(this, this);
+                customAlert.showDialog();
+                customAlert.showDialogLink(safety.PASS_QC);
+
             } else {
                 toastMessage();
             }
@@ -715,7 +724,7 @@ public class MainK9_K750 extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onItemSetupAlarm(String name, String description, String location) {
-
+        Log.d(TAG, "onItemSetupAlarm: name:"+name+"desc:" +description+".location:"+location);
     }
 
     //get resources for the language

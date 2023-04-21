@@ -51,8 +51,8 @@ public class RecyclerViewAdapBurn extends RecyclerView.Adapter<RecyclerViewAdapB
     public void onBindViewHolder(@NonNull RecyclerViewAdapBurn.ViewHolder holder, int position) {
         ModelBurn modelBurn = modelBurnsArrayList.get(position);
         //
-        //holder.tvModName.setText(modelBurn.getModName());
-        holder.tvModName.setText(String.valueOf(position));
+        holder.tvModName.setText(modelBurn.getModName());
+        //holder.tvModName.setText(String.valueOf(position));//working
         //parameters
         holder.tvModFreq.setText(modelBurn.getModFreq());
         holder.tvModTime.setText(modelBurn.getModTime());

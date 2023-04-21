@@ -45,6 +45,8 @@ dependencies {
     implementation 'com.mindorks.android:prdownloader:0.6.0'
     // for PDF view.
     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    //fpr pdf creator
+
 
 
 

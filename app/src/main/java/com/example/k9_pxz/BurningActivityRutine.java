@@ -9,6 +9,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.hardware.usb.UsbAccessory;
+import android.hardware.usb.UsbConstants;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbEndpoint;
+import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -82,6 +88,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -103,6 +111,7 @@ import Setpoints.SpEth;
 import Util.Beep;
 import Util.ControlGUI;
 import Util.ConvertTimeMin;
+import Util.DayOfWeek;
 import Util.Default_values;
 import Util.DisplayOperations;
 import Util.Key_Util;
@@ -231,6 +240,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private String dialogSoppingWait = "0";
     private String dialogSoppingLoading = "0";
     private String dialogSoppingBurningEnd = "0";
+    private String dialogSoppingBurningFailed = "0";
     //
     private boolean isTherapyOn = false;
     private boolean isLockScreen = false;
@@ -252,6 +262,9 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private int currentCycle = 0;//move cycles
     private int currentIndex = 0;//index to print
     private int repeatCycle = 0;
+    private String burningStatus="0";
+    private String burningStart="0";
+    private String burningEnd="0";
 
     private int timerBurn = 0;
 
@@ -262,6 +275,8 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     //save setpoints
     private String SERIAL = "0";
     private String DEVICE_ID = "123456";
+
+    private int EXTERNAL_STORAGE_PERMISSION_CODE = 23;
 
     //hide navigation bar
     private int currentApiVersion;
@@ -305,6 +320,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
             displaySerialNumber(SERIAL_NUMBER);
             hideBtnSerialEmpty(false);
         }
+
     }
 
     @Override
@@ -497,7 +513,6 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         }
     }
 
-
     /**********************************************
      *Init
      */
@@ -612,6 +627,8 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         if (v == btnBurnStart) {
             startTherapy();
         } else if (v == btnBurnStop) {
+            burningStatus=burnSequence.SEQ_STATUS_STOPPED;
+            burningEnd=getCurrentTime();
             stopTherapy();
             printModel();
             operationPrint();//create pdf
@@ -781,6 +798,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         dialogSoppingWait = resources.getString(R.string.string_text_dial_stoping);
         dialogSoppingLoading = resources.getString(R.string.string_text_dial_loading);
         dialogSoppingBurningEnd = resources.getString(R.string.string_text_burning_done);
+        dialogSoppingBurningFailed=resources.getString(R.string.string_text_burning_failed);
         //check if percussion or Percussion/Vibration
     }
 
@@ -788,7 +806,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private String getCurrentTime() {
         String date = "DD:MM:YYYY, HH:mm:ss";
         try {
-            @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm:ss");
+            @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss");
             date = df.format(Calendar.getInstance().getTime());
             if (date != null) {
                 return date;
@@ -1111,11 +1129,11 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
                 } else if (value == setPoints.INT_BLE_STATUS_WORKING) {
                     isReadyOperate = false;
                 } else if (value == setPoints.INT_BLE_STATUS_ALARM1) {
-                    //notificationAlarmDummy();
+                    notificationBurningFail();
                 } else if (value == setPoints.INT_BLE_STATUS_ALARM2) {//over current
-                    //notificationOverCurrent();
+                    notificationBurningFail();
                 } else if (value == setPoints.INT_BLE_STATUS_ALARM3) {//under current
-                    //notificationUnderCurrent();
+                    notificationBurningFail();
                 }
                 displayDate();
             }
@@ -1901,6 +1919,22 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
 
     }
 
+    //notification burning failed
+    private void notificationBurningFail() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                burningStatus=burnSequence.SEQ_STATUS_FAILED;
+                burningEnd=getCurrentTime();
+                stopTherapy();
+                operationPrint();//create pdf
+                k9Alert.alertDialogLoading(dialogSoppingBurningFailed, dialogConfirmLang, dialogCancelLang);
+            }
+        });
+
+    }
+
     //norification timer therapy elapsed
     private void notificationTimerElapsed() {
         //k9Alert.alertDialogTherapyDone(dialogTherapyCompleteLang, dialogConfirmLang);
@@ -2071,6 +2105,10 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         int trb = 0;
         switch (currentCycle) {
             case 0:
+                //
+                burningStatus=burnSequence.SEQ_STATUS_START;
+                burningStart=getCurrentTime();
+
                 iSample = 0;
                 displayBurnProcessStart(getCurrentTime());
                 displayBurnProcessEnd("-");
@@ -2144,8 +2182,11 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
                 break;
             case 10:
                 //end
-                operationPrint();//just for testing
+                burningStatus=burnSequence.SEQ_STATUS_SUCCESS;
+                //
+                burningEnd=getCurrentTime();
                 displayBurnProcessEnd(getCurrentTime());
+                operationPrint();//just for testing
                 k9Alert.alertDialogBurnEnd(dialogSoppingBurningEnd, dialogConfirmLang, dialogCancelLang);
                 break;
             case 11:
@@ -2158,27 +2199,27 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     private void setSeqInit(int ta, int tb) {
         Log.d(TAG, "run:setSeqInit currentIndex: " + currentIndex);
         String TRA = burnSequence.SEQ_TRA1;
-        String TRB = burnSequence.SEQ_TRA1;
+        String TRB = burnSequence.SEQ_TRB1;
         switch (ta) {
             case 0:
                 TRA = burnSequence.SEQ_TRA1;
-                TRB = burnSequence.SEQ_TRA1;
+                TRB = burnSequence.SEQ_TRB1;
                 break;
             case 1:
                 TRA = burnSequence.SEQ_TRA2;
-                TRB = burnSequence.SEQ_TRA2;
+                TRB = burnSequence.SEQ_TRB2;
                 break;
             case 2:
                 TRA = burnSequence.SEQ_TRA3;
-                TRB = burnSequence.SEQ_TRA3;
+                TRB = burnSequence.SEQ_TRB3;
                 break;
             case 3:
                 TRA = burnSequence.SEQ_TRA4;
-                TRB = burnSequence.SEQ_TRA4;
+                TRB = burnSequence.SEQ_TRB4;
                 break;
             case 4:
                 TRA = burnSequence.SEQ_TRA5;
-                TRB = burnSequence.SEQ_TRA5;
+                TRB = burnSequence.SEQ_TRB5;
                 break;
         }
 
@@ -2297,6 +2338,9 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
 
     //operation clean
     private void operationPrint() {
+        // Requesting Permission to access External Storage
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                EXTERNAL_STORAGE_PERMISSION_CODE);
 
         //createDocument();
         try {
@@ -2322,7 +2366,6 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
             customAlert.showDialogSerialLink("00000000");
         }
     }
-
 
     /**********************************************
      *SAVE PREFERENCES
@@ -2371,20 +2414,118 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     /**********************************************
      *CREATE DOCUMENT
      */
+    //spare
+    public static String getUSB(){
+        File storageDirectory = new File("/storage");
+        if(!storageDirectory.exists()) {
+            Log.e(TAG, "getUSB: '/storage' does not exist on this device");
+            return "";
+        }
+
+        File[] files = storageDirectory.listFiles();
+        if(files == null) {
+            Log.e(TAG, "getUSB: Null when requesting directories inside '/storage'");
+            return "";
+        }
+
+        List<String> possibleUSBStorageMounts = new ArrayList<>();
+        for (File file : files) {
+            String path = file.getPath();
+            if (path.contains("emulated") ||
+                    path.contains("sdcard") ||
+                    path.contains("usb")) {
+                Log.d(TAG, "getUSB: Found '" + path + "' - not USB");
+            } else {
+                possibleUSBStorageMounts.add(path);
+            }
+        }
+
+        if (possibleUSBStorageMounts.size() == 0) {
+            Log.e(TAG, "getUSB: Did not find any possible USB mounts");
+            return "";
+        }
+        if(possibleUSBStorageMounts.size() > 1) {
+            Log.d(TAG, "getUSB: Found multiple possible USB mount points, choosing the first one");
+        }
+
+        return possibleUSBStorageMounts.get(0);
+    }
+
+
+    //spare
+    public static String getUSBProblematic(Context context){
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        if (usbManager == null) {
+            Log.e(TAG, "Unable to get USB_SERVICE");
+            return "";
+        }
+        UsbAccessory[] accessoryList = usbManager.getAccessoryList();
+        if (accessoryList != null) {
+            for (UsbAccessory usbAccessory : accessoryList) {
+                // here we check the vendor
+                Log.d(TAG, "getUSBProblematic: " + usbAccessory.toString());
+            }
+        }
+
+        HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
+        if(deviceList != null) {
+            List<UsbDevice> usbDeviceList = new ArrayList<>(deviceList.values());
+
+            for (Iterator<UsbDevice> iterator = usbDeviceList.iterator(); iterator.hasNext();) {
+                UsbDevice next = iterator.next();
+
+                boolean isMassStorage = false;
+                for (int i = 0; i < next.getInterfaceCount(); i++) {
+                    // Check USB interface type is mass storage
+                    UsbInterface usbInterface = next.getInterface(i);
+                    if(usbInterface.getInterfaceClass() == UsbConstants.USB_CLASS_MASS_STORAGE && usbInterface.getEndpointCount() == 2) {
+
+                        // Check endpoints support bulk transfer
+                        for (int j = 0; j < usbInterface.getEndpointCount(); j++) {
+                            UsbEndpoint endpoint = usbInterface.getEndpoint(j);
+                            if(endpoint != null) {
+                                if(endpoint.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK){
+
+                                    // Valid mass storage
+                                    isMassStorage = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if(!isMassStorage) {
+                    iterator.remove();
+                }
+            }
+
+            for (UsbDevice usbDevice : usbDeviceList) {
+                Log.d(TAG, "getUSBProblematic: Device Name" + usbDevice.getDeviceName());
+                Log.d(TAG, "getUSBProblematic: Device Desc" + usbDevice.toString());
+            }
+        }
+        return "";
+    }
+
+
     //working
     private void createPdfFile() throws DocumentException {
+        DayOfWeek dayOfWeek=new DayOfWeek();
         String fileName = "";
         Document document = new Document();
         // Location to save
-        fileName = "k9_burning" + ".pdf";
+        fileName = "K9_burning" + ".pdf";//fileName = "K9_PVZ_burning"+dayOfWeek.getCurrentDay() + ".pdf";
         Context context = getApplicationContext();
         String dest = context.getExternalFilesDir(null) + "/";
 
+        
         File dir = new File(dest);
         if (!dir.exists())
+            Log.d(TAG, "createPdfFile: dest:"+dest);
             dir.mkdirs();
 
         try {
+            Log.d(TAG, "createPdfFile:dest: "+dest+".filename:"+fileName);
             File file = new File(dest, fileName);
             file.createNewFile();
             FileOutputStream fOut = new FileOutputStream(file, false);
@@ -2395,8 +2536,6 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             Log.v("PdfError", e.toString());
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2404,24 +2543,22 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         // Open to write
         document.open();
         document.add(new Paragraph("70.1.15.1 Rev:New\n"));
-        document.add(new Chunk(""));
-
+        String cd=dayOfWeek.getCurrentDay();
+        document.add(new Chunk(cd));
         addMetaData(document);
         addTitlePage(document);
-
         document.close();
-
+        //
         File pdfFile = new File(dest + "/" + fileName);
         if (!pdfFile.exists()) {
             pdfFile.mkdir();
+            Log.d(TAG, "createPdfFile: pdf file:");
         }
-
+        //
         if (pdfFile != null && pdfFile.exists()) //Checking for the file is exist or not
         {
-
+            Log.d(TAG, "createPdfFile: exist");
             Intent intent = new Intent(Intent.ACTION_VIEW);
-
-
             Uri mURI = FileProvider.getUriForFile(
                     context,
                     context.getApplicationContext()
@@ -2453,6 +2590,7 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
     }
 
     public void addTitlePage(Document document) throws DocumentException { // Font Style for Document
+        Log.d(TAG, "addTitlePage: ");
         Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
         Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 22, Font.BOLD
                 | Font.UNDERLINE, BaseColor.GRAY);
@@ -2488,36 +2626,33 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         document.add(myTable);
         Paragraph prProfile = new Paragraph();
         //
-        prProfile.setAlignment(Element.ALIGN_CENTER);
+        prProfile.setAlignment(Element.ALIGN_LEFT);
         prProfile.setFont(catFont);
-        prProfile.add("\nProduct:K9\n");
-        prProfile.add("Serial:");
+        prProfile.add("\nPRODUCT NAME:K9_PVZ\n");
+        prProfile.add("\nSERIAL:");
         prProfile.add(SERIAL_NUMBER + "\n\n");
         prProfile.add("\n \n Burning by:");
         prProfile.add("___________________________________________.\n\n");
 
         document.add(prProfile); // Create new Page in PDF
         document.add(myTable);
-
         //test result
         Paragraph prBurning = new Paragraph();
-
         //document.add(myTable);
         Log.d(TAG, "addTitlePage:modelBurns.size(): " + modelBurns.size());
 
 
         for (int i = 0; i < modelBurns.size(); i++) {
             Log.d(TAG, "addTitlePage: i:" + i);
-
+            //Index
+            prProfile.setFont(catFont);
+            prBurning.add("INDEX:");
+            prBurning.add(modelBurns.get(i).getModName());
+            prBurning.add("\n");
             //parametres:
             prProfile.setFont(catFont);
-            prBurning.add("Parameters:\n");
-            prBurning.setAlignment(Element.ALIGN_CENTER);
-
-            //prBurning.setFont(smallBold);
-            //index
-            prBurning.add("Index:");
-            prBurning.add(modelBurns.get(i).getModName());
+            prBurning.add("\nPARAMETERS:\n");
+            //prBurning.setAlignment(Element.ALIGN_CENTER);
             //freq
             prBurning.add("     ");
             prBurning.add(modelBurns.get(i).getModFreq());
@@ -2527,11 +2662,10 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
             //time
             prBurning.add("     ");
             prBurning.add(modelBurns.get(i).getModTime());
-            prBurning.add("\n\n");
-
+            //prBurning.add("\n");
             prProfile.setFont(catFont);
             prBurning.setAlignment(Element.ALIGN_CENTER);
-            prBurning.add(" Modules:\n");
+            prBurning.add(" \nMODULES:\n");
             //transducer-A
             //prBurning.setFont(smallBold);
             prBurning.add("     ");
@@ -2540,17 +2674,18 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
             prBurning.add("     ");
             prBurning.add(modelBurns.get(i).getModTransdB() + "");
             //Status label:
-            prBurning.add("\n\n");
-
-            prProfile.setFont(catFont);
+            prBurning.add("\n");
             prBurning.setAlignment(Element.ALIGN_CENTER);
-            prBurning.add("Status:");
-
-
+            prProfile.setFont(catFont);
+            prBurning.add("STATUS:\n");
             //status
             //prBurning.setFont(smallBold);
+            prBurning.setAlignment(Element.ALIGN_LEFT);
+            prBurning.add("     ");
             prBurning.add(modelBurns.get(i).getModStart() + "\n");
+            prBurning.add("     ");
             prBurning.add(modelBurns.get(i).getModEnd() + "\n");
+            prBurning.add("     ");
             prBurning.add(modelBurns.get(i).getModStatus() + "\n");
             prBurning.add("\n___________________________________________\n\n");
 
@@ -2559,7 +2694,16 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
             //document.add(myTable);
         }
 
+        //document.add(prBurning);
         document.add(prBurning);
+        //
+        Paragraph prBurningResumen = new Paragraph();
+        prBurningResumen.setAlignment(Element.ALIGN_LEFT);
+        prBurningResumen.setFont(catFont);
+        prBurningResumen.add("\n BURNING STARTED:"+ burningStart+"\n");
+        prBurningResumen.add("\nBURNING ENDED:"+burningEnd+"\n");
+        prBurningResumen.add("\nBURNING STATUS:"+burningStatus+"\n\n");
+        document.add(prBurningResumen);
         document.add(myTable);
         //end
         document.newPage();
@@ -2673,6 +2817,8 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
             Log.d(TAG, "printModel: " + modelBurns.get(i).getModStatus());
             Log.d(TAG, "printModel: " + modelBurns.get(i).getModStart());
             Log.d(TAG, "printModel: " + modelBurns.get(i).getModEnd());
+            Log.d(TAG, "printModel: " + modelBurns.get(i).getModTransdA());
+            Log.d(TAG, "printModel: " + modelBurns.get(i).getModTransdB());
 
         }
     }

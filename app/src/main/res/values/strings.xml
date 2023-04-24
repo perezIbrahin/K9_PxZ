@@ -201,7 +201,7 @@
 
     <string name="string_text_dial_enter_pass">Enter password : </string>
     <string name="string_text_burning_done">Burning all done!&quot;</string>
-
+    <string name="string_text_burning_failed">Burning failed!&quot;</string>
 
     <!-- start button -->
     <string name="string_text_btn_start">Start</string>

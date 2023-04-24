@@ -14,7 +14,7 @@
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/pdfViewReportBurn"
-        app:srcCompat="@drawable/ic_baseline_print_24" />
+        app:srcCompat="@drawable/ic_baseline_share_24" />
 
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfViewReportBurn"

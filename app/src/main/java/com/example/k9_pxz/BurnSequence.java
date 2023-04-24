@@ -20,13 +20,13 @@ public class BurnSequence {
     public String SEQ_TRB4="R4";
     public String SEQ_TRB5="R5";
     //STATUS
-    public String SEQ_STATUS_START="START: ";
+    public String SEQ_STATUS_START="START : ";
     public String SEQ_STATUS_END="END: ";
-    public String SEQ_STATUS_STATUS="STATUS:";
+    public String SEQ_STATUS_STATUS="BURNING STATUS :";
     public String SEQ_STATUS_CURRENT_CYCLE="CYCLE TIME(MM:SS): ";
     public String SEQ_STATUS_CURRENT_BURN="TOTAL BURNING TIME(HH:MM:SS): ";
     //
-
+    public String SEQ_STATUS_SUCCESS="SUCCESS";
     public String SEQ_STATUS_STOPPED="STOPPED";
     public String SEQ_STATUS_WORKING="WORKING";
     public String SEQ_STATUS_FAILED="FAILED";

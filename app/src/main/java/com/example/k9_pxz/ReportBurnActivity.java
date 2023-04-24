@@ -20,6 +20,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
@@ -35,6 +36,8 @@ import com.itextpdf.text.Document;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,10 +46,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URI;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -74,6 +80,7 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
     private static final String[] requiredPermissions = new String[]{
             Manifest.permission.WRITE_SETTINGS,
             Manifest.permission.WRITE_SECURE_SETTINGS
+
             /* ETC.. */
     };
 
@@ -175,7 +182,7 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
             if (pdfViewK9 != null) {
                 String fileName = "";
                 Document document = new Document();
-                fileName = "k9_burning" + ".pdf";
+                fileName = "K9_burning" + ".pdf";
                 Context context = getApplicationContext();
                 String dest = context.getExternalFilesDir(null) + "/";
 
@@ -195,9 +202,9 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
                 pdfViewK9.fromUri(mURI)
                         .pages(0, 2, 1, 3, 3, 3) // all pages are displayed by default
                         .enableSwipe(true) // allows to block changing pages using swipe
-                        .swipeHorizontal(true)
+                        .swipeHorizontal(false)
                         .enableDoubletap(true)
-                        .defaultPage(0)
+                        //.defaultPage(0)
                         // allows to draw something on the current page, usually visible in the middle of the screen
                         // .onDraw(onDrawListener)
                         // allows to draw something on all pages, separately for every page. Called only for visible pages
@@ -246,7 +253,9 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         if (fbprint == v) {
-            print();
+            //print();
+            //saveInFlashDrive();
+            shareFiles();
         }
     }
 
@@ -293,7 +302,7 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
         getPairedDevices();
 
         //
-        if (mDevice.getAddress()!=null){
+        if (mDevice.getAddress() != null) {
             mConnectThread = new ConnectThread(mDevice);
             mConnectThread.start();
         }
@@ -364,14 +373,17 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
                 Log.d(TAG, "run:IOException connectException ");
                 try {
                     mmSocket.close();
-                } catch (IOException closeException) { }
+                } catch (IOException closeException) {
+                }
                 return;
             }
         }
+
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
     }
 
@@ -379,6 +391,7 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
+
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
@@ -386,10 +399,12 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
+
         public void run() {
             byte[] buffer = new byte[1024];
             int begin = 0;
@@ -397,11 +412,11 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
             while (true) {
                 try {
                     bytes += mmInStream.read(buffer, bytes, buffer.length - bytes);
-                    for(int i = begin; i < bytes; i++) {
-                        if(buffer[i] == "#".getBytes()[0]) {
+                    for (int i = begin; i < bytes; i++) {
+                        if (buffer[i] == "#".getBytes()[0]) {
                             mHandler.obtainMessage(1, begin, i, buffer).sendToTarget();
                             begin = i + 1;
-                            if(i == bytes - 1) {
+                            if (i == bytes - 1) {
                                 bytes = 0;
                                 begin = 0;
                             }
@@ -412,15 +427,19 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         }
+
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
+
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
     }
 
@@ -428,10 +447,10 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
 
         public void handleMessage(Message msg) {
             byte[] writeBuf = (byte[]) msg.obj;
-            int begin = (int)msg.arg1;
-            int end = (int)msg.arg2;
+            int begin = (int) msg.arg1;
+            int end = (int) msg.arg2;
 
-            switch(msg.what) {
+            switch (msg.what) {
                 case 1:
                     String writeMessage = new String(writeBuf);
                     writeMessage = writeMessage.substring(begin, end);
@@ -444,10 +463,48 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
         //permission to management ethernet
         //initPermission();
         //mConnectedThread = new ConnectedThread(mmSocket);
-       // mConnectedThread.start();
+        // mConnectedThread.start();
 
 
+    }
 
+
+    private void saveInFlashDrive() {
+        if (isExternalStorageAvailable()) {
+            Log.d(TAG, "saveInFlashDrive:  available");
+
+            //source
+            String fileName = "k9_burning" + ".pdf";
+            Context context = getApplicationContext();
+            String dest = context.getExternalFilesDir(null) + "/";
+
+            File dirSource = new File(dest);
+            if (!dirSource .exists())
+                dirSource .mkdirs();
+            File pdfSource= new File(dest + "/" + fileName);
+
+            //dest
+            String dstPath = Environment.getExternalStorageDirectory() + File.separator + "myApp" + File.separator;
+            File fileDest = new File(dstPath);
+
+
+            try {
+                copyFile(pdfSource, fileDest);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+    }
+
+    private static boolean isExternalStorageAvailable() {
+        String extStorageState = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(extStorageState)) {
+            return true;
+        }
+        return false;
     }
 
     /*Bluetooth*/
@@ -682,6 +739,51 @@ public class ReportBurnActivity extends AppCompatActivity implements View.OnClic
                         .getPackageName() + ".provider", pdfFile);
         String str = mURI.toString();
         return str;
+    }
+
+    private void copyFile(File src, File dst) throws IOException {
+
+        FileInputStream inStream = new FileInputStream(src);
+
+        if (!dst.exists()) {
+            dst.mkdir();
+        }
+
+        if (!dst.canWrite()) {
+            System.out.print("CAN'T WRITE");
+            return;
+        }
+
+        FileOutputStream outStream = new FileOutputStream(dst);
+        FileChannel inChannel = inStream.getChannel();
+        FileChannel outChannel = outStream.getChannel();
+        inChannel.transferTo(0, inChannel.size(), outChannel);
+        inStream.close();
+        outStream.close();
+    }
+
+    private void shareFiles(){
+        //String path=getExternalFilesDir(null).getAbsolutePath().toString()+"/user.pdf";
+        String path=getAddOfFileStr();
+        File file=new File(path);
+
+        Log.d(TAG, "shareFiles:path: "+path);
+
+        if (!file.exists()) {
+            file.mkdir();
+            Log.d(TAG, "shareFiles: create file");
+        }
+
+        if (true){            //file.exists()
+            Intent share=new Intent();
+            share.setAction(Intent.ACTION_SEND);
+            share.putExtra(Intent.EXTRA_STREAM, getAddOfFile());//getAddOfFile()//Uri.fromFile(file)
+            share.setType("application/pdf");
+            startActivity(share);
+            Log.d(TAG, "shareFiles: ");
+        }else{
+            Log.d(TAG, "shareFiles:file no exist ");
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.hardware.usb.UsbAccessory;
@@ -290,6 +291,8 @@ public class BurningActivityRutine extends AppCompatActivity implements Interfac
         super.onCreate(savedInstanceState);
 
         loadLayout(R.layout.activity_burning_rutine);//load layout
+        //fix orientation
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         hideNavigationBar(); //remove menu bar
 
         initGUI();//init gui

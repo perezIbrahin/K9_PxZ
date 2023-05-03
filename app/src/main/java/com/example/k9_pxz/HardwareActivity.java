@@ -3,6 +3,7 @@ package com.example.k9_pxz;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,8 @@ public class HardwareActivity extends AppCompatActivity {
         screenFullSize();
         //load layout
         loadLayout(R.layout.activity_hardware);
+        //fix orientation
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //remove menu bar
         removeMenuBar();
         //remove action bar from top

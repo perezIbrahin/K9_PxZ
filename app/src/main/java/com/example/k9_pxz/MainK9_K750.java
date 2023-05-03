@@ -130,6 +130,8 @@ public class MainK9_K750 extends AppCompatActivity implements View.OnClickListen
         screenFullSize();
         //load layout
         loadLayout(R.layout.layout_main_page_k9_k750);
+        //fix orientation
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //remove menu bar
         hideStatusBar();
         //remove action bar from top

@@ -1,5 +1,7 @@
 package com.example.k9_pxz;
 
+import static java.lang.Long.MAX_VALUE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -358,6 +360,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //mute
     private boolean isMuteOn=false;
+    //redundant time
+    private  static Handler myHandlerRedundant = new Handler();
+    private Runnable myRunnable =null;
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -366,6 +371,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         //screenFullSize();
         //load layout
         loadLayout(R.layout.layout_percussion_vibration);
+        //fix screen landscape
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //remove menu bar
         hideNavigationBar();
         //remove action bar from top
@@ -1049,7 +1056,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         //check if percussion or Percussion/Vibration
         typeOfTherapy = selectTypeOfTherapy(resources, Serial_Number_Product);
     }
-
 
     /**********************************************
      * Models/AdapterView
@@ -2898,6 +2904,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         updateBtnReady(controlGUI.POS0);
         //
         loadDisplayTimerCountFirstTime(memoryLastTimer);
+        //
+        stopRedundantTime();
         return true;
     }
 
@@ -3381,9 +3389,13 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         try {
             cleanTimerTherapy();
             Log.d(TAG, "runTimerTherapy: time:" + time + ". Interval:" + countInterval);
+            //
+           startRedundatTime(time);
+            //
             timerTherapy = new CountDownTimer(time, countInterval) {
                 @Override
                 public void onTick(long l) {
+
                     //Log.d(TAG, "onTick: timer sec:"+l/1000);
                     //
                     if (sec == 0) {
@@ -3466,6 +3478,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         forceStopTimerTherapy();
         isFlagTimerElapsed = false;
         loadDisplayTimerCountFirstTime(memoryLastTimer);
+        //
+        stopRedundantTime();
+
+
     }
 
     //set display time 00:00
@@ -3513,6 +3529,31 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }
         displayTimerMinSec(utilTimer.convertIntTimeStr(mTagReference.SELECTED_INT_TIME_0));
         return false;
+    }
+
+    //redundant timer
+    private void redundantTime(){
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "run: ");
+                // your code here
+                timerTherapyElapsed();
+            }
+        };
+    }
+
+    public void startRedundatTime(long TIME_TO_WAIT) {
+        myHandlerRedundant.postDelayed(myRunnable, TIME_TO_WAIT+1000);
+    }
+
+    public void stopRedundantTime() {
+        myHandlerRedundant.removeCallbacks(myRunnable);
+    }
+
+    public void restartRedundatTime(long TIME_TO_WAIT) {
+        myHandlerRedundant.removeCallbacks(myRunnable);
+        myHandlerRedundant.postDelayed(myRunnable, TIME_TO_WAIT);
     }
 
     /**********************************************

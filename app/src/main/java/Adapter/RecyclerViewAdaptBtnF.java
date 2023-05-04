@@ -21,7 +21,7 @@ import Util.Default_values;
 import Util.RecyclerLocations;
 import Util.TextSize;
 
-public class RecyclerViewAdaptBtnF extends RecyclerView.Adapter<RecyclerViewAdaptBtnF.ViewHolder>{
+public class RecyclerViewAdaptBtnF extends RecyclerView.Adapter<RecyclerViewAdaptBtnF.ViewHolder> {
     private static final String TAG = "RecyclerViewAdaptBtnF";
 
     public RecyclerViewAdaptBtnF() {
@@ -34,6 +34,7 @@ public class RecyclerViewAdaptBtnF extends RecyclerView.Adapter<RecyclerViewAdap
 
     RecyclerViewClickInterface recyclerViewClickInterface;
     private ArrayList<ModelBtn> modelArrayList;
+
     @NonNull
     @Override
     public RecyclerViewAdaptBtnF.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,19 +49,27 @@ public class RecyclerViewAdaptBtnF extends RecyclerView.Adapter<RecyclerViewAdap
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdaptBtnF.ViewHolder holder, int position) {
-        Default_values default_values=new Default_values();
-        TextSize textSize=new TextSize();
+        Default_values default_values = new Default_values();
+        TextSize textSize = new TextSize();
 
-        ModelBtn modelBtnFreq= modelArrayList.get(position);
+        ModelBtn modelBtnFreq = modelArrayList.get(position);
 
-        Log.d(TAG, "onBindViewHolder: "+modelArrayList.get(position).getBtnName());
+        Log.d(TAG, "onBindViewHolder: " + modelArrayList.get(position).getBtnName());
         holder.button.setText(modelBtnFreq.getBtnName());
         holder.button.setCompoundDrawablesRelativeWithIntrinsicBounds(modelBtnFreq.getMenuDrawable(), null, null, null);
-        if(modelBtnFreq.getBtnStatus().equalsIgnoreCase(default_values.DEF_STATUS_CHECKED)){
+        if (modelBtnFreq.getBtnStatus().equalsIgnoreCase(default_values.DEF_STATUS_CHECKED)) {
             holder.button.setTextSize(textSize.TEXT_SIZE_30);
-        }else{
+        } else {
             holder.button.setTextSize(textSize.TEXT_SIZE_30);
         }
+
+        try {
+
+        } catch (Exception e) {
+            Log.d(TAG, "onBindViewHolder: ex:" + e.getMessage());
+        }
+
+
     }
 
     @Override
@@ -73,7 +82,7 @@ public class RecyclerViewAdaptBtnF extends RecyclerView.Adapter<RecyclerViewAdap
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            button=itemView.findViewById(R.id.btnF);
+            button = itemView.findViewById(R.id.btnF);
             button.setOnClickListener(this);
             //itemView.setOnClickListener(this);
             Log.d(TAG, "ViewHolder: ");
@@ -89,8 +98,8 @@ public class RecyclerViewAdaptBtnF extends RecyclerView.Adapter<RecyclerViewAdap
         }
     }
 
-    private void btnCheck(ViewHolder viewHolder, Button button){
-        if(viewHolder!=null) {
+    private void btnCheck(ViewHolder viewHolder, Button button) {
+        if (viewHolder != null) {
         }
     }
 }

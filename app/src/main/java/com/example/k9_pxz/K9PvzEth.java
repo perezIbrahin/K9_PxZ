@@ -364,6 +364,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private  static Handler myHandlerRedundant = new Handler();
     private Runnable myRunnable =null;
 
+    //solving timer frozen
+    private long oldTimer=0;
+    private long newTimer=0;
+    private  int counterFrozenTimer=0;
+
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -2565,7 +2570,12 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 } else if (value == setPoints.INT_BLE_STATUS_ALARM3) {//under current
                     notificationUnderCurrent();
                 }
+                //
                 displayDate();
+                //check timer
+                timerFrozen( isTherapyOn);
+
+
 
                 /*// Stuff that updates the UI
                 int ret = updateCommand(value);
@@ -2906,7 +2916,16 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         loadDisplayTimerCountFirstTime(memoryLastTimer);
         //
         stopRedundantTime();
+        //
+        cleanFrozenTime();
         return true;
+    }
+
+    //clean frozen timer
+    private void cleanFrozenTime(){
+        oldTimer=0;
+        newTimer=0;
+        counterFrozenTimer=0;
     }
 
     //cancel ready
@@ -3376,6 +3395,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 timerTherapy = null;
                 flagIsMinZero = false;
                 //  disableWhenTheraStart();
+
+
+
                 return true;
             }
         } catch (Exception e) {
@@ -3395,7 +3417,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             timerTherapy = new CountDownTimer(time, countInterval) {
                 @Override
                 public void onTick(long l) {
-
+                    //added for frozen timer
+                    newTimer=l/1000;
                     //Log.d(TAG, "onTick: timer sec:"+l/1000);
                     //
                     if (sec == 0) {
@@ -3480,8 +3503,25 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         loadDisplayTimerCountFirstTime(memoryLastTimer);
         //
         stopRedundantTime();
+        //
+        cleanFrozenTime();
+    }
 
-
+    //solving timer frozen
+    private void timerFrozen( boolean isTherapyOn){
+        if(isTherapyOn){
+            if(oldTimer==newTimer){
+                if(counterFrozenTimer>5){
+                    Log.d(TAG, "timerFrozen: flag ");
+                    forceStopTimerTherapy();
+                }else{
+                    Log.d(TAG, "timerFrozen: counter:"+counterFrozenTimer);
+                    counterFrozenTimer++;
+                }
+            }else{
+                oldTimer=newTimer;
+            }
+        }
     }
 
     //set display time 00:00
@@ -3532,28 +3572,28 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //redundant timer
-    private void redundantTime(){
-        myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "run: ");
-                // your code here
-                timerTherapyElapsed();
-            }
-        };
-    }
+    Runnable myRunnableRedundant = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "myRunnableRedundant: ");
+            timerTherapyElapsed();
+        }
+    };
 
     public void startRedundatTime(long TIME_TO_WAIT) {
-        myHandlerRedundant.postDelayed(myRunnable, TIME_TO_WAIT+1000);
+        Log.d(TAG, "startRedundatTime: ");
+        myHandlerRedundant.postDelayed(myRunnableRedundant , TIME_TO_WAIT+1000);
     }
 
     public void stopRedundantTime() {
-        myHandlerRedundant.removeCallbacks(myRunnable);
+        Log.d(TAG, "stopRedundantTime: ");
+        myHandlerRedundant.removeCallbacks(myRunnableRedundant );
     }
 
     public void restartRedundatTime(long TIME_TO_WAIT) {
-        myHandlerRedundant.removeCallbacks(myRunnable);
-        myHandlerRedundant.postDelayed(myRunnable, TIME_TO_WAIT);
+        Log.d(TAG, "restartRedundatTime: ");
+        myHandlerRedundant.removeCallbacks(myRunnableRedundant );
+        myHandlerRedundant.postDelayed(myRunnableRedundant , TIME_TO_WAIT);
     }
 
     /**********************************************

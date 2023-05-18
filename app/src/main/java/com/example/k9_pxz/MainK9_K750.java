@@ -33,6 +33,7 @@ import Alert.K9Alert;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
 import Util.Beep;
+import Util.Key_Util;
 import Util.Languages;
 import Util.LocaleHelper;
 import Util.Rev;
@@ -75,6 +76,7 @@ public class MainK9_K750 extends AppCompatActivity implements View.OnClickListen
     public static final String BLE_ADD = "text";
     //beep
     private Beep beep = new Beep();
+    private Key_Util keyUtil = new Key_Util();
 
     //private String
     private String myBleAdd = "0";
@@ -123,6 +125,9 @@ public class MainK9_K750 extends AppCompatActivity implements View.OnClickListen
     private boolean isLockScreenMain = false;
     private Handler handlerMain;
 
+    private String SERIAL_NUMBER = "0";
+    private String DEVICE_ID = "123456";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +161,8 @@ public class MainK9_K750 extends AppCompatActivity implements View.OnClickListen
         displayDate();
         //orientation of the screen landscape
         setOrientationLandscape();
+        //load serial id
+        loadPreferences();
 
     }
 
@@ -966,5 +973,15 @@ public class MainK9_K750 extends AppCompatActivity implements View.OnClickListen
         }*/
 
         beep.beep_key();
+    }
+
+    /**********************************************
+     *LOAD PREFERENCES
+     */
+    private void loadPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences(keyUtil.KEY_SETTINGS2, MODE_PRIVATE);
+        SERIAL_NUMBER = sharedPref.getString(keyUtil.KEY_SERIAL_NUMBER, "0");
+        DEVICE_ID = sharedPref.getString(keyUtil.KEY_ID, "12345");
+        Log.d(TAG, "loadPreferences:KEY_SERIAL_NUMBER:" + SERIAL_NUMBER);
     }
 }

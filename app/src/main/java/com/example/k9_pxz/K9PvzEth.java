@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.TimeUnit;
 
 import Adapter.RecyclerViewAdaptBtnF;
 import Adapter.RecyclerViewAdaptBtnI;
@@ -358,16 +359,31 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private int SP_TRB = 0;
     private int SP_MODE = 0;
 
+    //toast
+    private Toast toast = null;
+
     //mute
-    private boolean isMuteOn=false;
+    private boolean isMuteOn = false;
     //redundant time
-    private  static Handler myHandlerRedundant = new Handler();
-    private Runnable myRunnable =null;
+    private static Handler myHandlerRedundant = new Handler();
+    private Runnable myRunnable = null;
 
     //solving timer frozen
-    private long oldTimer=0;
-    private long newTimer=0;
-    private  int counterFrozenTimer=0;
+    private long oldTimer = 0;
+    private long newTimer = 0;
+    private int counterFrozenTimer = 0;
+    //
+    private String SERIAL_NUMBER = "0";
+    private String DEVICE_ID = "123456";
+    //working time
+    private long year = 1;
+    private long day = 1;
+    private long hours = 1;
+    private long minutes = 1;
+    private long seconds = 1;
+    private long totalSecs = 1;
+    private String timeString = "00:00:00";
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -397,7 +413,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         //loading alert dialog
         alertDialogLoading(true);
         //Adding revision
-        displaySoftRev(rev.APP_REV_PAGE_11);
+        //displaySoftRev(rev.APP_REV_PAGE_11);
         //disable wifi
         disableWIFI();
         //request every 3 sec status of the host
@@ -408,8 +424,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         setOrientationLandscape();
         //load settings
         loadPreferences();
+        //load serial number
+        loadPreferences2();
         //send the last configuration
         loadLastConfig();
+        //Adding revision
+        displaySoftRev("S/N:" + SERIAL_NUMBER + "\n" + "Rev:" + rev.APP_REV_PAGE_10);
+        //
+        toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -541,10 +563,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //get settings
     private void getSettings(int value) {
-        Modes modes=new Modes();
+        Modes modes = new Modes();
         switch (value) {
             case 0:
-                isMuteOn=true;
+                isMuteOn = true;
                 iSample++;
                 break;
             case 1:
@@ -565,28 +587,28 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 iSample++;
                 break;
             case 4:
-                positionSample=SP_MODE;
-                sendModes( SP_MODE);
+                positionSample = SP_MODE;
+                sendModes(SP_MODE);
                 iSample++;
                 break;
             case 5:
                 positionSample = SP_TRA;
-                Log.d(TAG, "getSettings:SP_TRA "+SP_TRA);
-                if( SP_MODE==modes.MODE_PERC || SP_MODE==modes.MODE_VIB ){
+                Log.d(TAG, "getSettings:SP_TRA " + SP_TRA);
+                if (SP_MODE == modes.MODE_PERC || SP_MODE == modes.MODE_VIB) {
                     sendSpRBA(positionSample, false);
-                   // flagIsTRA =true;
+                    // flagIsTRA =true;
                 }
                 iSample++;
                 break;
             case 6:
                 positionSample = SP_TRB;
-                Log.d(TAG, "getSettings:SP_TRB: "+SP_TRB);
-                if( SP_MODE==modes.MODE_PERC || SP_MODE==modes.MODE_VIB ){
+                Log.d(TAG, "getSettings:SP_TRB: " + SP_TRB);
+                if (SP_MODE == modes.MODE_PERC || SP_MODE == modes.MODE_VIB) {
                     sendSpRBB(positionSample, false);
                     // flagIsTRB=true;
                 }
                 iSample++;
-                isMuteOn=false;
+                isMuteOn = false;
                 break;
         }
 
@@ -694,7 +716,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     } else {
                         //clean flag
                         cleanSelectedTrandA(conditions);
-                        SP_TRA =6;//clean
+                        SP_TRA = 6;//clean
                     }
                 }
             } else if (value.equalsIgnoreCase(recyclerLocations.LOCATION_RB_B)) {
@@ -711,7 +733,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     } else {
                         //clean flag
                         cleanSelectedTrandB(conditions);
-                        SP_TRB =6;
+                        SP_TRB = 6;
                     }
                     //sendSpRBB(position, conditions);//working
                 }
@@ -2371,6 +2393,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             if (tvDate != null) {
                 @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm:ss");
                 String date = df.format(Calendar.getInstance().getTime());
+                //String workingTime=getWorkingTime();
                 if (date != null) {
                     tvDate.setText(date);
                 }
@@ -2571,9 +2594,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     notificationUnderCurrent();
                 }
                 //
+
                 displayDate();
                 //check timer
-                timerFrozen( isTherapyOn);
+                timerFrozen(isTherapyOn);
 
 
 
@@ -2610,7 +2634,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         /*if (!isFlagSetConnection) {
             setConnetion();
         }*/
-        if (!isMuteOn){
+        if (!isMuteOn) {
             beep.beep_key();
         }
 
@@ -2766,7 +2790,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                     startTherapy();
                 } else {
                     //missing parameter
-                    Log.d(TAG, "condStartTherapy: flagIsTRA:"+flagIsTRA+"/flagIsTRB:"+flagIsTRB);
+                    Log.d(TAG, "condStartTherapy: flagIsTRA:" + flagIsTRA + "/flagIsTRB:" + flagIsTRB);
                     int status = checkMissingParam(flagIsFreq, flagIsInt, flagIsTim, flagIsTRA, flagIsTRB, flagIsSR);
                     Log.d(TAG, "condStartTherapy: status:" + status);
                     if (dialogMissTitle == null) {
@@ -2815,7 +2839,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     //operation stop therapy
     private void stopTherapy() {
+        Log.d(TAG, "stopTherapy: isTherapyOn:"+
+                isTherapyOn);
+
         sendSpCommand(controlGUI.CMD_OFF, isTherapyOn);
+        Log.d(TAG, "stopTherapy: #2842");
         //cleanFlagAfterStop();
 
         //do not clean flag if screen is locked
@@ -2922,10 +2950,10 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //clean frozen timer
-    private void cleanFrozenTime(){
-        oldTimer=0;
-        newTimer=0;
-        counterFrozenTimer=0;
+    private void cleanFrozenTime() {
+        oldTimer = 0;
+        newTimer = 0;
+        counterFrozenTimer = 0;
     }
 
     //cancel ready
@@ -3324,6 +3352,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 break;
             case 2:
                 if (enable) {
+                    Log.d(TAG, "sendSpCommand: stop");
                     sendTCP(spEth.k9_op_3);//stop
                     //text stopping wait
                     notificationSystemStoppingWait();
@@ -3397,7 +3426,6 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                 //  disableWhenTheraStart();
 
 
-
                 return true;
             }
         } catch (Exception e) {
@@ -3412,16 +3440,18 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             cleanTimerTherapy();
             Log.d(TAG, "runTimerTherapy: time:" + time + ". Interval:" + countInterval);
             //
-           startRedundatTime(time);
+            //startRedundatTime(time);
             //
             timerTherapy = new CountDownTimer(time, countInterval) {
                 @Override
                 public void onTick(long l) {
+                    convertTimerHHmm(l);//added 05/06/23
+
                     //added for frozen timer
-                    newTimer=l/1000;
+                    newTimer = l / 1000;
                     //Log.d(TAG, "onTick: timer sec:"+l/1000);
                     //
-                    if (sec == 0) {
+                   /* if (sec == 0) {
                         //discount minutes between 0 and 9
                         if (min >= 0 && min <= 9) {
                             if (min > 0) {
@@ -3464,9 +3494,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                             }
                         }
                     }
-                    Log.d(TAG, "onTick:strMin: " + strMin + ":strSec" + strSec);
+                    Log.d(TAG, "onTick:strMin: " + strMin + ":strSec" + strSec);*/
                     //display value
-                    displayTimerMinSec(String.valueOf(strMin + strDiv + strSec));
+                    //displayTimerMinSec(String.valueOf(strMin + strDiv + strSec));//working but some delay
+
+
                 }
 
                 @Override
@@ -3479,6 +3511,28 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
             Log.d(TAG, "runTimerTherapy: ex:" + e.getMessage());
         }
     }
+
+    //new 05/06/23
+    private void convertTimerHHmm(long millisUntilFinish){
+
+        long millis = millisUntilFinish;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis)%60;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis)%60;
+
+        String ms = String.format("%02d:%02d",
+                minutes, seconds);
+        Log.d(TAG, "convertTimerHHmm:"+ms);
+
+        /*Log.d(TAG, "convertTimerHHmm:long min:"+minutes+":"+seconds);
+        //
+        strMin=String.valueOf( minutes);
+        strSec=String.valueOf( seconds);
+        Log.d(TAG, "convertTimerHHmm: min:"+strMin+":"+strSec);
+        displayTimerMinSec(strMin+":"+strSec);*/
+
+        displayTimerMinSec(ms);
+    }
+
 
     // timer finish therapy done
     private void timerTherapyElapsed() {
@@ -3508,18 +3562,20 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     }
 
     //solving timer frozen
-    private void timerFrozen( boolean isTherapyOn){
-        if(isTherapyOn){
-            if(oldTimer==newTimer){
-                if(counterFrozenTimer>5){
+    private void timerFrozen(boolean isTherapyOn) {
+        if (isTherapyOn) {
+            Log.d(TAG, "timerFrozen: old:" + oldTimer);
+            Log.d(TAG, "timerFrozen: new:" + newTimer);
+            if (oldTimer == newTimer) {
+                if (counterFrozenTimer > 5) {
                     Log.d(TAG, "timerFrozen: flag ");
                     forceStopTimerTherapy();
-                }else{
-                    Log.d(TAG, "timerFrozen: counter:"+counterFrozenTimer);
+                } else {
+                    Log.d(TAG, "timerFrozen: counter:" + counterFrozenTimer);
                     counterFrozenTimer++;
                 }
-            }else{
-                oldTimer=newTimer;
+            } else {
+                oldTimer = newTimer;
             }
         }
     }
@@ -3582,18 +3638,18 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
 
     public void startRedundatTime(long TIME_TO_WAIT) {
         Log.d(TAG, "startRedundatTime: ");
-        myHandlerRedundant.postDelayed(myRunnableRedundant , TIME_TO_WAIT+1000);
+        myHandlerRedundant.postDelayed(myRunnableRedundant, TIME_TO_WAIT + 3000);
     }
 
     public void stopRedundantTime() {
         Log.d(TAG, "stopRedundantTime: ");
-        myHandlerRedundant.removeCallbacks(myRunnableRedundant );
+        myHandlerRedundant.removeCallbacks(myRunnableRedundant);
     }
 
     public void restartRedundatTime(long TIME_TO_WAIT) {
         Log.d(TAG, "restartRedundatTime: ");
-        myHandlerRedundant.removeCallbacks(myRunnableRedundant );
-        myHandlerRedundant.postDelayed(myRunnableRedundant , TIME_TO_WAIT);
+        myHandlerRedundant.removeCallbacks(myRunnableRedundant);
+        myHandlerRedundant.postDelayed(myRunnableRedundant, TIME_TO_WAIT);
     }
 
     /**********************************************
@@ -4175,6 +4231,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
                             Log.d(TAG, "feedbackFromEthernet: enable star from mcu");
                             isFlagMcuReady = true;
                         }
+                        if (myNum == 92) {
+                            Log.d(TAG, "feedbackFromEthernet: Runing code 92");
+                            //isFlagMcuReady = true;
+                            isTherapyOn=true;//added 051623
+                        }
                     }
 
 
@@ -4449,7 +4510,14 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
      */
 
     private void waitReadyConditions() {
+        //toast.cancel();
+       // toast.setText("Wait...");
+       /* if(toast.)
+
+        toast
+
         Toast.makeText(getApplicationContext(), "Wait...", Toast.LENGTH_SHORT).show();
+        */
     }
 
     /**********************************************
@@ -4464,6 +4532,8 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         editor.putInt(keyUtil.KEY_TRA, SP_TRA);
         editor.putInt(keyUtil.KEY_TTRB, SP_TRB);
         editor.putInt(keyUtil.KEY_MODE, SP_MODE);
+        editor.putLong(keyUtil.KEY_LIFE_TIME,totalSecs);
+
         editor.commit();
         Log.d(TAG, "savePreferences: freq:" + SP_FREQ);
     }
@@ -4480,9 +4550,11 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         SP_TRB = sharedPref.getInt(keyUtil.KEY_TTRB, 0);
         SP_MODE = sharedPref.getInt(keyUtil.KEY_MODE, 0);
         Log.d(TAG, "loadPreferences: freq:" + (String.valueOf(SP_FREQ)));
+        //working time
+        totalSecs= sharedPref.getLong(keyUtil.KEY_LIFE_TIME, 1);
 
-        memoryTransdA=SP_TRA;
-        memoryTransdB=SP_TRB;
+        memoryTransdA = SP_TRA;
+        memoryTransdB = SP_TRB;
        /* if(SP_TRA>=0 && SP_TRA<6){
             flagIsTRA=true;
             Log.d(TAG, "loadPreferences:flagIsTRA=true ");
@@ -4494,10 +4566,37 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
         }*/
     }
 
+    /**********************************************
+     *LOAD PREFERENCES
+     */
+    private void loadPreferences2() {
+        SharedPreferences sharedPref = getSharedPreferences(keyUtil.KEY_SETTINGS2, MODE_PRIVATE);
+        SERIAL_NUMBER = sharedPref.getString(keyUtil.KEY_SERIAL_NUMBER, "0");
+        DEVICE_ID = sharedPref.getString(keyUtil.KEY_ID, "12345");
+        Log.d(TAG, "loadPreferences:KEY_SERIAL_NUMBER:" + SERIAL_NUMBER);
+    }
 
     /**********************************************
-     *
+     * Get working time
      */
-
+    private String getWorkingTime() {
+        try {
+            if (isTherapyOn) {
+                if (totalSecs > MAX_VALUE) {/**/
+                    totalSecs = 0;
+                }
+                totalSecs = totalSecs + 3;
+                year=day/365;
+                day=hours/24;
+                hours = totalSecs / 3600;
+                minutes = (totalSecs % 3600) / 60;
+                seconds = totalSecs % 60;
+                timeString = String.format("%02d:%02d:%02d:%02d:%02d",year,day, hours, minutes, seconds);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "getWorkingTime: ex:" + e.getMessage());
+        }
+        return timeString;
+    }
 
 }

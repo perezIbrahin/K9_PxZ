@@ -43,6 +43,8 @@ public class Key_Util {
     public String KEY_SERIAL_NUMBER="KEY_SERIAL_NUMBER";
     public String KEY_ID="KEY_ID";
 
+    public String KEY_LIFE_TIME="KEY_LIFE_TIME";
+
 
 
 

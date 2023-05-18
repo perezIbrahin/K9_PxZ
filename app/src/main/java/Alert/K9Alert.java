@@ -973,7 +973,9 @@ public class K9Alert extends AppCompatActivity {
                     btnConf.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_AUTO_SLEEP", util_dialog.LOCATION_AUTO_SLEEP);
+                            /*interfaceSetupInfo.onItemSetupInfo("util_dialog.LOCATION_AUTO_SLEEP", util_dialog.LOCATION_AUTO_SLEEP);
+                            alertDialog.dismiss();*/
+
                             alertDialog.dismiss();
                         }
                     });

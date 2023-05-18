@@ -36,6 +36,7 @@ import Alert.K9Alert;
 import Interface.InterfaceSetupInfo;
 import Interface.RecyclerViewClickInterface;
 import Util.Beep;
+import Util.Key_Util;
 import Util.Languages;
 import Util.LocaleHelper;
 import Util.Rev;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isLockScreen = false;
     //revision
     private Rev rev = new Rev();
+    private Key_Util keyUtil = new Key_Util();
     //alert
     private K9Alert k9Alert;
     private Util_Dialog utilDialog = new Util_Dialog();
@@ -113,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //PDFView pdfView;
     // url of our PDF file.
 
+
+    private String SERIAL_NUMBER = "0";
+    private String DEVICE_ID = "123456";
     //hide permanent bar
     final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -149,14 +154,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         eventSpinnerLanguage();
         //get info from others pages
         getExtrasFromAct();//get extras from other activity
-        //Adding revision
-        displaySoftRev(rev.APP_REV_PAGE_10);
+
         //disable wifi
         disableWIFI();
         //date
         displayDate();
         //orientation of the screen landscape
         setOrientationLandscape();
+        //load saved preferences
+        loadPreferences();
+        //Adding revision
+        displaySoftRev("S/N:" + SERIAL_NUMBER + "\n" + "Rev:" + rev.APP_REV_PAGE_10);
 
     }
 
@@ -602,9 +610,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (position == status.STATUS_SERIAL_LINK) {
             Serial_Number_Product = value;
         } else if (position == status.STATUS_PASS) {
-          if(value== status.PASS_OK){
-              launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");//working
-          }
+            if (value == status.PASS_OK) {
+                launchActivityWithExtras(SettActivity.class, language, Serial_Number_Product, "0");//working
+            }
         }
 
     }
@@ -961,4 +969,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         beep.beep_key();
     }
+
+    /**********************************************
+     *LOAD PREFERENCES
+     */
+    private void loadPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences(keyUtil.KEY_SETTINGS2, MODE_PRIVATE);
+        SERIAL_NUMBER = sharedPref.getString(keyUtil.KEY_SERIAL_NUMBER, "0");
+        DEVICE_ID = sharedPref.getString(keyUtil.KEY_ID, "12345");
+        Log.d(TAG, "loadPreferences:KEY_SERIAL_NUMBER:" + SERIAL_NUMBER);
+    }
 }
+

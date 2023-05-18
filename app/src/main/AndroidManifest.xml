@@ -33,9 +33,6 @@
     <uses-permission android:name="android.permission.ACCESS_BLUETOOTH_SHARE" />
 
 
-
-
-
     <application
         android:name=".Home"
         android:allowBackup="true"

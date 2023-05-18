@@ -147,8 +147,10 @@ public class SettActivity extends AppCompatActivity implements View.OnClickListe
             launchActivity(BurningActivityRutine.class);
         } else if (v == btnAbout) {
             // launchActivity(BurningActivityRutine.class);
-            K9Alert k9Alert=new K9Alert(this,this);
+            //  K9Alert k9Alert=new K9Alert(this,this);
             //k9Alert.alertDialogAbout("","", "");
+
+            launchActivity(InfoActivity.class);
 
         } else if (v == btnSystem) {
             //launchActivity(UpdateActivity.class);

@@ -102,8 +102,25 @@
                     android:orientation="vertical">
 
 
+                    <TextView
+                        android:id="@+id/tvSN"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="S/N:"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvSystemLife"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="TOTAL RUNNING TIME:"
+                        android:textSize="24sp" />
                 </LinearLayout>
             </ScrollView>
+
         </LinearLayout>
 
     </LinearLayout>

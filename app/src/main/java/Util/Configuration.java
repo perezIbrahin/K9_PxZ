@@ -1,6 +1,9 @@
 package Util;
 
 public class Configuration {
+
+
+
     //temperature
     public  Integer MAX_RANGE_TEMPERATURE=80;
     public  Integer MIN_RANGE_TEMPERATURE=1;

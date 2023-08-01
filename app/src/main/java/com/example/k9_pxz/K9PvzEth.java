@@ -384,6 +384,9 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private long totalSecs = 1;
     private String timeString = "00:00:00";
 
+    //enable disable sleepode
+    private boolean enableSleepTimer=false;
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -4110,6 +4113,7 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private void feedbackFromEthernet(String message) {
         MessageEth messageEth = new MessageEth();
         Log.d(TAG, "statusEthernet:" + message);
+
         sleepMode(isTherapyOn);//auto sleep mode
 
         /*
@@ -4471,32 +4475,35 @@ public class K9PvzEth extends AppCompatActivity implements InterfaceSetupInfo, R
     private boolean sleepMode(boolean isWorking) {
         /*private int autoSleepCounter=0;
         private int MAX_AUTO_SLEEP=20;*/
-        if (!isWorking) {
-            //counter
-            if (autoSleepCounter == 0) {
-                //go to sleep mode
-                if (!isLockScreen) {
-                    //goHome();
-                    goSleep();
-                }
-                return true;
-            } else if (autoSleepCounter > 0 && autoSleepCounter < 5) {
-                //close connection and send to sleep mode
-                if (!isSleepMode) {
-                    notificationSystemSleep();
-                    isSleepMode = true;
+        if(enableSleepTimer){
+            if (!isWorking) {
+                //counter
+                if (autoSleepCounter == 0) {
+                    //go to sleep mode
+                    if (!isLockScreen) {
+                        //goHome();
+                        goSleep();
+                    }
+                    return true;
+                } else if (autoSleepCounter > 0 && autoSleepCounter < 5) {
+                    //close connection and send to sleep mode
+                    if (!isSleepMode) {
+                        notificationSystemSleep();
+                        isSleepMode = true;
+                    }
+                    autoSleepCounter--;
+                    Log.d(TAG, "sleepMode: enable");
+                    return true;
                 }
                 autoSleepCounter--;
-                Log.d(TAG, "sleepMode: enable");
-                return true;
+                Log.d(TAG, "sleepMode: counter:" + autoSleepCounter);
+                return false;
+            } else {
+                resetSleepMode();
+                return false;
             }
-            autoSleepCounter--;
-            Log.d(TAG, "sleepMode: counter:" + autoSleepCounter);
-            return false;
-        } else {
-            resetSleepMode();
-            return false;
         }
+        return true;
     }
 
     //reset sleep mode
